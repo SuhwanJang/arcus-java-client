@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.filter;
 
-import com.jam2in.arcus.admin.tool.component.JwtTokenProvider;
+import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.component;
+package com.jam2in.arcus.admin.tool.bean;
 
 import org.junit.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,10 +1,8 @@
-package com.jam2in.arcus.admin.tool.component;
+package com.jam2in.arcus.admin.tool.bean;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UserPasswordEncoder implements PasswordEncoder {
 
   private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

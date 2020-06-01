@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jam2in.arcus.admin.tool.component.JwtTokenProvider;
+import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
 import com.jam2in.arcus.admin.tool.exception.ApiError;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;

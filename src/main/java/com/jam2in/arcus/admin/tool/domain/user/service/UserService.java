@@ -83,15 +83,6 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public org.springframework.security.core.userdetails.User getUserDetails(String username) {
-    UserEntity userEntity = getEntityByUsername(username);
-
-    return new org.springframework.security.core.userdetails.User(
-        userEntity.getUsername(),
-        userEntity.getPassword(),
-        userEntity.getRoles());
-  }
-
   public void checkDuplicateUsername(String username) {
     if (userRepository.exists(Example.of(
         UserEntity.builder().username(username).build(),

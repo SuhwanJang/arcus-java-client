@@ -1,11 +1,13 @@
 package com.jam2in.arcus.admin.tool.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jam2in.arcus.admin.tool.component.JwtAccessDeniedHandler;
-import com.jam2in.arcus.admin.tool.component.JwtAuthenticationEntryPoint;
-import com.jam2in.arcus.admin.tool.component.JwtTokenProvider;
+import com.jam2in.arcus.admin.tool.bean.JwtAccessDeniedHandler;
+import com.jam2in.arcus.admin.tool.bean.JwtAuthenticationEntryPoint;
+import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
+import com.jam2in.arcus.admin.tool.bean.UserPasswordEncoder;
 import com.jam2in.arcus.admin.tool.filter.JwtAuthenticationFilter;
 import com.jam2in.arcus.admin.tool.filter.JwtAuthorizationFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,32 +15,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-  private final PasswordEncoder passwordEncoder;
-  private final JwtTokenProvider jwtTokenProvider;
-  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final ObjectMapper objectMapper;
-  private final UserDetailsService userDetailsService;
 
-  public SecurityConfiguration(PasswordEncoder passwordEncoder,
-                               JwtTokenProvider jwtTokenProvider,
-                               JwtAccessDeniedHandler jwtAccessDeniedHandler,
-                               JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                               ObjectMapper objectMapper,
-                               UserDetailsService userDetailsService) {
-    this.passwordEncoder = passwordEncoder;
-    this.jwtTokenProvider = jwtTokenProvider;
-    this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-    this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+  public SecurityConfiguration(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
-    this.userDetailsService = userDetailsService;
   }
 
   @Override
@@ -63,15 +49,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .anyRequest().permitAll();
 
     http.exceptionHandling()
-        .accessDeniedHandler(jwtAccessDeniedHandler)
-        .authenticationEntryPoint(jwtAuthenticationEntryPoint);
+        .accessDeniedHandler(jwtAccessDeniedHandler())
+        .authenticationEntryPoint(jwtAuthenticationEntryPoint());
 
     JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(
-        authenticationManager(), jwtTokenProvider, objectMapper);
+        authenticationManager(), jwtTokenProvider(), objectMapper);
     jwtAuthenticationFilter.setFilterProcessesUrl("/login");
 
     JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(
-        authenticationManager(), jwtTokenProvider);
+        authenticationManager(), jwtTokenProvider());
 
     http.addFilter(jwtAuthenticationFilter)
         .addFilter(jwtAuthorizationFilter);
@@ -79,8 +65,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService)
-        .passwordEncoder(passwordEncoder);
+    auth.userDetailsService(userDetailsService())
+        .passwordEncoder(passwordEncoder());
+  }
+
+  @Bean
+  public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
+    return new JwtAccessDeniedHandler(objectMapper);
+  }
+
+  @Bean
+  public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+    return new JwtAuthenticationEntryPoint(objectMapper);
+  }
+
+  @Bean
+  public JwtTokenProvider jwtTokenProvider() {
+    return new JwtTokenProvider();
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new UserPasswordEncoder();
   }
 
 }

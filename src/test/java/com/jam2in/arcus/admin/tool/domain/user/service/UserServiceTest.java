@@ -11,8 +11,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -129,45 +127,6 @@ public class UserServiceTest {
 
     // when
     userService.delete(id);
-  }
-
-  @Test
-  public void getUserDetails() {
-    // given
-    UserEntity userEntity =
-        UserEntity.builder()
-          .username("foo")
-          .password("bar")
-          .roles(List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER))
-          .build();
-
-    User user = new User(
-        userEntity.getUsername(),
-        userEntity.getPassword(),
-        userEntity.getRoles());
-
-    given(userRepository.findByUsername(user.getUsername()))
-        .willReturn(Optional.of(userEntity));
-
-    // when
-    UserDetails userDetails = userService.getUserDetails(user.getUsername());
-
-    // then
-    verify(userRepository, atMostOnce()).findByUsername(user.getUsername());
-    assertThat(userDetails.getUsername(), is(user.getUsername()));
-    assertThat(userDetails.getPassword(), is(user.getPassword()));
-    assertThat(userDetails.getAuthorities(), is(user.getAuthorities()));
-  }
-
-  @Test(expected = BusinessException.class)
-  public void getUserDetails_notFound() {
-    // given
-    String username = "foo";
-
-    given(userRepository.findByUsername(username)).willReturn(Optional.empty());
-
-    // when
-    userService.getUserDetails(username);
   }
 
 }
