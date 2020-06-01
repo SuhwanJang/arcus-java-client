@@ -17,7 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class ApiExceptionHandler {
 
   private ResponseEntity<ApiError> createResponse(ApiError apiError) {
-    final HttpHeaders headers = new HttpHeaders();
+    HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
     return new ResponseEntity<>(apiError, headers, apiError.getStatus());
@@ -26,7 +26,7 @@ public class ApiExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<?> handleHttpMessageNotReadableException(
       HttpMessageNotReadableException e) {
-    final Throwable cause = e.getCause();
+    Throwable cause = e.getCause();
     if (cause instanceof InvalidFormatException) {
       return createResponse(ApiError.of(
           ApiErrorCode.COMMON_INVALID_BODY, (InvalidFormatException) cause));

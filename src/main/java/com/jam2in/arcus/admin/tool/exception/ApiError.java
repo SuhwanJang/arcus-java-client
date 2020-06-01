@@ -55,7 +55,7 @@ public class ApiError {
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode, InvalidFormatException exception) {
-    final List<JsonMappingException.Reference> references = exception.getPath();
+    List<JsonMappingException.Reference> references = exception.getPath();
 
     if (references.size() > 0) {
       return new ApiError(apiErrorCode,
@@ -72,7 +72,7 @@ public class ApiError {
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode, BindingResult bindingResult) {
-    final Collection<org.springframework.validation.FieldError> fieldErrors =
+    Collection<org.springframework.validation.FieldError> fieldErrors =
         bindingResult.getFieldErrors();
 
     if (fieldErrors.isEmpty()) {
@@ -87,7 +87,7 @@ public class ApiError {
               Detail.of(
                   fieldError.getField(),
                   Objects.toString(rejectedValue, StringUtils.EMPTY),
-                  // FIXME: use message source & property
+                  // FIXME: message source 사용
                   fieldError.getDefaultMessage()));
         },
         List::addAll));
@@ -95,7 +95,7 @@ public class ApiError {
 
   public static ApiError of(ApiErrorCode apiErrorCode,
                             MethodArgumentTypeMismatchException exception) {
-    final Optional<Class<?>> optionalClass = Optional.ofNullable(exception.getRequiredType());
+    Optional<Class<?>> optionalClass = Optional.ofNullable(exception.getRequiredType());
 
     return new ApiError(apiErrorCode, Detail.of(
         exception.getName(),

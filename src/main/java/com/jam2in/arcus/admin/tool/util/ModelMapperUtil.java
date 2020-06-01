@@ -17,7 +17,7 @@ public class ModelMapperUtil {
   }
 
   private static ModelMapper initializeModelMapper() {
-    final ModelMapper modelMapper = new ModelMapper();
+    ModelMapper modelMapper = new ModelMapper();
 
     Configuration configuration = modelMapper.getConfiguration();
     configuration.setMatchingStrategy(MatchingStrategies.STRICT);

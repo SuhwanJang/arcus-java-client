@@ -49,7 +49,7 @@ public class JwtTokenProvider {
   }
 
   public String create(UserDetails userDetails) {
-    final Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+    Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
 
     claims.put(roles,
         userDetails.getAuthorities()
@@ -57,7 +57,7 @@ public class JwtTokenProvider {
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toList()));
 
-    final Date now = new Date();
+    Date now = new Date();
 
     return Jwts.builder()
         .setClaims(claims)
@@ -86,7 +86,7 @@ public class JwtTokenProvider {
   }
 
   public String resolve(HttpServletRequest request) {
-    final String bearerToken = request.getHeader(header);
+    String bearerToken = request.getHeader(header);
 
     if (bearerToken != null && bearerToken.startsWith(prefix)) {
       return bearerToken.substring(prefix.length());

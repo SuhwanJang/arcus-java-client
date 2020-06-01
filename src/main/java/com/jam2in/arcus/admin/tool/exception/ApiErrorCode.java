@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ApiErrorCode {
 
-  // FIXME: use message source
+  // FIXME: message source 사용
 
   COMMON_INTERNAL_SERVER_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR,

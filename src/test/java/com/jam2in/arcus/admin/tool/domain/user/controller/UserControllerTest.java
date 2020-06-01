@@ -36,14 +36,14 @@ public class UserControllerTest {
   @Test
   public void create() throws Exception {
     // given
-    final UserDto userDto = UserDto.builder()
+    UserDto userDto = UserDto.builder()
         .username("foo")
         .password("foo")
         .email("foo@bar.com")
         .build();
 
     // when
-    final ResultActions resultActions = mockMvc.perform(
+    ResultActions resultActions = mockMvc.perform(
         post("/api/v1/users")
             .content(objectMapper.writeValueAsString(userDto))
             .contentType(MediaType.APPLICATION_JSON))

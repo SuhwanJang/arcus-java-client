@@ -53,16 +53,8 @@ public class UserDto {
 
   private Collection<String> roles;
 
-  public void encodePassword(String encodedPassword) {
-    password = encodedPassword;
-  }
-
-  public void applyAdminRole() {
-    roles = List.of(RoleEntity.ROLE_ADMIN.name(), RoleEntity.ROLE_USER.name());
-  }
-
   public static UserDto of(UserEntity userEntity) {
-    final UserDto userDto = ModelMapperUtil.map(
+    UserDto userDto = ModelMapperUtil.map(
         userEntity, UserDto.class);
 
     userDto.password = null;

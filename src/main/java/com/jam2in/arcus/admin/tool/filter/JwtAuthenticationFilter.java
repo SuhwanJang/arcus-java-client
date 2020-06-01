@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   public Authentication attemptAuthentication(HttpServletRequest request,
                                               HttpServletResponse response)
       throws AuthenticationException {
-    final UserDto userDto;
+    UserDto userDto;
 
     try {
       userDto = new ObjectMapper().readValue(request.getInputStream(), UserDto.class);
