@@ -32,7 +32,7 @@ public class UserController {
 
   @GetMapping("/me")
   @ResponseStatus(code = HttpStatus.OK)
-  public UserDto me() throws BusinessException {
+  public UserDto me() {
     return userService.getByUsername(
         (String) SecurityContextHolder
             .getContext()
@@ -43,27 +43,26 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(code = HttpStatus.CREATED)
-  public UserDto create(@RequestBody @Valid UserDto userDto) throws BusinessException {
+  public UserDto create(@RequestBody @Valid UserDto userDto) {
     return userService.create(userDto);
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(code = HttpStatus.OK)
   public UserDto update(@PathVariable long id,
-                        @RequestBody @Valid UserDto userDto) throws BusinessException {
+                        @RequestBody @Valid UserDto userDto) {
     return userService.update(id, userDto);
   }
 
   @GetMapping("/{id}")
   @ResponseStatus(code = HttpStatus.OK)
-  public UserDto get(@PathVariable long id, @RequestParam("page") long page)
-      throws BusinessException {
+  public UserDto get(@PathVariable long id, @RequestParam("page") long page) {
     return userService.get(id);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void delete(@PathVariable long id) throws BusinessException {
+  public void delete(@PathVariable long id) {
     userService.delete(id);
   }
 

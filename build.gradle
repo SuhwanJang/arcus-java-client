@@ -35,6 +35,8 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:1.18.12")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test:5.2.4.RELEASE")
+  testImplementation("org.powermock:powermock-module-junit4:2.0.7")
+  testImplementation("org.powermock:powermock-api-mockito2:2.0.7")
 }
 
 checkstyle {

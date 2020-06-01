@@ -3,7 +3,7 @@ package com.jam2in.arcus.admin.tool.exception;
 import lombok.Getter;
 
 @Getter
-public class BaseException extends Exception {
+public class BaseException extends RuntimeException {
 
   private final ApiError apiError;
 

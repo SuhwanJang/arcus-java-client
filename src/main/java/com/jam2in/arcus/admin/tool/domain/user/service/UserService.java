@@ -26,7 +26,7 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto create(UserDto userDto) throws BusinessException {
+  public UserDto create(UserDto userDto) {
     checkDuplicateUsername(userDto.getUsername());
     checkDuplicateEmail(userDto.getEmail());
 
@@ -40,8 +40,7 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto update(long id, UserDto userDto)
-      throws BusinessException {
+  public UserDto update(long id, UserDto userDto) {
     // FIXME: userRepository.save 호출하여 수정? 아니면 영속성 컨텍스트에서 entity field 수정?
     UserEntity userEntity = getEntity(id);
 
@@ -67,16 +66,16 @@ public class UserService {
     return UserDto.of(userEntity);
   }
 
-  public UserDto get(long id) throws BusinessException {
+  public UserDto get(long id) {
     return UserDto.of(getEntity(id));
   }
 
-  public UserDto getByUsername(String username) throws BusinessException {
+  public UserDto getByUsername(String username) {
     return UserDto.of(getEntityByUsername(username));
   }
 
   @Transactional
-  public void delete(long id) throws BusinessException {
+  public void delete(long id) {
     if (!userRepository.existsById(id)) {
       throw new BusinessException(ApiErrorCode.USER_NOT_FOUND);
     }
@@ -84,8 +83,7 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public org.springframework.security.core.userdetails.User getUserDetails(String username)
-      throws BusinessException {
+  public org.springframework.security.core.userdetails.User getUserDetails(String username) {
     UserEntity userEntity = getEntityByUsername(username);
 
     return new org.springframework.security.core.userdetails.User(
@@ -94,17 +92,17 @@ public class UserService {
         userEntity.getRoles());
   }
 
-  private UserEntity getEntity(long id) throws BusinessException {
+  private UserEntity getEntity(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_NOT_FOUND));
   }
 
-  private UserEntity getEntityByUsername(String username) throws BusinessException {
+  private UserEntity getEntityByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
   }
 
-  public boolean isExistsByUsername(String username) {
+  private boolean isExistsByUsername(String username) {
     return userRepository.exists(Example.of(
         UserEntity.builder().username(username).build(),
         ExampleMatcher.matching().withIgnoreCase()));
@@ -116,13 +114,13 @@ public class UserService {
         ExampleMatcher.matching().withIgnoreCase()));
   }
 
-  private void checkDuplicateUsername(String username) throws BusinessException {
+  private void checkDuplicateUsername(String username) {
     if (isExistsByUsername(username)) {
       throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
     }
   }
 
-  private void checkDuplicateEmail(String email) throws BusinessException {
+  private void checkDuplicateEmail(String email) {
     if (isExistsByEmail(email)) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }

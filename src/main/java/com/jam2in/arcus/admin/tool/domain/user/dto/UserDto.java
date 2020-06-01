@@ -30,7 +30,7 @@ public class UserDto {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.password = newPassword;
+    this.newPassword = newPassword;
     this.roles = roles;
   }
 
