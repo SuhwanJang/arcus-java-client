@@ -16,8 +16,6 @@ public enum ApiErrorCode {
   COMMON_INVALID_BODY(
       HttpStatus.BAD_REQUEST,
       "COMMON003", "invalid body"),
-  COMMON_INVALID_TYPE(
-      "must %s type"),
   COMMON_ACCESS_DENIED(
     HttpStatus.FORBIDDEN,
       "COMMON004", "access denied"),
@@ -27,6 +25,9 @@ public enum ApiErrorCode {
   COMMON_INVALID_PARAMETER(
       HttpStatus.BAD_REQUEST,
       "COMMON006", "invalid parameter"),
+
+  COMMON_INVALID_TYPE(
+      "must %s type"),
 
   USER_NOT_FOUND(
       HttpStatus.NOT_FOUND,

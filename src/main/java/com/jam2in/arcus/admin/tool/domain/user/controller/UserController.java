@@ -1,7 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.user.controller;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;

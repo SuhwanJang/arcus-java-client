@@ -20,7 +20,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
