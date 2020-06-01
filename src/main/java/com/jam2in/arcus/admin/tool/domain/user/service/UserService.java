@@ -92,6 +92,22 @@ public class UserService {
         userEntity.getRoles());
   }
 
+  public void checkDuplicateUsername(String username) {
+    if (userRepository.exists(Example.of(
+        UserEntity.builder().username(username).build(),
+        ExampleMatcher.matching().withIgnoreCase()))) {
+      throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
+    }
+  }
+
+  public void checkDuplicateEmail(String email) {
+    if (userRepository.exists(Example.of(
+        UserEntity.builder().username(email).build(),
+        ExampleMatcher.matching().withIgnoreCase()))) {
+      throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
+    }
+  }
+
   private UserEntity getEntity(long id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_NOT_FOUND));
@@ -100,30 +116,6 @@ public class UserService {
   private UserEntity getEntityByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
-  }
-
-  private boolean isExistsByUsername(String username) {
-    return userRepository.exists(Example.of(
-        UserEntity.builder().username(username).build(),
-        ExampleMatcher.matching().withIgnoreCase()));
-  }
-
-  private boolean isExistsByEmail(String username) {
-    return userRepository.exists(Example.of(
-        UserEntity.builder().username(username).build(),
-        ExampleMatcher.matching().withIgnoreCase()));
-  }
-
-  private void checkDuplicateUsername(String username) {
-    if (isExistsByUsername(username)) {
-      throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
-    }
-  }
-
-  private void checkDuplicateEmail(String email) {
-    if (isExistsByEmail(email)) {
-      throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
-    }
   }
 
 }
