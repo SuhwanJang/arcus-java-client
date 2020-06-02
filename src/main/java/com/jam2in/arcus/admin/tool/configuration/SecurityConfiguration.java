@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jam2in.arcus.admin.tool.bean.JwtAccessDeniedHandler;
 import com.jam2in.arcus.admin.tool.bean.JwtAuthenticationEntryPoint;
 import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
+import com.jam2in.arcus.admin.tool.bean.UserDetailsService;
 import com.jam2in.arcus.admin.tool.bean.UserPasswordEncoder;
+import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import com.jam2in.arcus.admin.tool.filter.JwtAuthenticationFilter;
 import com.jam2in.arcus.admin.tool.filter.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +25,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final ObjectMapper objectMapper;
 
-  public SecurityConfiguration(ObjectMapper objectMapper) {
+  private final UserRepository userRepository;
+
+  public SecurityConfiguration(ObjectMapper objectMapper,
+                               UserRepository userRepository) {
     this.objectMapper = objectMapper;
+    this.userRepository = userRepository;
   }
 
   @Override
@@ -67,6 +73,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService())
         .passwordEncoder(passwordEncoder());
+  }
+
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return new UserDetailsService(userRepository);
   }
 
   @Bean

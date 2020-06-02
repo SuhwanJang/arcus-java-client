@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 public class UserDetailsService
     implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -17,6 +18,7 @@ public class UserDetailsService
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     UserEntity userEntity = userRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException(StringUtils.EMPTY));
