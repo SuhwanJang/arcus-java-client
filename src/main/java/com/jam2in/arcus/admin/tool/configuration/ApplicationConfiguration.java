@@ -29,7 +29,8 @@ public class ApplicationConfiguration {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    /* FIXME: recommend you change the origins, methods, and headers to be more specific, increasing security. */
+    /* FIXME: recommend you change the origins, methods,
+        and headers to be more specific, increasing security. */
     config.setAllowedOrigins(Collections.singletonList("*"));
     config.setAllowedMethods(Collections.singletonList("*"));
     config.setAllowedHeaders(Collections.singletonList("*"));
@@ -38,4 +39,5 @@ public class ApplicationConfiguration {
     bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
     return bean;
   }
+
 }
