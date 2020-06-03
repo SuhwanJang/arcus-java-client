@@ -12,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class UserService {
@@ -70,6 +73,10 @@ public class UserService {
     return UserDto.of(getEntity(id));
   }
 
+  public List<UserDto> getAll() {
+    return UserDto.of(getAllEntity());
+  }
+
   public UserDto getByUsername(String username) {
     return UserDto.of(getEntityByUsername(username));
   }
@@ -107,6 +114,15 @@ public class UserService {
   private UserEntity getEntityByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
+  }
+
+  private List<UserEntity> getAllEntity() {
+    List<UserEntity> users = new ArrayList<>();
+    userRepository.findAll().forEach(users::add);
+    if (users.isEmpty()) {
+      throw new BusinessException(ApiErrorCode.NO_USER);
+    }
+    return users;
   }
 
 }
