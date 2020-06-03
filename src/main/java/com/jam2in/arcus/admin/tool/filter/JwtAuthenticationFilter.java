@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             AuthenticationException failed) throws IOException {
     ApiError.response(response,
-        ApiError.of(ApiErrorCode.COMMON_UNAUTHORIZED),
+        ApiError.of(ApiErrorCode.COMMON_INVALID_USERNAME_OR_PASSWORD),
         objectMapper);
   }
 

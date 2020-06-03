@@ -19,9 +19,9 @@ public enum ApiErrorCode {
   COMMON_ACCESS_DENIED(
     HttpStatus.FORBIDDEN,
       "COMMON004", "access denied"),
-  COMMON_UNAUTHORIZED(
+  COMMON_INVALID_USERNAME_OR_PASSWORD(
       HttpStatus.UNAUTHORIZED,
-      "COMMON005", "unauthorized"),
+      "COMMON005", "invalid username or password"),
   COMMON_INVALID_PARAMETER(
       HttpStatus.BAD_REQUEST,
       "COMMON006", "invalid parameter"),
