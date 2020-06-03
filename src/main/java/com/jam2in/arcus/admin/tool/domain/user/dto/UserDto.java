@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,12 +24,14 @@ public class UserDto {
   public UserDto(Long id,
                  String username,
                  String email,
+                 String registered,
                  String password,
                  String newPassword,
                  Collection<String> roles) {
     this.id = id;
     this.username = username;
     this.email = email;
+    this.registered = registered;
     this.password = password;
     this.newPassword = newPassword;
     this.roles = roles;
@@ -42,6 +46,8 @@ public class UserDto {
   @Email
   @NotEmpty
   private String email;
+
+  private String registered;
 
   @Size(min = 8, max = 64)
   @NotEmpty
@@ -65,4 +71,10 @@ public class UserDto {
     return userDto;
   }
 
+  public static List<UserDto> of(List<UserEntity> userEntities) {
+    return userEntities.stream().collect(
+        ArrayList::new,
+        (userDtos, userEntity) -> userDtos.add(of(userEntity)),
+        List::addAll);
+  }
 }
