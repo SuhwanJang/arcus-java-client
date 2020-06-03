@@ -18,7 +18,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -36,6 +38,8 @@ public class UserEntity {
     this.email = email;
     this.password = password;
     this.roles = roles;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    this.registered = dateFormat.format(new Date());
   }
 
   @Id
@@ -44,6 +48,9 @@ public class UserEntity {
 
   @Column(nullable = false, unique = true)
   private String username;
+
+  @Column(nullable = false)
+  private String registered;
 
   @Column(nullable = false, unique = true)
   private String email;

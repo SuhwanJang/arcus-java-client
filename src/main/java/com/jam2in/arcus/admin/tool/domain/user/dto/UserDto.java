@@ -23,12 +23,14 @@ public class UserDto {
   public UserDto(Long id,
                  String username,
                  String email,
+                 String registered,
                  String password,
                  String newPassword,
                  Collection<String> roles) {
     this.id = id;
     this.username = username;
     this.email = email;
+    this.registered = registered;
     this.password = password;
     this.newPassword = newPassword;
     this.roles = roles;
@@ -44,7 +46,9 @@ public class UserDto {
   @NotEmpty
   private String email;
 
-  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
+  private String registered;
+
+  @Size(min = 8, max = 64)
   @NotEmpty
   private String password;
 

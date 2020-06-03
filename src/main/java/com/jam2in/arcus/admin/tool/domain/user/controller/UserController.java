@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -54,6 +55,12 @@ public class UserController {
   @ResponseStatus(code = HttpStatus.OK)
   public UserDto get(@PathVariable long id) {
     return userService.get(id);
+  }
+
+  @GetMapping
+  @ResponseStatus(code = HttpStatus.OK)
+  public List<UserDto> getAll() {
+    return userService.getAll();
   }
 
   @DeleteMapping("/{id}")

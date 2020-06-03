@@ -46,7 +46,10 @@ public enum ApiErrorCode {
       HttpStatus.CONFLICT),
   USER_PASSWORD_MISMATCH(
       "USER006", "password is mismatch",
-      HttpStatus.FORBIDDEN);
+      HttpStatus.FORBIDDEN),
+  NO_USER(
+      "USER007", "no user",
+      HttpStatus.NO_CONTENT);
 
   private final String code;
   private final String message;
