@@ -93,7 +93,7 @@ public class UserService {
 
   public void checkDuplicateEmail(String email) {
     if (userRepository.exists(Example.of(
-        UserEntity.builder().username(email).build(),
+        UserEntity.builder().email(email).build(),
         ExampleMatcher.matching().withIgnoreCase()))) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }
