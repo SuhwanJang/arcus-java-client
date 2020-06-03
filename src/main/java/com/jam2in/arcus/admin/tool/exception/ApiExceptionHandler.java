@@ -23,6 +23,19 @@ public class ApiExceptionHandler {
     return new ResponseEntity<>(apiError, headers, apiError.getStatus());
   }
 
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity<?> handleBusinessException(BusinessException e) {
+    return createResponse(e.getApiError());
+  }
+
+  @ExceptionHandler({Exception.class, RuntimeException.class})
+  public ResponseEntity<?> handleException(Exception e) {
+    log.error(e.getMessage(), e);
+
+    return createResponse(ApiError.of(
+        ApiErrorCode.COMMON_INTERNAL_SERVER_ERROR));
+  }
+
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<?> handleHttpMessageNotReadableException(
       HttpMessageNotReadableException e) {
@@ -35,11 +48,11 @@ public class ApiExceptionHandler {
     return handleException(e);
   }
 
-  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<?> handleMethodArgumentTypeMismatchException(
-      MethodArgumentTypeMismatchException e) {
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public ResponseEntity<?> handleHttpRequestMethodNotSupportedException(
+      HttpRequestMethodNotSupportedException e) {
     return createResponse(ApiError.of(
-        ApiErrorCode.COMMON_INVALID_PARAMETER, e));
+        ApiErrorCode.COMMON_METHOD_NOT_ALLOWED));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -49,24 +62,11 @@ public class ApiExceptionHandler {
         ApiErrorCode.COMMON_INVALID_BODY, e.getBindingResult()));
   }
 
-  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  public ResponseEntity<?> handleHttpRequestMethodNotSupportedException(
-      HttpRequestMethodNotSupportedException e) {
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<?> handleMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException e) {
     return createResponse(ApiError.of(
-        ApiErrorCode.COMMON_METHOD_NOT_ALLOWED));
-  }
-
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<?> handleBusinessException(BusinessException e) {
-    return createResponse(e.getApiError());
-  }
-
-  @ExceptionHandler({Exception.class, RuntimeException.class})
-  public ResponseEntity<?> handleException(Exception e) {
-    log.error(e.getMessage(), e);
-
-    return createResponse(ApiError.of(
-        ApiErrorCode.COMMON_INTERNAL_SERVER_ERROR));
+        ApiErrorCode.COMMON_INVALID_PARAMETER, e));
   }
 
 }

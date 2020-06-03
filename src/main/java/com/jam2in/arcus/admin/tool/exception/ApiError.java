@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,41 +24,42 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Getter
+@Slf4j
 public class ApiError {
 
   @JsonIgnore
   private final HttpStatus status;
-  private final String message;
   private final String code;
+  private final String message;
   private final Collection<Detail> details;
 
   private ApiError(HttpStatus status,
-                  String message,
                   String code,
+                  String message,
                   Collection<Detail> details) {
     this.status = status;
-    this.message = message;
     this.code = code;
+    this.message = message;
     this.details = details;
   }
 
   private ApiError(ApiErrorCode apiErrorCode, Collection<Detail> details) {
-    this(apiErrorCode.status(), apiErrorCode.message(), apiErrorCode.code(), details);
+    this(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(), details);
   }
 
   private ApiError(ApiErrorCode apiErrorCode, Detail detail) {
-    this(apiErrorCode.status(), apiErrorCode.message(), apiErrorCode.code(), List.of(detail));
+    this(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(), List.of(detail));
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode) {
-    return new ApiError(apiErrorCode.status(), apiErrorCode.message(), apiErrorCode.code(),
+    return new ApiError(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(),
         Collections.emptyList());
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode, InvalidFormatException exception) {
     List<JsonMappingException.Reference> references = exception.getPath();
 
-    if (references.size() > 0) {
+    if (CollectionUtils.size(references) > 0) {
       return new ApiError(apiErrorCode,
           List.of(
               Detail.of(
@@ -65,6 +68,8 @@ public class ApiError {
                   String.format(
                       ApiErrorCode.COMMON_INVALID_TYPE.message(),
                       exception.getTargetType().getSimpleName()))));
+    } else {
+      log.warn("references is empty");
     }
 
     return of(apiErrorCode);
@@ -74,7 +79,7 @@ public class ApiError {
     Collection<org.springframework.validation.FieldError> fieldErrors =
         bindingResult.getFieldErrors();
 
-    if (fieldErrors.isEmpty()) {
+    if (CollectionUtils.isEmpty(fieldErrors)) {
       return of(apiErrorCode);
     }
 

@@ -59,4 +59,28 @@ public class UserEntityTest {
         .map(RoleEntity::valueOf).collect(Collectors.toList())));
   }
 
+  @Test
+  public void updateEmail() {
+    // given
+    UserEntity userEntity = UserEntity.builder().email("foo").build();
+
+    // when
+    userEntity.updateEmail("bar");
+
+    // then
+    assertThat(userEntity.getEmail(), is("bar"));
+  }
+
+  @Test
+  public void updatePassword() {
+    // given
+    UserEntity userEntity = UserEntity.builder().password("foo").build();
+
+    // when
+    userEntity.updatePassword("bar");
+
+    // then
+    assertThat(userEntity.getPassword(), is("bar"));
+  }
+
 }

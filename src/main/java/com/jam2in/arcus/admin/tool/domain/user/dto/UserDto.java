@@ -1,6 +1,5 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtil;
 import lombok.AccessLevel;
@@ -11,7 +10,9 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,7 +36,7 @@ public class UserDto {
 
   private Long id;
 
-  @Size(min = 4, max = 32)
+  @Size(min = SIZE_MIN_USERNAME, max = SIZE_MAX_USERNAME)
   @NotEmpty
   private String username;
 
@@ -43,11 +44,12 @@ public class UserDto {
   @NotEmpty
   private String email;
 
-  @Size(min = 8, max = 64)
+  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
   @NotEmpty
   private String password;
 
-  @Size(min = 8, max = 64)
+  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
+  @NotEmpty
   private String newPassword;
 
   private Collection<String> roles;
@@ -64,5 +66,18 @@ public class UserDto {
 
     return userDto;
   }
+
+  public static List<UserDto> of(List<UserEntity> userEntities) {
+    return userEntities.stream().collect(
+        ArrayList::new,
+        (userDtos, userEntity) -> userDtos.add(of(userEntity)),
+        List::addAll);
+  }
+
+  public static final int SIZE_MIN_USERNAME = 4;
+  public static final int SIZE_MAX_USERNAME = 32;
+
+  public static final int SIZE_MIN_PASSWORD = 8;
+  public static final int SIZE_MAX_PASSWORD = 32;
 
 }

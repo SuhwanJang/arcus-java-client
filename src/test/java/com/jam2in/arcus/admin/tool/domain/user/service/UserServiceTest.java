@@ -3,6 +3,7 @@ package com.jam2in.arcus.admin.tool.domain.user.service;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
+import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.junit.Test;
@@ -18,10 +19,14 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.oneOf;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,13 +60,176 @@ public class UserServiceTest {
     assertThat(userEntityCapture.getValue().getPassword(), is(ENCODED_PASSWORD));
   }
 
-  @Test(expected = BusinessException.class)
+  @Test
   public void create_duplicate() {
     // given
     given(userRepository.exists(any())).willReturn(true);
 
+    try {
+      // when
+      userService.create(UserDto.builder().build());
+    } catch (BusinessException e) {
+      // then
+      verify(userRepository, never()).save(any());
+      assertThat(e.getApiError().getCode(), oneOf(
+          ApiErrorCode.USER_USERNAME_DUPLICATED.code(),
+          ApiErrorCode.USER_EMAIL_DUPLICATED.code()));
+      return;
+    }
+
+    fail();
+  }
+
+  @Test
+  public void update() {
+    // given
+    String encodedPassword = "foobar";
+
+    UserDto userDto = UserDto.builder()
+        .id(1L)
+        .username("foo")
+        .email("bar")
+        .password("baz")
+        .newPassword("qux")
+        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
+        .build();
+
+    UserEntity userEntity = UserEntity.builder()
+        .username(userDto.getUsername() + " u")
+        .email(userDto.getEmail() + " e")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .build();
+
+    given(userRepository.findById(userDto.getId()))
+        .willReturn(Optional.of(userEntity));
+    given(passwordEncoder.encode(userDto.getNewPassword()))
+        .willReturn(encodedPassword);
+    given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
+        .willReturn(true);
+
     // when
-    userService.create(UserDto.builder().build());
+    userService.update(userDto.getId(), userDto);
+
+    // then
+    assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
+    assertThat(userEntity.getEmail(), is(userDto.getEmail()));
+    assertThat(userEntity.getPassword(), is(encodedPassword));
+  }
+
+  @Test
+  public void update_notFound() {
+    // given
+    UserDto userDto = UserDto.builder()
+        .id(1L)
+        .username("foo")
+        .email("bar")
+        .password("baz")
+        .newPassword("qux")
+        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
+        .build();
+
+    UserEntity userEntity = UserEntity.builder()
+        .username(userDto.getUsername() + " u")
+        .email(userDto.getEmail() + " e")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .build();
+
+    given(userRepository.findById(userDto.getId()))
+        .willReturn(Optional.empty());
+
+    try {
+      // when
+      userService.update(userDto.getId(), userDto);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_NOT_FOUND.code()));
+      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
+      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
+      assertThat(userEntity.getPassword(), is(userDto.getPassword()));
+    }
+
+  }
+
+  @Test
+  public void update_mismatchPassword() {
+    // given
+    String encodedPassword = "foobar";
+
+    UserDto userDto = UserDto.builder()
+        .id(1L)
+        .username("foo")
+        .email("bar")
+        .password("baz")
+        .newPassword("qux")
+        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
+        .build();
+
+    UserEntity userEntity = UserEntity.builder()
+        .username(userDto.getUsername() + " u")
+        .email(userDto.getEmail() + " e")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .build();
+
+    given(userRepository.findById(userDto.getId()))
+        .willReturn(Optional.of(userEntity));
+    given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
+        .willReturn(false);
+
+    try {
+      // when
+      userService.update(userDto.getId(), userDto);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_PASSWORD_MISMATCH.code()));
+      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
+      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
+      assertThat(userEntity.getPassword(), is(not(encodedPassword)));
+    }
+
+  }
+
+  @Test
+  public void update_duplicateEmail() {
+    // given
+    String encodedPassword = "foobar";
+
+    UserDto userDto = UserDto.builder()
+        .id(1L)
+        .username("foo")
+        .email("bar")
+        .password("baz")
+        .newPassword("qux")
+        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
+        .build();
+
+    UserEntity userEntity = UserEntity.builder()
+        .username(userDto.getUsername() + " u")
+        .email(userDto.getEmail() + " e")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .build();
+
+    given(userRepository.findById(userDto.getId()))
+        .willReturn(Optional.of(userEntity));
+    given(userRepository.exists(any()))
+        .willReturn(true);
+    given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
+        .willReturn(true);
+
+    try {
+      // when
+      userService.update(userDto.getId(), userDto);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_EMAIL_DUPLICATED.code()));
+      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
+      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
+      assertThat(userEntity.getPassword(), is(not(encodedPassword)));
+    }
+
   }
 
   @Test
@@ -82,26 +250,60 @@ public class UserServiceTest {
     assertThat(userDto, is(notNullValue()));
   }
 
-  @Test(expected = BusinessException.class)
+  @Test
   public void get_notFound() {
     // given
     long id = 1L;
 
     given(userRepository.findById(id)).willReturn(Optional.empty());
 
-    // when
-    userService.get(id);
+    try {
+      // when
+      userService.get(id);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_NOT_FOUND.code()));
+      return;
+    }
+
+    fail();
   }
 
-  @Test(expected = BusinessException.class)
+  @Test
+  public void getByUsername() {
+    // given
+    String username = "foo";
+
+    given(userRepository.findByUsername(username))
+        .willReturn(Optional.of(UserEntity.builder()
+            .roles(List.of(RoleEntity.ROLE_ADMIN))
+            .build()));
+
+    // when
+    UserDto userDto = userService.getByUsername(username);
+
+    // then
+    verify(userRepository, atMostOnce()).findByUsername(username);
+    assertThat(userDto, is(notNullValue()));
+  }
+
+  @Test
   public void getByUsername_notFound() {
     // given
     String username = "foo";
 
     given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 
-    // when
-    userService.getByUsername(username);
+    try {
+      // when
+      userService.getByUsername(username);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_USERNAME_NOT_FOUND.code()));
+      return;
+    }
+
+    fail();
   }
 
   @Test
@@ -118,15 +320,23 @@ public class UserServiceTest {
     verify(userRepository, atMostOnce()).deleteById(id);
   }
 
-  @Test(expected = BusinessException.class)
+  @Test
   public void delete_notFound() {
     // given
     long id = 1L;
 
     given(userRepository.existsById(id)).willReturn(false);
 
-    // when
-    userService.delete(id);
+    try {
+      // when
+      userService.delete(id);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_NOT_FOUND.code()));
+      return;
+    }
+
+    fail();
   }
 
 }

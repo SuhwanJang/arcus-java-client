@@ -12,6 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class UserService {
@@ -31,7 +35,7 @@ public class UserService {
     checkDuplicateEmail(userDto.getEmail());
 
     UserEntity userEntity = UserEntity.of(userDto);
-    userEntity.encodePassword(passwordEncoder.encode(userDto.getPassword()));
+    userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
     userEntity.applyAdminRole();  // TODO: 어드민은 최대 하나만 존재해야 함
 
     userRepository.save(userEntity);
@@ -48,18 +52,13 @@ public class UserService {
       throw new BusinessException(ApiErrorCode.USER_PASSWORD_MISMATCH);
     }
 
-    if (!StringUtils.equals(userDto.getUsername(), userEntity.getUsername())) {
-      checkDuplicateUsername(userDto.getUsername());
-      userEntity.updateUsername(userDto.getUsername());
-    }
-
     if (!StringUtils.equals(userDto.getEmail(), userEntity.getEmail())) {
       checkDuplicateEmail(userDto.getEmail());
       userEntity.updateEmail(userDto.getEmail());
     }
 
     if (!passwordEncoder.matches(userDto.getNewPassword(), userEntity.getPassword())) {
-      userEntity.encodePassword(passwordEncoder.encode(userDto.getNewPassword()));
+      userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
     }
 
     // TODO: roles 업데이트 필요
@@ -83,18 +82,26 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public void checkDuplicateUsername(String username) {
-    if (userRepository.exists(Example.of(
+  private boolean existsUsername(String username) {
+    return userRepository.exists(Example.of(
         UserEntity.builder().username(username).build(),
-        ExampleMatcher.matching().withIgnoreCase()))) {
+        ExampleMatcher.matching().withIgnoreCase()));
+  }
+
+  private boolean existsEmail(String email) {
+    return userRepository.exists(Example.of(
+        UserEntity.builder().username(email).build(),
+        ExampleMatcher.matching().withIgnoreCase()));
+  }
+
+  private void checkDuplicateUsername(String username) {
+    if (existsUsername(username)) {
       throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
     }
   }
 
-  public void checkDuplicateEmail(String email) {
-    if (userRepository.exists(Example.of(
-        UserEntity.builder().username(email).build(),
-        ExampleMatcher.matching().withIgnoreCase()))) {
+  private void checkDuplicateEmail(String email) {
+    if (existsEmail(email)) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }
   }
