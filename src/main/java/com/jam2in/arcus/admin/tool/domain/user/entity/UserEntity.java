@@ -18,9 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -40,9 +38,8 @@ public class UserEntity {
     this.email = email;
     this.password = password;
     this.roles = roles;
-    Date date = Calendar.getInstance().getTime();
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-    this.registered = dateFormat.format(date);
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    this.registered = dateFormat.format(new Date());
   }
 
   @Id
