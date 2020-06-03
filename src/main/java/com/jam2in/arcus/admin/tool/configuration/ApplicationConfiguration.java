@@ -33,6 +33,7 @@ public class ApplicationConfiguration {
     config.setAllowedOrigins(Collections.singletonList("*"));
     config.setAllowedMethods(Collections.singletonList("*"));
     config.setAllowedHeaders(Collections.singletonList("*"));
+    config.setExposedHeaders(Collections.singletonList("Authorization"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
