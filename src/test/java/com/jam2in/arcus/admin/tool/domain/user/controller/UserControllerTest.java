@@ -204,6 +204,22 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
+  public void update() throws Exception {
+    // given
+    UserDto userDto = userDtoBuilder.build();
+
+    given(userService.update(userDto.getId(), userDto)).willReturn(userDto);
+
+    // when
+    ResultActions resultActions = put(URL + "/" + userDto.getId(), userDto);
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
+
+  @Test
   public void get() throws Exception {
     // given
     UserDto userDto = userDtoBuilder.build();
@@ -220,19 +236,8 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void update() throws Exception {
-    // given
-    UserDto userDto = userDtoBuilder.build();
-
-    given(userService.update(userDto.getId(), userDto)).willReturn(userDto);
-
-    // when
-    ResultActions resultActions = put(URL + "/" + userDto.getId(), userDto);
-
-    // then
-    resultActions
-        .andExpect(status().isOk())
-        .andDo(print());
+  public void getAll() {
+    // TODO: test
   }
 
   @Test

@@ -307,6 +307,11 @@ public class UserServiceTest {
   }
 
   @Test
+  public void getAll() {
+    // TODO: test
+  }
+
+  @Test
   public void delete() {
     // given
     long id = 1L;
