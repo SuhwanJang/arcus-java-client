@@ -3,9 +3,11 @@ package com.jam2in.arcus.admin.tool.bean;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,6 +20,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Getter
 public class JwtTokenProvider {
 
   @Value("${jwt.token.secret-key}")
@@ -83,29 +86,30 @@ public class JwtTokenProvider {
     );
   }
 
+  @Nullable
   public String resolve(HttpServletRequest request) {
-    String bearerToken = request.getHeader(header);
-
-    if (bearerToken != null && bearerToken.startsWith(prefix)) {
-      return bearerToken.substring(prefix.length());
-    }
-
-    return null;
+    return resolve(request.getHeader(header));
   }
 
-  public boolean validate(String token) {
-    try {
-      if (StringUtils.isNotEmpty(token)) {
-        Jwts.parser()
-            .setSigningKey(secretKey)
-            .parseClaimsJws(token);
-        return true;
-      }
-    } catch (Exception e) {
-      log.debug("Expired or invalid JWT token", e);
+  @Nullable
+  public String resolve(String bearerToken) {
+    if (!StringUtils.startsWith(bearerToken, prefix)) {
+      return null;
     }
 
-    return false;
+    return bearerToken.substring(prefix.length());
+  }
+
+  public boolean validate(@Nullable String token) {
+    if (StringUtils.isEmpty(token)) {
+      return false;
+    }
+
+    Jwts.parser()
+        .setSigningKey(secretKey)
+        .parseClaimsJws(token);
+
+    return true;
   }
 
 }

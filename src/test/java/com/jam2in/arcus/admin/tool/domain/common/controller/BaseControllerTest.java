@@ -20,7 +20,7 @@ public class BaseControllerTest {
   private ObjectMapper objectMapper;
 
   @MockBean
-  private UserRepository userRepository;
+  protected UserRepository userRepository;
 
   protected ResultActions post(String url, String content) throws Exception {
     return mockMvc.perform(

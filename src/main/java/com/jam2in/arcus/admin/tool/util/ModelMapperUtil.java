@@ -1,10 +1,13 @@
 package com.jam2in.arcus.admin.tool.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 
-public class ModelMapperUtil {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ModelMapperUtil {
 
   private static final ModelMapper modelMapper;
 

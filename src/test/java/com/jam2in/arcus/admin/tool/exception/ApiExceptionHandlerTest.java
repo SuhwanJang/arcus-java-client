@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "test")
 public class ApiExceptionHandlerTest extends BaseControllerTest {
 
-  private static final String URL = "/test";
+  private static final String URL = "/api/v1/test";
 
   @MockBean
   private TestService testService;
@@ -80,7 +80,7 @@ public class ApiExceptionHandlerTest extends BaseControllerTest {
   @Test
   public void handleHttpMessageNotReadableException() throws Exception {
     // given
-    String json = "{ \"id\": \"id\" }";
+    String json = "{ \"id\": \"foo\" }";
 
     // when
     ResultActions resultActions = post(URL, json);
@@ -94,9 +94,9 @@ public class ApiExceptionHandlerTest extends BaseControllerTest {
         .andExpect(jsonPath("$.details", contains(
             allOf(
                 hasEntry("name", "id"),
-                hasEntry("value", "id"),
+                hasEntry("value", "foo"),
                 hasEntry("reason", String.format(
-                    ApiErrorCode.COMMON_INVALID_TYPE.message(), "int"))))
+                    ApiErrorCode.COMMON_INVALID_TYPE.message(), "long"))))
         )).andDo(print());
   }
 

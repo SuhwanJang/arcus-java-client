@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @Getter
 @Slf4j
-public class ApiError {
+public final class ApiError {
 
   @JsonIgnore
   private final HttpStatus status;
