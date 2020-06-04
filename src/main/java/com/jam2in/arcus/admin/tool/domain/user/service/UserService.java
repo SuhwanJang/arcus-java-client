@@ -56,8 +56,10 @@ public class UserService {
       userEntity.updateEmail(userDto.getEmail());
     }
 
-    if (!passwordEncoder.matches(userDto.getNewPassword(), userEntity.getPassword())) {
-      userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
+    if (StringUtils.length(userDto.getNewPassword()) > 0) {
+      if (!passwordEncoder.matches(userDto.getNewPassword(), userEntity.getPassword())) {
+        userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
+      }
     }
 
     // TODO: roles 업데이트 필요

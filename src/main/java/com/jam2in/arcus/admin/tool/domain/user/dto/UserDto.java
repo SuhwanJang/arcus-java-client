@@ -53,7 +53,6 @@ public class UserDto {
   private String password;
 
   @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
-  @NotEmpty
   private String newPassword;
 
   private Collection<String> roles;
