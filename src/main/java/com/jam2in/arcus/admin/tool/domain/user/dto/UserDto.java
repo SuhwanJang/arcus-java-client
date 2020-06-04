@@ -48,7 +48,7 @@ public class UserDto {
 
   private String registered;
 
-  @Size(min = 8, max = 64)
+  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
   @NotEmpty
   private String password;
 
@@ -82,6 +82,6 @@ public class UserDto {
   public static final int SIZE_MAX_USERNAME = 32;
 
   public static final int SIZE_MIN_PASSWORD = 8;
-  public static final int SIZE_MAX_PASSWORD = 32;
+  public static final int SIZE_MAX_PASSWORD = 64;
 
 }
