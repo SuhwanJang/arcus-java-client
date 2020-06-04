@@ -2,7 +2,6 @@ package com.jam2in.arcus.admin.tool.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
@@ -13,13 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -100,8 +97,8 @@ public class ApiErrorTest {
     ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_BODY;
 
     List<FieldError> fieldErrors = List.of(
-      new FieldError("foo", "fooField", "fooValue", false, null, null, "fooMessage"),
-      new FieldError("bar", "barField", "barValue", false, null, null, "barMessage")
+        new FieldError("foo", "fooField", "fooValue", false, null, null, "fooMessage"),
+        new FieldError("bar", "barField", "barValue", false, null, null, "barMessage")
     );
 
     BindingResult bindingResult = mock(BindingResult.class);

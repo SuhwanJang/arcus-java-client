@@ -47,7 +47,6 @@ public class UserServiceTest {
   public void create() {
     // given
     UserDto userDto = UserDto.builder().password("foo").build();
-    ArgumentCaptor<UserEntity> userEntityCapture = ArgumentCaptor.forClass(UserEntity.class);
 
     given(passwordEncoder.encode(userDto.getPassword())).willReturn(ENCODED_PASSWORD);
     given(userRepository.exists(any())).willReturn(false);
@@ -56,6 +55,7 @@ public class UserServiceTest {
     userService.create(userDto);
 
     // then
+    ArgumentCaptor<UserEntity> userEntityCapture = ArgumentCaptor.forClass(UserEntity.class);
     verify(userRepository, atMostOnce()).save(userEntityCapture.capture());
     assertThat(userEntityCapture.getValue().getPassword(), is(ENCODED_PASSWORD));
   }
