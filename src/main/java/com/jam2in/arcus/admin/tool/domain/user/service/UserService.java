@@ -85,26 +85,18 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  private boolean existsUsername(String username) {
-    return userRepository.exists(Example.of(
-        UserEntity.builder().username(username).build(),
-        ExampleMatcher.matching().withIgnoreCase()));
-  }
-
-  private boolean existsEmail(String email) {
-    return userRepository.exists(Example.of(
-        UserEntity.builder().username(email).build(),
-        ExampleMatcher.matching().withIgnoreCase()));
-  }
-
   private void checkDuplicateUsername(String username) {
-    if (existsUsername(username)) {
+    if (userRepository.exists(Example.of(
+        UserEntity.builder().username(username).build(),
+        ExampleMatcher.matching().withIgnoreCase()))) {
       throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
     }
   }
 
   private void checkDuplicateEmail(String email) {
-    if (existsEmail(email)) {
+    if (userRepository.exists(Example.of(
+        UserEntity.builder().username(email).build(),
+        ExampleMatcher.matching().withIgnoreCase()))) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }
   }
