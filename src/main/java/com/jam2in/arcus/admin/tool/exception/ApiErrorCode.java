@@ -49,7 +49,18 @@ public enum ApiErrorCode {
       HttpStatus.FORBIDDEN),
   NO_USER(
       "USER007", "no user",
+      HttpStatus.NO_CONTENT),
+
+  ENSEMBLE_NOT_FOUND(
+      "ENSEMBLE001", "ensemble is not found",
+      HttpStatus.NOT_FOUND),
+  ENSEMBLE_NAME_DUPLICATED(
+      "ENSEMBLE002", "name is duplicated",
+      HttpStatus.CONFLICT),
+  ENSEMBLE_NO_ENSEMBLES(
+      "USER007", "no ensembles",
       HttpStatus.NO_CONTENT);
+
 
   private final String code;
   private final String message;
