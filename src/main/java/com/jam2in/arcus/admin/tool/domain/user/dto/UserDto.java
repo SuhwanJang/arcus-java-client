@@ -64,10 +64,6 @@ public class UserDto {
 
     userDto.password = null;
 
-    userDto.roles = userEntity.getRoles()
-        .stream().map(Enum::name)
-        .collect(Collectors.toList());
-
     return userDto;
   }
 

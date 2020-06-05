@@ -82,17 +82,8 @@ public class UserEntity {
   }
 
   public static UserEntity of(UserDto userDto) {
-    UserEntity userEntity = ModelMapperUtil.map(
+    return ModelMapperUtil.map(
         userDto, UserEntityBuilder.class).build();
-
-    /*
-    userEntity.roles = userDto.getRoles()
-        .stream()
-        .map(RoleEntity::valueOf) // FIXME: IllegalArgumentException 발생 가능성
-        .collect(Collectors.toList());
-     */
-
-    return userEntity;
   }
 
 }
