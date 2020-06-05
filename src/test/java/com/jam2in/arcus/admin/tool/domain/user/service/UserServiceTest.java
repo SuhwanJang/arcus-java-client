@@ -41,14 +41,13 @@ public class UserServiceTest {
   @Mock
   private PasswordEncoder passwordEncoder;
 
-  private static final String ENCODED_PASSWORD = "bar";
-
   @Test
   public void create() {
     // given
+    String encodedPassword = "bar";
     UserDto userDto = UserDto.builder().password("foo").build();
 
-    given(passwordEncoder.encode(userDto.getPassword())).willReturn(ENCODED_PASSWORD);
+    given(passwordEncoder.encode(userDto.getPassword())).willReturn(encodedPassword);
     given(userRepository.exists(any())).willReturn(false);
 
     // when
@@ -57,7 +56,7 @@ public class UserServiceTest {
     // then
     ArgumentCaptor<UserEntity> userEntityCapture = ArgumentCaptor.forClass(UserEntity.class);
     verify(userRepository, atMostOnce()).save(userEntityCapture.capture());
-    assertThat(userEntityCapture.getValue().getPassword(), is(ENCODED_PASSWORD));
+    assertThat(userEntityCapture.getValue().getPassword(), is(encodedPassword));
   }
 
   @Test
