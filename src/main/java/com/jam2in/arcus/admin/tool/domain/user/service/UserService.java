@@ -51,15 +51,11 @@ public class UserService {
       throw new BusinessException(ApiErrorCode.USER_PASSWORD_MISMATCH);
     }
 
-    if (!StringUtils.equals(userDto.getEmail(), userEntity.getEmail())) {
-      checkDuplicateEmail(userDto.getEmail());
-      userEntity.updateEmail(userDto.getEmail());
-    }
+    checkDuplicateEmail(userDto.getEmail());
+    userEntity.updateEmail(userDto.getEmail());
 
     if (StringUtils.length(userDto.getNewPassword()) > 0) {
-      if (!passwordEncoder.matches(userDto.getNewPassword(), userEntity.getPassword())) {
-        userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
-      }
+      userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
     }
 
     // TODO: roles 업데이트 필요
