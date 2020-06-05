@@ -15,6 +15,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasEntry;
@@ -236,8 +238,34 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void getAll() {
-    // TODO: test
+  public void getAll() throws Exception {
+    // given
+    UserDto userDto1 = userDtoBuilder
+            .id(1L)
+            .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME))
+            .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD))
+            .email("s@naver.com")
+            .build();
+
+    UserDto userDto2 = userDtoBuilder
+            .id(2L)
+            .username(StringUtils.repeat('x', UserDto.SIZE_MIN_USERNAME))
+            .password(StringUtils.repeat('y', UserDto.SIZE_MIN_PASSWORD))
+            .email("d@naver.com")
+            .build();
+
+    given(userService.getAll()).willReturn(List.of(userDto1, userDto2));
+
+    // when
+    ResultActions resultActions = get(URL);
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andExpect(content().json(
+            "[{'id': 1, 'username': 'uuuu', 'password': 'pppppppp', 'email': 's@naver.com'},"
+                + "{'id': 2, 'username': 'xxxx', 'password': 'yyyyyyyy', 'email': 'd@naver.com'}]"))
+        .andDo(print());
   }
 
   @Test
