@@ -35,6 +35,7 @@ public class EnsembleEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String name;
 
   @ElementCollection
@@ -49,6 +50,10 @@ public class EnsembleEntity {
 
   public void updateName(String name) {
     this.name = name;
+  }
+
+  public void updateZookeepers(Collection<String> zookeepers) {
+    this.zookeepers = zookeepers;
   }
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {

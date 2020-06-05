@@ -5,8 +5,6 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +22,6 @@ public class EnsembleService {
 
   @Transactional
   public EnsembleDto create(EnsembleDto ensembleDto) {
-    checkDuplicateName(ensembleDto.getName());
-
     EnsembleEntity ensembleEntity = EnsembleEntity.of(ensembleDto);
 
     ensembleRepository.save(ensembleEntity);
@@ -38,6 +34,7 @@ public class EnsembleService {
     EnsembleEntity ensembleEntity = getEntity(id);
 
     ensembleEntity.updateName(ensembleDto.getName());
+    ensembleEntity.updateZookeepers(ensembleDto.getZookeepers());
 
     return EnsembleDto.of(ensembleEntity);
   }
@@ -57,14 +54,6 @@ public class EnsembleService {
     }
 
     ensembleRepository.deleteById(id);
-  }
-
-  private void checkDuplicateName(String name) {
-    if (ensembleRepository.exists(Example.of(
-        EnsembleEntity.builder().name(name).build(),
-        ExampleMatcher.matching().withIgnoreCase()))) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NAME_DUPLICATED);
-    }
   }
 
   private EnsembleEntity getEntity(long id) {
