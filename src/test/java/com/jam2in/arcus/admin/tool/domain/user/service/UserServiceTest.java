@@ -308,7 +308,55 @@ public class UserServiceTest {
 
   @Test
   public void getAll() {
-    // TODO: test
+    // given
+    UserDto userDto = UserDto.builder()
+        .id(1L)
+        .username("foo")
+        .email("bar")
+        .password("baz")
+        .newPassword("qux")
+        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
+        .build();
+
+    UserEntity userEntity1 = UserEntity.builder()
+        .username(userDto.getUsername() + " u")
+        .email(userDto.getEmail() + " e")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .build();
+
+    UserEntity userEntity2 = UserEntity.builder()
+        .username(userDto.getUsername() + " d")
+        .email(userDto.getEmail() + " v")
+        .password(userDto.getPassword())
+        .roles(List.of(RoleEntity.ROLE_USER))
+        .build();
+
+    given(userRepository.findAll()).willReturn(List.of(userEntity1, userEntity2));
+
+    // when
+    List<UserDto> userDtos = userService.getAll();
+
+    // then
+    verify(userRepository, atMostOnce()).findAll();
+    assertThat(userDtos.size(), is(2));
+  }
+
+  @Test
+  public void getAll_noUser() {
+    // given
+    given(userRepository.findAll()).willReturn(List.of());
+
+    try {
+      // when
+      userService.getAll();
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.NO_USER.code()));
+      return;
+    }
+
+    fail();
   }
 
   @Test
