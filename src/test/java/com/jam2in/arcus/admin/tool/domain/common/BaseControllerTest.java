@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.common.controller;
+package com.jam2in.arcus.admin.tool.domain.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;

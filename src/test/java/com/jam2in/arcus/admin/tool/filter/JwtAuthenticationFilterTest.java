@@ -1,8 +1,8 @@
 package com.jam2in.arcus.admin.tool.filter;
 
 import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
-import com.jam2in.arcus.admin.tool.domain.common.controller.BaseControllerTest;
-import com.jam2in.arcus.admin.tool.domain.common.controller.TestController;
+import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
+import com.jam2in.arcus.admin.tool.domain.common.TestController;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.domain.user.service.TestService;

@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.bean;
 
-import com.jam2in.arcus.admin.tool.domain.common.controller.BaseControllerTest;
-import com.jam2in.arcus.admin.tool.domain.common.controller.TestController;
+import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
+import com.jam2in.arcus.admin.tool.domain.common.TestController;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.service.TestService;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;

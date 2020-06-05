@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.common.controller;
+package com.jam2in.arcus.admin.tool.domain.common;
 
 import com.jam2in.arcus.admin.tool.domain.user.entity.TestDto;
 import com.jam2in.arcus.admin.tool.domain.user.service.TestService;
