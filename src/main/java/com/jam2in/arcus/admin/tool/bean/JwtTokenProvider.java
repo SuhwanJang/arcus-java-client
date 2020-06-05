@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -86,12 +85,10 @@ public class JwtTokenProvider {
     );
   }
 
-  @Nullable
   public String resolve(HttpServletRequest request) {
     return resolve(request.getHeader(header));
   }
 
-  @Nullable
   public String resolve(String bearerToken) {
     if (!StringUtils.startsWith(bearerToken, prefix)) {
       return null;
@@ -100,7 +97,7 @@ public class JwtTokenProvider {
     return bearerToken.substring(prefix.length());
   }
 
-  public boolean validate(@Nullable String token) {
+  public boolean validate(String token) {
     if (StringUtils.isEmpty(token)) {
       return false;
     }
