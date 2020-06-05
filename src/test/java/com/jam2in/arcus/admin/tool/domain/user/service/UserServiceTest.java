@@ -147,8 +147,10 @@ public class UserServiceTest {
       assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
       assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
       assertThat(userEntity.getPassword(), is(userDto.getPassword()));
+      return;
     }
 
+    fail();
   }
 
   @Test
@@ -186,8 +188,10 @@ public class UserServiceTest {
       assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
       assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
       assertThat(userEntity.getPassword(), is(not(encodedPassword)));
+      return;
     }
 
+    fail();
   }
 
   @Test
@@ -227,8 +231,10 @@ public class UserServiceTest {
       assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
       assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
       assertThat(userEntity.getPassword(), is(not(encodedPassword)));
+      return;
     }
 
+    fail();
   }
 
   @Test
