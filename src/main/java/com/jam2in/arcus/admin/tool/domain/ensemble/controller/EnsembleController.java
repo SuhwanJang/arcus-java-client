@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api/v1/ensembles")
 public class EnsembleController {
 
-  private EnsembleService ensembleService;
+  private final EnsembleService ensembleService;
 
   public EnsembleController(EnsembleService ensembleService) {
     this.ensembleService = ensembleService;
