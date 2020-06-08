@@ -30,6 +30,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation('org.springframework.boot:spring-boot-starter-validation')
   implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("org.springframework.boot:spring-boot-starter-mail")
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("mysql:mysql-connector-java:8.0.20")
   compileOnly("org.projectlombok:lombok:1.18.12")

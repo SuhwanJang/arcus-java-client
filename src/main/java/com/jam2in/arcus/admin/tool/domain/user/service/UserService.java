@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,9 +22,12 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
 
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  private final EmailService EmailService;
+
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.EmailService = emailService;
   }
 
   @Transactional
@@ -111,4 +115,17 @@ public class UserService {
     return users;
   }
 
+  @Transactional
+  public void resetPassword(String username) {
+    UserEntity userEntity = getEntityByUsername(username);
+    String newPassword = UUID.randomUUID().toString().replaceAll("-","").substring(0, 10);
+    userEntity.updatePassword(passwordEncoder.encode(newPassword));
+
+    String subject = "Your password has changed";
+    String to = userEntity.getEmail();
+    String text = "To " + username + ".\n\n"
+        + "your password has changed with " + newPassword + ".\n\n"
+        + "Try to login and recommend to change your password.\n\n";
+    EmailService.mailSend(subject, to, text);
+  }
 }
