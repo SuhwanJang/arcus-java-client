@@ -2,6 +2,8 @@ package com.jam2in.arcus.admin.tool.domain.user.repository;
 
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -9,8 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-  /*
-  TODO: JPQL 제거. ExampleMatcher로 대체.
   @Query(
       "SELECT CASE WHEN COUNT(u) > 0 "
       + "THEN TRUE "
@@ -19,9 +19,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
       + "FROM UserEntity u "
       + "WHERE LOWER(u.email) = LOWER(:email)")
   boolean existsByEmail(@Param("email") String email);
-   */
 
-  /*
   @Query(
       "SELECT CASE WHEN COUNT(u) > 0 "
       + "THEN TRUE "
@@ -30,7 +28,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
       + "FROM UserEntity u "
       + "WHERE LOWER(u.username) = LOWER(:username)")
   boolean existsByUsername(@Param("username") String username);
-   */
 
   Optional<UserEntity> findByUsername(String username);
 

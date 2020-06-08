@@ -6,8 +6,6 @@ import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,17 +82,13 @@ public class UserService {
   }
 
   private void checkDuplicateUsername(String username) {
-    if (userRepository.exists(Example.of(
-        UserEntity.builder().username(username).build(),
-        ExampleMatcher.matching().withIgnoreCase()))) {
+    if (userRepository.existsByUsername(username)) {
       throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
     }
   }
 
   private void checkDuplicateEmail(String email) {
-    if (userRepository.exists(Example.of(
-        UserEntity.builder().username(email).build(),
-        ExampleMatcher.matching().withIgnoreCase()))) {
+    if (userRepository.existsByEmail(email)) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }
   }

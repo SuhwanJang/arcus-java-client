@@ -12,6 +12,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -52,6 +56,84 @@ public class UserRepositoryTest {
     userEntityBuilder.password(null);
 
     userRepository.save(userEntityBuilder.build());
+  }
+
+  @Test
+  public void existsByUsername() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+    userRepository.save(userEntity);
+
+    // when
+    boolean exists = userRepository.existsByUsername(userEntity.getUsername());
+
+    // then
+    assertThat(exists, is(true));
+  }
+
+  @Test
+  public void existsByUsername_noUsername() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+
+    // when
+    boolean exists = userRepository.existsByUsername(userEntity.getUsername());
+
+    // then
+    assertThat(exists, is(false));
+  }
+
+  @Test
+  public void existsByEmail() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+    userRepository.save(userEntity);
+
+    // when
+    boolean exists = userRepository.existsByEmail(userEntity.getEmail());
+
+    // then
+    assertThat(exists, is(true));
+  }
+
+  @Test
+  public void existsByEmail_noEmail() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+
+    // when
+    boolean exists = userRepository.existsByEmail(userEntity.getEmail());
+
+    // then
+    assertThat(exists, is(false));
+  }
+
+
+  @Test
+  public void findByUsername() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+
+    // when
+    userRepository.save(userEntity);
+    Optional<UserEntity> optionalUserEntity =
+        userRepository.findByUsername(userEntity.getUsername());
+
+    // then
+    assertThat(optionalUserEntity.isPresent(), is(true));
+  }
+
+  @Test
+  public void findByUsername_noUsername() {
+    // given
+    UserEntity userEntity = userEntityBuilder.build();
+
+    // when
+    Optional<UserEntity> optionalUserEntity =
+        userRepository.findByUsername(userEntity.getUsername());
+
+    // then
+    assertThat(optionalUserEntity.isPresent(), is(false));
   }
 
 }

@@ -38,8 +38,7 @@ public class UserEntity {
     this.email = email;
     this.password = password;
     this.roles = roles;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    this.registered = dateFormat.format(new Date());
+    this.registered = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
   }
 
   @Id
@@ -49,6 +48,7 @@ public class UserEntity {
   @Column(nullable = false, unique = true)
   private String username;
 
+  // FIXME: 제거
   @Column(nullable = false)
   private String registered;
 
