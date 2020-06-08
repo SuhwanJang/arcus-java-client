@@ -22,6 +22,8 @@ public class EnsembleService {
 
   @Transactional
   public EnsembleDto create(EnsembleDto ensembleDto) {
+    checkDuplicateName(ensembleDto.getName());
+
     EnsembleEntity ensembleEntity = EnsembleEntity.of(ensembleDto);
 
     ensembleRepository.save(ensembleEntity);
@@ -69,6 +71,12 @@ public class EnsembleService {
     }
 
     return ensembles;
+  }
+
+  private void checkDuplicateName(String name) {
+    if (ensembleRepository.existsByName(name)) {
+      throw new BusinessException(ApiErrorCode.ENSEMBLE_NAME_DUPLICATED);
+    }
   }
 
 }

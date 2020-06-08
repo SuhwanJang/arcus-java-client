@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,6 +49,26 @@ public class EnsembleServiceTest {
 
     // then
     verify(ensembleRepository, atMostOnce()).save(any());
+  }
+
+  @Test
+  public void create_duplicateName() {
+    // given
+    EnsembleDto ensembleDto = EnsembleDto.builder().name("foo").build();
+
+    given(ensembleRepository.existsByName(ensembleDto.getName())).willReturn(true);
+
+    try {
+      // when
+      ensembleService.create(ensembleDto);
+    } catch (BusinessException e) {
+      // then
+      verify(ensembleRepository, never()).save(any());
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.ENSEMBLE_NAME_DUPLICATED.code()));
+      return;
+    }
+
+    fail();
   }
 
   @Test
