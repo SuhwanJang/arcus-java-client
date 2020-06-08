@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.bean;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
@@ -102,9 +103,13 @@ public class JwtTokenProvider {
       return false;
     }
 
-    Jwts.parser()
-        .setSigningKey(secretKey)
-        .parseClaimsJws(token);
+    try {
+      Jwts.parser()
+          .setSigningKey(secretKey)
+          .parseClaimsJws(token);
+    } catch (ExpiredJwtException e) {
+      return false;
+    }
 
     return true;
   }
