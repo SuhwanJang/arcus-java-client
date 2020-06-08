@@ -1,21 +1,3 @@
-mail:
-  protocol: smtp
-  host: localhost
-  port: 25
-  smtp:
-    auth: false
-# TLS configuration
-    starttls:
-      enable: false
-# SSL configuration
-# smtps:
-#    ssl:
-#      enable: true
-#      checkserveridentity: true
-#      trust:
-  from: no_reply@arcus-admin.com
-  username:
-  password:
 spring:
   profiles:
     active: local
@@ -43,6 +25,22 @@ jwt:
     prefix: Bearer
     header: Authorization
     roles: role
+mail:
+  protocol: smtp
+  host: localhost
+  port: 25
+  smtp:
+    auth: false
+    starttls:
+      enable: false
+  smtps:
+    ssl:
+      enable: true
+      checkserveridentity: true
+      trust:
+  from: no_reply@arcus-admin.com
+  username:
+  password:
 
 ---
 

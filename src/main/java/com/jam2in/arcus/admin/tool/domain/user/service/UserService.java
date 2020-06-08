@@ -20,14 +20,16 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  private final EmailService emailService;
+
   private final PasswordEncoder passwordEncoder;
 
-  private final EmailService EmailService;
-
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+  public UserService(UserRepository userRepository,
+                     EmailService emailService,
+                     PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
+    this.emailService = emailService;
     this.passwordEncoder = passwordEncoder;
-    this.EmailService = emailService;
   }
 
   @Transactional
@@ -118,7 +120,8 @@ public class UserService {
   @Transactional
   public void resetPassword(String username) {
     UserEntity userEntity = getEntityByUsername(username);
-    String newPassword = UUID.randomUUID().toString().replaceAll("-","").substring(0, 10);
+    String newPassword = UUID.randomUUID().toString().replaceAll("-", StringUtils.EMPTY)
+        .substring(0, 10);  // FIXME: 비밀번호 최대 사이즈 사용 (UserDto.SIZE_MAX_PASSWORD)
     userEntity.updatePassword(passwordEncoder.encode(newPassword));
 
     String subject = "Your password has changed";
@@ -126,6 +129,7 @@ public class UserService {
     String text = "To " + username + ".\n\n"
         + "your password has changed with " + newPassword + ".\n\n"
         + "Try to login and recommend to change your password.\n\n";
-    EmailService.mailSend(subject, to, text);
+    emailService.send(subject, to, text);
   }
+
 }

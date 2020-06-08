@@ -25,7 +25,6 @@ public class MailConfiguration {
   @Value("${mail.smtp.starttls.enable}")
   private boolean starttls;
 
-  /* uncomment if smtp server requires ssl.
   @Value("${mail.smtps.ssl.enable}")
   private boolean ssl;
 
@@ -34,7 +33,6 @@ public class MailConfiguration {
 
   @Value("${mail.smtps.ssl.trust}")
   private String trust;
-  */
 
   @Value("${mail.from}")
   private String from;
@@ -46,22 +44,38 @@ public class MailConfiguration {
   private String password;
 
   @Bean
-  MailSender mailSender() {
-    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+  public MailSender mailTlsSender() {
     Properties mailProperties = new Properties();
     mailProperties.put("mail.smtp.auth", auth);
     mailProperties.put("mail.smtp.starttls.enable", starttls);
-    /* uncomment if smtp server requires ssl.
-    mailProperties.put("mail.smtps.ssl.enable", ssl);
-    mailProperties.put("mail.smtps.ssl.checkserveridentity", checkserveridentity);
-    mailProperties.put("mail.smtps.ssl.trust", trust);
-    */
+
+    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
     mailSender.setJavaMailProperties(mailProperties);
     mailSender.setHost(host);
     mailSender.setPort(port);
     mailSender.setProtocol(protocol);
     mailSender.setUsername(username);
     mailSender.setPassword(password);
+
     return mailSender;
   }
+
+  @Bean
+  public MailSender mailSslSender() {
+    Properties mailProperties = new Properties();
+    mailProperties.put("mail.smtps.ssl.enable", ssl);
+    mailProperties.put("mail.smtps.ssl.checkserveridentity", checkserveridentity);
+    mailProperties.put("mail.smtps.ssl.trust", trust);
+
+    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+    mailSender.setJavaMailProperties(mailProperties);
+    mailSender.setHost(host);
+    mailSender.setPort(port);
+    mailSender.setProtocol(protocol);
+    mailSender.setUsername(username);
+    mailSender.setPassword(password);
+
+    return mailSender;
+  }
+
 }
