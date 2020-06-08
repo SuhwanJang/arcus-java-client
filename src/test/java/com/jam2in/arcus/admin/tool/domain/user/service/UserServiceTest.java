@@ -21,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.oneOf;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -48,7 +47,8 @@ public class UserServiceTest {
     UserDto userDto = UserDto.builder().password("foo").build();
 
     given(passwordEncoder.encode(userDto.getPassword())).willReturn(encodedPassword);
-    given(userRepository.exists(any())).willReturn(false);
+    given(userRepository.existsByUsername(userDto.getUsername())).willReturn(false);
+    given(userRepository.existsByEmail(userDto.getEmail())).willReturn(false);
 
     // when
     userService.create(userDto);
@@ -60,19 +60,39 @@ public class UserServiceTest {
   }
 
   @Test
-  public void create_duplicate() {
+  public void create_duplicateUsername() {
     // given
-    given(userRepository.exists(any())).willReturn(true);
+    UserDto userDto = UserDto.builder().username("foo").build();
+
+    given(userRepository.existsByUsername(userDto.getUsername())).willReturn(true);
 
     try {
       // when
-      userService.create(UserDto.builder().build());
+      userService.create(userDto);
     } catch (BusinessException e) {
       // then
       verify(userRepository, never()).save(any());
-      assertThat(e.getApiError().getCode(), oneOf(
-          ApiErrorCode.USER_USERNAME_DUPLICATED.code(),
-          ApiErrorCode.USER_EMAIL_DUPLICATED.code()));
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_USERNAME_DUPLICATED.code()));
+      return;
+    }
+
+    fail();
+  }
+
+  @Test
+  public void create_duplicateEmail() {
+    // given
+    UserDto userDto = UserDto.builder().email("foo").build();
+
+    given(userRepository.existsByEmail(userDto.getEmail())).willReturn(true);
+
+    try {
+      // when
+      userService.create(userDto);
+    } catch (BusinessException e) {
+      // then
+      verify(userRepository, never()).save(any());
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_EMAIL_DUPLICATED.code()));
       return;
     }
 
@@ -217,7 +237,7 @@ public class UserServiceTest {
 
     given(userRepository.findById(userDto.getId()))
         .willReturn(Optional.of(userEntity));
-    given(userRepository.exists(any()))
+    given(userRepository.existsByEmail(userDto.getEmail()))
         .willReturn(true);
     given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
         .willReturn(true);
