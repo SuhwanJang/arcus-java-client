@@ -1,5 +1,5 @@
 package com.jam2in.arcus.admin.tool.util;
 
-public class ModelMapperUtilTest {
+public class ModelMapperUtilsTest {
   // TODO: test
 }

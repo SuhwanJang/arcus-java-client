@@ -13,8 +13,8 @@ public enum ApiErrorCode {
   COMMON_METHOD_NOT_ALLOWED(
       "COMMON002", "method not allowed",
       HttpStatus.METHOD_NOT_ALLOWED),
-  COMMON_INVALID_BODY(
-      "COMMON003", "invalid body",
+  COMMON_INVALID_CONTENT(
+      "COMMON003", "invalid content",
       HttpStatus.BAD_REQUEST),
   COMMON_ACCESS_DENIED(
       "COMMON004", "access denied",

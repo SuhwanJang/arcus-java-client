@@ -89,8 +89,8 @@ public class ApiExceptionHandlerTest extends BaseControllerTest {
     resultActions
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
         .andExpect(jsonPath("$.details", contains(
             allOf(
                 hasEntry("name", "id"),
@@ -123,8 +123,8 @@ public class ApiExceptionHandlerTest extends BaseControllerTest {
     resultActions
     .andExpect(status().isBadRequest())
     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-    .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-    .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+    .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+    .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
     .andExpect(jsonPath("$.details", containsInAnyOrder(
         allOf(
             hasEntry("name", "name"),

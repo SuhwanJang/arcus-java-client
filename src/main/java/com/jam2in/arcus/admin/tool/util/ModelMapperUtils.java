@@ -7,7 +7,7 @@ import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ModelMapperUtil {
+public final class ModelMapperUtils {
 
   private static final ModelMapper modelMapper;
 

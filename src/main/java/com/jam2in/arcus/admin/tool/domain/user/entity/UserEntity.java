@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.user.entity;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import com.jam2in.arcus.admin.tool.util.ModelMapperUtil;
+import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -82,7 +82,7 @@ public class UserEntity {
   }
 
   public static UserEntity of(UserDto userDto) {
-    return ModelMapperUtil.map(
+    return ModelMapperUtils.map(
         userDto, UserEntityBuilder.class).build();
   }
 

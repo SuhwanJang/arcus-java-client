@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
-import com.jam2in.arcus.admin.tool.util.ModelMapperUtil;
+import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,7 +57,7 @@ public class EnsembleEntity {
   }
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {
-    return ModelMapperUtil.map(ensembleDto, EnsembleEntity.class);
+    return ModelMapperUtils.map(ensembleDto, EnsembleEntity.class);
   }
 
 }

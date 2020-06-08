@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
-import com.jam2in.arcus.admin.tool.util.ModelMapperUtil;
+import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,7 +57,7 @@ public class UserDto {
   private Collection<String> roles;
 
   public static UserDto of(UserEntity userEntity) {
-    UserDto userDto = ModelMapperUtil.map(
+    UserDto userDto = ModelMapperUtils.map(
         userEntity, UserDto.class);
 
     userDto.password = null;

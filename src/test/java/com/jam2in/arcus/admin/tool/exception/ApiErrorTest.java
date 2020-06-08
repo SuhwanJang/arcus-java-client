@@ -44,7 +44,7 @@ public class ApiErrorTest {
     String fieldValue = "bar";
     Class<?> fieldType = String.class;
 
-    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_BODY;
+    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_CONTENT;
 
     JsonMappingException.Reference reference = mock(JsonMappingException.Reference.class);
     given(reference.getFieldName()).willReturn(fieldName);
@@ -76,7 +76,7 @@ public class ApiErrorTest {
   @Test
   public void of_withInvalidFormatException_emptyReferences() {
     // given
-    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_BODY;
+    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_CONTENT;
 
     InvalidFormatException exception = mock(InvalidFormatException.class);
     given(exception.getPath()).willReturn(Collections.emptyList());
@@ -94,7 +94,7 @@ public class ApiErrorTest {
   @Test
   public void of_withBindingResult() {
     // given
-    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_BODY;
+    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_CONTENT;
 
     List<FieldError> fieldErrors = List.of(
         new FieldError("foo", "fooField", "fooValue", false, null, null, "fooMessage"),
@@ -128,7 +128,7 @@ public class ApiErrorTest {
   @Test
   public void of_withBindingResult_emptyFieldErrors() {
     // given
-    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_BODY;
+    ApiErrorCode apiErrorCode = ApiErrorCode.COMMON_INVALID_CONTENT;
 
     BindingResult bindingResult = mock(BindingResult.class);
     given(bindingResult.getFieldErrors()).willReturn(Collections.emptyList());

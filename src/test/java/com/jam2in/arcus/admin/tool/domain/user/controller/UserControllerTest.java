@@ -4,6 +4,7 @@ import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.service.UserService;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.util.PathUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -49,7 +52,7 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void invalidSizeMin() throws Exception {
+  public void invalidContentSizeMin() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
         .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME - 1))
@@ -64,8 +67,8 @@ public class UserControllerTest extends BaseControllerTest {
     resultActions
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
         .andExpect(jsonPath("$.details", containsInAnyOrder(
             allOf(
                 hasEntry("name", "username"),
@@ -86,7 +89,7 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void invalidSizeMax() throws Exception {
+  public void invalidContentSizeMax() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
         .username(StringUtils.repeat('u', UserDto.SIZE_MAX_USERNAME + 1))
@@ -101,8 +104,8 @@ public class UserControllerTest extends BaseControllerTest {
     resultActions
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
         .andExpect(jsonPath("$.details", containsInAnyOrder(
             allOf(
                 hasEntry("name", "username"),
@@ -123,7 +126,7 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void invalidEmail() throws Exception {
+  public void invalidContentEmail() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
         .email("e")
@@ -136,8 +139,8 @@ public class UserControllerTest extends BaseControllerTest {
     resultActions
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
         .andExpect(jsonPath("$.details", containsInAnyOrder(
             allOf(
                 hasEntry("name", "email"),
@@ -147,13 +150,12 @@ public class UserControllerTest extends BaseControllerTest {
   }
 
   @Test
-  public void invalidNotEmpty() throws Exception {
+  public void invalidContentNotEmpty() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
         .username(null)
         .email(null)
         .password(null)
-        .newPassword(null)
         .build();
 
     // when
@@ -163,8 +165,8 @@ public class UserControllerTest extends BaseControllerTest {
     resultActions
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_BODY.code()))
-        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_BODY.message()))
+        .andExpect(jsonPath("$.code").value(ApiErrorCode.COMMON_INVALID_CONTENT.code()))
+        .andExpect(jsonPath("$.message").value(ApiErrorCode.COMMON_INVALID_CONTENT.message()))
         .andExpect(jsonPath("$.details", containsInAnyOrder(
             allOf(
                 hasEntry("name", "username"),
@@ -180,11 +182,6 @@ public class UserControllerTest extends BaseControllerTest {
                 hasEntry("name", "password"),
                 hasEntry("value", StringUtils.EMPTY),
                 hasEntry("reason", "must not be empty")
-            ),
-            allOf(
-                hasEntry("name", "newPassword"),
-                hasEntry("value", StringUtils.EMPTY),
-                hasEntry("reason", "must not be empty")
             )
         ))).andDo(print());
   }
@@ -194,7 +191,7 @@ public class UserControllerTest extends BaseControllerTest {
     // given
     UserDto userDto = userDtoBuilder.build();
 
-    given(userService.create(userDto)).willReturn(userDto);
+    given(userService.create(any())).willReturn(userDto);
 
     // when
     ResultActions resultActions = post(URL, userDto);
@@ -202,7 +199,19 @@ public class UserControllerTest extends BaseControllerTest {
     // then
     resultActions
         .andExpect(status().isCreated())
+        .andExpect((content().contentType(MediaType.APPLICATION_JSON)))
+        .andExpect(content().json(objectMapper.writeValueAsString(userDto)))
         .andDo(print());
+  }
+
+  @Test
+  public void create_invalidContent() throws Throwable {
+    invalidContentNotEmpty(
+        () -> post(URL, userDtoBuilder
+            .username(null)
+            .build()),
+        "username"
+    );
   }
 
   @Test
@@ -210,7 +219,7 @@ public class UserControllerTest extends BaseControllerTest {
     // given
     UserDto userDto = userDtoBuilder.build();
 
-    given(userService.update(userDto.getId(), userDto)).willReturn(userDto);
+    given(userService.update(anyLong(), any())).willReturn(userDto);
 
     // when
     ResultActions resultActions = put(URL + "/" + userDto.getId(), userDto);
@@ -218,7 +227,19 @@ public class UserControllerTest extends BaseControllerTest {
     // then
     resultActions
         .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(content().json(objectMapper.writeValueAsString(userDto)))
         .andDo(print());
+  }
+
+  @Test
+  public void update_invalidContent() throws Throwable {
+    invalidContentNotEmpty(
+        () -> put(PathUtils.create(URL, 1L), userDtoBuilder
+            .username(null)
+            .build()),
+        "username"
+    );
   }
 
   @Test
@@ -234,6 +255,8 @@ public class UserControllerTest extends BaseControllerTest {
     // then
     resultActions
         .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(content().json(objectMapper.writeValueAsString(userDto)))
         .andDo(print());
   }
 
@@ -244,14 +267,14 @@ public class UserControllerTest extends BaseControllerTest {
             .id(1L)
             .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME))
             .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD))
-            .email("s@naver.com")
+            .email("foo@bar.com")
             .build();
 
     UserDto userDto2 = userDtoBuilder
             .id(2L)
             .username(StringUtils.repeat('x', UserDto.SIZE_MIN_USERNAME))
             .password(StringUtils.repeat('y', UserDto.SIZE_MIN_PASSWORD))
-            .email("d@naver.com")
+            .email("foo@bar.com")
             .build();
 
     given(userService.getAll()).willReturn(List.of(userDto1, userDto2));
@@ -262,9 +285,12 @@ public class UserControllerTest extends BaseControllerTest {
     // then
     resultActions
         .andExpect(status().isOk())
-        .andExpect(content().json(
-            "[{'id': 1, 'username': 'uuuu', 'password': 'pppppppp', 'email': 's@naver.com'},"
-                + "{'id': 2, 'username': 'xxxx', 'password': 'yyyyyyyy', 'email': 'd@naver.com'}]"))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(content().json("["
+            + objectMapper.writeValueAsString(userDto1)
+            + ","
+            + objectMapper.writeValueAsString(userDto2)
+            + "]"))
         .andDo(print());
   }
 

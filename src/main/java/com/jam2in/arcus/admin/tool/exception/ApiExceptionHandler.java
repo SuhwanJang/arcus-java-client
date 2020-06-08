@@ -42,7 +42,7 @@ public class ApiExceptionHandler {
     Throwable cause = e.getCause();
     if (cause instanceof InvalidFormatException) {
       return createResponse(ApiError.of(
-          ApiErrorCode.COMMON_INVALID_BODY, (InvalidFormatException) cause));
+          ApiErrorCode.COMMON_INVALID_CONTENT, (InvalidFormatException) cause));
     }
 
     return handleException(e);
@@ -59,7 +59,7 @@ public class ApiExceptionHandler {
   public ResponseEntity<?> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
     return createResponse(ApiError.of(
-        ApiErrorCode.COMMON_INVALID_BODY, e.getBindingResult()));
+        ApiErrorCode.COMMON_INVALID_CONTENT, e.getBindingResult()));
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
