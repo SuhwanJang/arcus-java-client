@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +30,8 @@ public class EnsembleDto {
   @NotEmpty
   private String name;
 
-  private Collection<@NotNull String> zookeepers;
+  // TODO: validation
+  private Collection<String> zookeepers;
 
   public static EnsembleDto of(EnsembleEntity ensembleEntity) {
     return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class);
