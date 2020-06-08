@@ -45,6 +45,12 @@ public class EnsembleController {
     return ensembleService.get(id);
   }
 
+  @GetMapping("/{id}/servers")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void getServers(@PathVariable long id) {
+    // TODO: response list of zookeeper server info
+  }
+
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
   public List<EnsembleDto> getAll() {
