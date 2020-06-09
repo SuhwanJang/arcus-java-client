@@ -1,17 +1,17 @@
 package com.jam2in.arcus.admin.tool.domain.user.service;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
+import com.jam2in.arcus.admin.tool.domain.user.entity.AdminEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
+import com.jam2in.arcus.admin.tool.domain.user.repository.AdminRepository;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -24,14 +24,18 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  private final AdminRepository adminRepository;
+
   private final EmailService emailService;
 
   private final PasswordEncoder passwordEncoder;
 
   public UserService(UserRepository userRepository,
+                     AdminRepository adminRepository,
                      EmailService emailService,
                      PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
+    this.adminRepository = adminRepository;
     this.emailService = emailService;
     this.passwordEncoder = passwordEncoder;
   }
@@ -51,7 +55,6 @@ public class UserService {
     UserEntity userEntity = UserEntity.of(userDto);
     userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
 
-    // FIXME: concurrency issue
     if (userRepository.count() == 0) {
       userEntity.applyAdminRole();
     } else {
@@ -59,6 +62,10 @@ public class UserService {
     }
 
     userRepository.save(userEntity);
+
+    if (isAdmin(userEntity)) {
+      adminRepository.save(AdminEntity.builder().userEntity(userEntity).build());
+    }
 
     return UserDto.of(userEntity);
   }
@@ -149,11 +156,10 @@ public class UserService {
     }
   }
 
-  private boolean isAdmin(Object userDetails) {
-    return userDetails instanceof UserDetails
-        && ((UserDetails) userDetails).getAuthorities()
-        .stream().anyMatch(grantedAuthority ->
-            RoleEntity.ROLE_ADMIN.name().equals(grantedAuthority.getAuthority()));
+  private boolean isAdmin(UserEntity userEntity) {
+    return userEntity.getRoles()
+        .stream().anyMatch(r ->
+            r == RoleEntity.ROLE_ADMIN);
   }
 
 }
