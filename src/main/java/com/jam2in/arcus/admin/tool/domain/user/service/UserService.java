@@ -43,35 +43,22 @@ public class UserService {
         .getDetails();
   }
 
-  @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+  @Transactional
   public UserDto create(UserDto userDto) {
-    boolean noUser = false;
-
-    if (userRepository.count() == 0) {
-      noUser = true;
-    }
-
     checkDuplicateUsername(userDto.getUsername());
     checkDuplicateEmail(userDto.getEmail());
 
     UserEntity userEntity = UserEntity.of(userDto);
     userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
 
-    if (noUser) {
+    // FIXME: concurrency issue
+    if (userRepository.count() == 0) {
       userEntity.applyAdminRole();
     } else {
-      if (isAdmin(me())) {
-        userEntity.applyUserRole();
-      } else {
-        throw new BusinessException(ApiErrorCode.COMMON_ACCESS_DENIED);
-      }
+      userEntity.applyUserRole();
     }
 
     userRepository.save(userEntity);
-
-    if (noUser && userRepository.count() > 1) {
-      throw new BusinessException(ApiErrorCode.COMMON_ACCESS_DENIED);
-    }
 
     return UserDto.of(userEntity);
   }
