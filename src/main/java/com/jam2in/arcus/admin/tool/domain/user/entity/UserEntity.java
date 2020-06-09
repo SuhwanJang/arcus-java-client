@@ -81,6 +81,10 @@ public class UserEntity {
     roles = List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER);
   }
 
+  public void applyUserRole() {
+    roles = List.of(RoleEntity.ROLE_USER);
+  }
+
   public static UserEntity of(UserDto userDto) {
     return ModelMapperUtils.map(
         userDto, UserEntityBuilder.class).build();

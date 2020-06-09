@@ -1,13 +1,17 @@
 package com.jam2in.arcus.admin.tool.domain.user.service;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
+import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -32,16 +36,42 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  @Transactional
+  public Object me() {
+    return SecurityContextHolder
+        .getContext()
+        .getAuthentication()
+        .getDetails();
+  }
+
+  @Transactional(isolation = Isolation.READ_UNCOMMITTED)
   public UserDto create(UserDto userDto) {
+    boolean noUser = false;
+
+    if (userRepository.count() == 0) {
+      noUser = true;
+    }
+
     checkDuplicateUsername(userDto.getUsername());
     checkDuplicateEmail(userDto.getEmail());
 
     UserEntity userEntity = UserEntity.of(userDto);
     userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
-    userEntity.applyAdminRole();  // TODO: 어드민은 최대 하나만 존재해야 함
+
+    if (noUser) {
+      userEntity.applyAdminRole();
+    } else {
+      if (isAdmin(me())) {
+        userEntity.applyUserRole();
+      } else {
+        throw new BusinessException(ApiErrorCode.COMMON_ACCESS_DENIED);
+      }
+    }
 
     userRepository.save(userEntity);
+
+    if (noUser && userRepository.count() > 1) {
+      throw new BusinessException(ApiErrorCode.COMMON_ACCESS_DENIED);
+    }
 
     return UserDto.of(userEntity);
   }
@@ -87,16 +117,19 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  private void checkDuplicateUsername(String username) {
-    if (userRepository.existsByUsername(username)) {
-      throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
-    }
-  }
+  @Transactional
+  public void resetPassword(String username) {
+    UserEntity userEntity = getEntityByUsername(username);
+    String newPassword = UUID.randomUUID().toString().replaceAll("-", StringUtils.EMPTY)
+        .substring(0, 10);  // FIXME: 비밀번호 최대 사이즈 사용 (UserDto.SIZE_MAX_PASSWORD)
+    userEntity.updatePassword(passwordEncoder.encode(newPassword));
 
-  private void checkDuplicateEmail(String email) {
-    if (userRepository.existsByEmail(email)) {
-      throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
-    }
+    String subject = "Your password has changed";
+    String to = userEntity.getEmail();
+    String text = "To " + username + ".\n\n"
+        + "your password has changed with " + newPassword + ".\n\n"
+        + "Try to login and recommend to change your password.\n\n";
+    emailService.send(subject, to, text);
   }
 
   private UserEntity getEntity(long id) {
@@ -117,19 +150,23 @@ public class UserService {
     return users;
   }
 
-  @Transactional
-  public void resetPassword(String username) {
-    UserEntity userEntity = getEntityByUsername(username);
-    String newPassword = UUID.randomUUID().toString().replaceAll("-", StringUtils.EMPTY)
-        .substring(0, 10);  // FIXME: 비밀번호 최대 사이즈 사용 (UserDto.SIZE_MAX_PASSWORD)
-    userEntity.updatePassword(passwordEncoder.encode(newPassword));
+  private void checkDuplicateUsername(String username) {
+    if (userRepository.existsByUsername(username)) {
+      throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
+    }
+  }
 
-    String subject = "Your password has changed";
-    String to = userEntity.getEmail();
-    String text = "To " + username + ".\n\n"
-        + "your password has changed with " + newPassword + ".\n\n"
-        + "Try to login and recommend to change your password.\n\n";
-    emailService.send(subject, to, text);
+  private void checkDuplicateEmail(String email) {
+    if (userRepository.existsByEmail(email)) {
+      throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
+    }
+  }
+
+  private boolean isAdmin(Object userDetails) {
+    return userDetails instanceof UserDetails
+        && ((UserDetails) userDetails).getAuthorities()
+        .stream().anyMatch(grantedAuthority ->
+            RoleEntity.ROLE_ADMIN.name().equals(grantedAuthority.getAuthority()));
   }
 
 }
