@@ -2,16 +2,9 @@ spring:
   profiles:
     active: local
   mvc:
-    static-path-pattern: /public/**
-  resources:
-    static-locations: classpath:/public/
-    add-mappings: true
-  thymeleaf:
-    enabled: true
-    prefix: classpath:/public/
-    suffix: .html
-    encoding: UTF-8
-    mode: HTML
+    view:
+      prefix: /public/
+      suffix: .html
 http:
   encoding:
     charset: UTF-8
@@ -85,3 +78,16 @@ spring:
 
 spring:
   profiles: prod
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    hibernate:
+      format-sql: true
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+  datasource:
+    url: jdbc:mysql://1.255.51.181:3306/arcus_admin_tool?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Jam3824in#
