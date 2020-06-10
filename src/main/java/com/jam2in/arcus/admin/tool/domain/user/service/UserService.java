@@ -71,8 +71,15 @@ public class UserService {
       throw new BusinessException(ApiErrorCode.USER_PASSWORD_MISMATCH);
     }
 
-    checkDuplicateEmail(userDto.getEmail());
-    userEntity.updateEmail(userDto.getEmail());
+    if (!userDto.getUsername().equals(userEntity.getUsername())) {
+      checkDuplicateUsername(userDto.getUsername());
+      userEntity.updateUsername(userDto.getUsername());
+    }
+
+    if (!userDto.getEmail().equals(userEntity.getEmail())) {
+      checkDuplicateEmail(userDto.getEmail());
+      userEntity.updateEmail(userDto.getEmail());
+    }
 
     if (StringUtils.length(userDto.getNewPassword()) > 0) {
       userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
