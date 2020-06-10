@@ -3,7 +3,7 @@ package com.jam2in.arcus.admin.tool.domain.user.controller;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +31,12 @@ public class UserController {
   @GetMapping("/me")
   @ResponseStatus(code = HttpStatus.OK)
   public UserDto me() {
-    return userService.getByUsername(((UserDetails) userService.me()).getUsername());
+    return userService.getByUsername(
+        (String) SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getPrincipal()
+    );
   }
 
   @PostMapping

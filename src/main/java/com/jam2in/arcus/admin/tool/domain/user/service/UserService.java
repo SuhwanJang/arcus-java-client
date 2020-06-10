@@ -9,7 +9,6 @@ import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,13 +37,6 @@ public class UserService {
     this.adminRepository = adminRepository;
     this.emailService = emailService;
     this.passwordEncoder = passwordEncoder;
-  }
-
-  public Object me() {
-    return SecurityContextHolder
-        .getContext()
-        .getAuthentication()
-        .getDetails();
   }
 
   @Transactional
