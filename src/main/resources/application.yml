@@ -1,10 +1,6 @@
 spring:
   profiles:
     active: local
-  mvc:
-    view:
-      prefix: /public/
-      suffix: .html
 http:
   encoding:
     charset: UTF-8
