@@ -78,7 +78,7 @@ public class UserEntity {
   }
 
   public void applyAdminRole() {
-    roles = List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER);
+    roles = List.of(RoleEntity.ROLE_ADMIN);
   }
 
   public void applyUserRole() {
