@@ -69,6 +69,10 @@ public class UserEntity {
   @Column(name = "role")
   private Collection<RoleEntity> roles;
 
+  public void updateUsername(String username) {
+    this.username = username;
+  }
+
   public void updateEmail(String email) {
     this.email = email;
   }
@@ -78,7 +82,7 @@ public class UserEntity {
   }
 
   public void applyAdminRole() {
-    roles = List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER);
+    roles = List.of(RoleEntity.ROLE_ADMIN);
   }
 
   public void applyUserRole() {
