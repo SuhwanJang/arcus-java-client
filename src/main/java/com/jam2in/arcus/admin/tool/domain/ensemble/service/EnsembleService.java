@@ -35,7 +35,11 @@ public class EnsembleService {
   public EnsembleDto update(long id, EnsembleDto ensembleDto) {
     EnsembleEntity ensembleEntity = getEntity(id);
 
-    ensembleEntity.updateName(ensembleDto.getName());
+    if (!ensembleDto.getName().equals(ensembleEntity.getName())) {
+      checkDuplicateName(ensembleDto.getName());
+      ensembleEntity.updateName(ensembleDto.getName());
+    }
+
     ensembleEntity.updateZookeepers(ensembleDto.getZookeepers());
 
     return EnsembleDto.of(ensembleEntity);

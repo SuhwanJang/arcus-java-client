@@ -59,7 +59,8 @@ public enum ApiErrorCode {
       HttpStatus.CONFLICT),
   ENSEMBLE_NO_ENSEMBLES(
       "USER007", "no ensembles",
-      HttpStatus.NO_CONTENT);
+      HttpStatus.NO_CONTENT),
+  ;
 
 
   private final String code;

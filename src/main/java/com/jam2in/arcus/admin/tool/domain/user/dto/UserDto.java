@@ -1,6 +1,8 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,17 +24,17 @@ public class UserDto {
   public UserDto(Long id,
                  String username,
                  String email,
-                 String registered,
                  String password,
                  String newPassword,
-                 Collection<String> roles) {
+                 Role role,
+                 Collection<Access> accesses) {
     this.id = id;
     this.username = username;
     this.email = email;
-    this.registered = registered;
-    this.password = password;
     this.newPassword = newPassword;
-    this.roles = roles;
+    this.password = password;
+    this.role = role;
+    this.accesses = accesses;
   }
 
   private Long id;
@@ -45,8 +47,6 @@ public class UserDto {
   @NotEmpty
   private String email;
 
-  private String registered;
-
   @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
   @NotEmpty
   private String password;
@@ -54,7 +54,9 @@ public class UserDto {
   @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
   private String newPassword;
 
-  private Collection<String> roles;
+  private Role role;
+
+  private Collection<Access> accesses;
 
   public static UserDto of(UserEntity userEntity) {
     UserDto userDto = ModelMapperUtils.map(

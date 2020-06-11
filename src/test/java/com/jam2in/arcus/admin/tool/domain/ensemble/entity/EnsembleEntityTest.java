@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDtoUtils;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -34,13 +35,7 @@ public class EnsembleEntityTest {
   @Test
   public void of() {
     // given
-    EnsembleDto ensembleDto = EnsembleDto.builder()
-        .name("foo")
-        .zookeepers(List.of(
-            "192.168.0.1:2181",
-            "192.168.0.2:2181",
-            "192.168.0.3:2181"))
-        .build();
+    EnsembleDto ensembleDto = EnsembleDtoUtils.createBuilder().build();
 
     // when
     EnsembleEntity ensembleEntity = EnsembleEntity.of(ensembleDto);

@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.user.repository;
 
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,10 @@ public class UserRepositoryTest {
           .username("foo")
           .email("foo@bar.com")
           .password("foobar")
-          .roles(List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER));
+          .role(Role.ROLE_ADMIN)
+          .accesses(List.of(
+              Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT,
+              Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT));
   }
 
   @Test(expected = DataIntegrityViolationException.class)

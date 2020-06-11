@@ -1,20 +1,14 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
+import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntityUtils;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 public class UserDtoTest {
 
@@ -26,8 +20,10 @@ public class UserDtoTest {
     String email = "foo@bar.com";
     String password = "baz";
     String newPassword = "qux";
-    Collection<String> roles = List.of(
-        RoleEntity.ROLE_ADMIN.name(), RoleEntity.ROLE_USER.name());
+    Role role = Role.ROLE_ADMIN;
+    Collection<Access> accesses = List.of(
+        Access.ACCESS_CACHE_CLUSTER_MANAGEMENT,
+        Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT);
 
     // when
     UserDto userDto = UserDto.builder()
@@ -36,27 +32,19 @@ public class UserDtoTest {
         .email(email)
         .password(password)
         .newPassword(newPassword)
-        .roles(roles)
+        .role(role)
+        .accesses(accesses)
         .build();
 
     // then
-    assertThat(userDto.getId(), is(id));
-    assertThat(userDto.getUsername(), is(username));
-    assertThat(userDto.getEmail(), is(email));
-    assertThat(userDto.getPassword(), is(password));
-    assertThat(userDto.getNewPassword(), is(newPassword));
-    assertThat(userDto.getRoles(), is(roles));
+    UserDtoUtils.equals(userDto,
+        id, username, email, password, newPassword, role, accesses);
   }
 
   @Test
   public void of() {
     // given
-    UserEntity userEntity = UserEntity.builder()
-        .username("foo")
-        .email("foo@bar.com")
-        .password("baz")
-        .roles(List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER))
-        .build();
+    UserEntity userEntity = UserEntityUtils.createBuilder().build();
 
     ReflectionTestUtils.setField(userEntity, "id", 1L);
 
@@ -64,13 +52,7 @@ public class UserDtoTest {
     UserDto userDto = UserDto.of(userEntity);
 
     // then
-    assertThat(userDto.getId(), is(userEntity.getId()));
-    assertThat(userDto.getUsername(), is(userEntity.getUsername()));
-    assertThat(userDto.getEmail(), is(userEntity.getEmail()));
-    assertThat(userDto.getPassword(), is(nullValue()));
-    assertThat(userDto.getNewPassword(), is(nullValue()));
-    assertThat(userDto.getRoles(), is(userEntity.getRoles().stream()
-        .map(Enum::name).collect(Collectors.toList())));
+    UserDtoUtils.equals(userDto, userEntity);
   }
 
   @Test
@@ -78,17 +60,11 @@ public class UserDtoTest {
     // given
     UserEntity userEntity1 = UserEntity.builder()
         .username("foo")
-        .email("foo@bar.com")
-        .password("baz")
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
         .build();
     ReflectionTestUtils.setField(userEntity1, "id", 1L);
 
     UserEntity userEntity2 = UserEntity.builder()
         .username("foofoo")
-        .email("foofoo@barbar.com")
-        .password("bazbaz")
-        .roles(List.of(RoleEntity.ROLE_USER))
         .build();
     ReflectionTestUtils.setField(userEntity2, "id", 2L);
 
@@ -96,22 +72,8 @@ public class UserDtoTest {
     List<UserDto> userDtos = UserDto.of(List.of(userEntity1, userEntity2));
 
     // then
-    assertThat(userDtos, contains(
-        allOf(
-            hasProperty("username", is(userEntity1.getUsername())),
-            hasProperty("email", is(userEntity1.getEmail())),
-            hasProperty("password", is(nullValue())),
-            hasProperty("roles", is(userEntity1.getRoles().stream()
-                .map(Enum::name).collect(Collectors.toList())))
-        ),
-        allOf(
-            hasProperty("username", is(userEntity2.getUsername())),
-            hasProperty("email", is(userEntity2.getEmail())),
-            hasProperty("password", is(nullValue())),
-            hasProperty("roles", is(userEntity2.getRoles().stream()
-                .map(Enum::name).collect(Collectors.toList())))
-        )
-    ));
+    UserDtoUtils.equals(userDtos.get(0), userEntity1);
+    UserDtoUtils.equals(userDtos.get(1), userEntity2);
   }
 
 }

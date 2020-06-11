@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.bean;
 
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -37,13 +40,18 @@ public class UserDetailsServiceTest {
         UserEntity.builder()
           .username("foo")
           .password("bar")
-          .roles(List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER))
+          .role(Role.ROLE_ADMIN)
+          .accesses(List.of(
+              Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT,
+              Access.ACCESS_CACHE_CLUSTER_MANAGEMENT))
           .build();
+
 
     User user = new User(
         userEntity.getUsername(),
         userEntity.getPassword(),
-        userEntity.getRoles());
+        Stream.concat(Stream.of(userEntity.getRole()), userEntity.getAccesses().stream())
+            .collect(Collectors.toList()));
 
     given(userRepository.findByUsername(user.getUsername()))
         .willReturn(Optional.of(userEntity));

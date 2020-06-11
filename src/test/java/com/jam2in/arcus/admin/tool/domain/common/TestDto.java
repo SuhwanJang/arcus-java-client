@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.user.entity;
+package com.jam2in.arcus.admin.tool.domain.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

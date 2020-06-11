@@ -1,15 +1,16 @@
 package com.jam2in.arcus.admin.tool.domain.user.entity;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
+import com.jam2in.arcus.admin.tool.domain.user.dto.UserDtoUtils;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
 
 public class UserEntityTest {
 
@@ -19,44 +20,35 @@ public class UserEntityTest {
     String username = "foo";
     String email = "foo@bar.com";
     String password = "baz";
-    Collection<RoleEntity> roles = List.of(RoleEntity.ROLE_ADMIN, RoleEntity.ROLE_USER);
+    Role role = Role.ROLE_ADMIN;
+    Collection<Access> accesses = List.of(
+        Access.ACCESS_CACHE_CLUSTER_MANAGEMENT,
+        Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT);
 
     // when
     UserEntity userEntity = UserEntity.builder()
         .username(username)
         .email(email)
         .password(password)
-        .roles(roles)
+        .role(role)
+        .accesses(accesses)
         .build();
 
     // then
-    assertThat(userEntity.getUsername(), is(username));
-    assertThat(userEntity.getEmail(), is(email));
-    assertThat(userEntity.getPassword(), is(password));
-    assertThat(userEntity.getRoles(), is(roles));
+    UserEntityUtils.equals(userEntity,
+        username, email, password, role, accesses);
   }
 
   @Test
   public void of() {
     // given
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("foo@bar.com")
-        .password("baz")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name(), RoleEntity.ROLE_USER.name()))
-        .build();
+    UserDto userDto = UserDtoUtils.createBuilder().build();
 
     // when
     UserEntity userEntity = UserEntity.of(userDto);
 
     // then
-    assertThat(userEntity.getId(), is(not(userDto.getId())));
-    assertThat(userEntity.getUsername(), is(userDto.getUsername()));
-    assertThat(userEntity.getEmail(), is(userDto.getEmail()));
-    assertThat(userEntity.getPassword(), is(userDto.getPassword()));
-    assertThat(userEntity.getRoles(), is(userDto.getRoles().stream()
-        .map(RoleEntity::valueOf).collect(Collectors.toList())));
+    UserEntityUtils.equals(userEntity, userDto);
   }
 
   @Test

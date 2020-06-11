@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.user.controller;
 
 import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
+import com.jam2in.arcus.admin.tool.domain.user.dto.UserDtoUtils;
 import com.jam2in.arcus.admin.tool.domain.user.service.UserService;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
@@ -43,12 +44,7 @@ public class UserControllerTest extends BaseControllerTest {
 
   @Before
   public void before() {
-    userDtoBuilder = UserDto.builder()
-        .id(1L)
-        .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME))
-        .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD))
-        .newPassword(StringUtils.repeat('n', UserDto.SIZE_MIN_PASSWORD))
-        .email("foo@bar.com");
+    userDtoBuilder = UserDtoUtils.createBuilder();
   }
 
   @Test

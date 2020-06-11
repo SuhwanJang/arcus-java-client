@@ -1,11 +1,13 @@
 package com.jam2in.arcus.admin.tool.domain.user.service;
 
+import com.jam2in.arcus.admin.tool.domain.user.dto.UserDtoUtils;
+import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntityUtils;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -13,14 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -40,12 +41,24 @@ public class UserServiceTest {
   @Mock
   private PasswordEncoder passwordEncoder;
 
+  private UserDto userDto;
+
+  private UserEntity userEntity;
+
+  private String encodedPassword;
+
+  @Before
+  public void before() {
+    userDto = UserDtoUtils.createBuilder().build();
+    userEntity = UserEntityUtils.createBuilder(userDto).build();
+    encodedPassword = userDto.getNewPassword() + "e";
+
+    ReflectionTestUtils.setField(userEntity, "id", userDto.getId());
+  }
+
   @Test
   public void create() {
     // given
-    String encodedPassword = "bar";
-    UserDto userDto = UserDto.builder().password("foo").build();
-
     given(passwordEncoder.encode(userDto.getPassword())).willReturn(encodedPassword);
     given(userRepository.existsByUsername(userDto.getUsername())).willReturn(false);
     given(userRepository.existsByEmail(userDto.getEmail())).willReturn(false);
@@ -62,8 +75,6 @@ public class UserServiceTest {
   @Test
   public void create_duplicateUsername() {
     // given
-    UserDto userDto = UserDto.builder().username("foo").build();
-
     given(userRepository.existsByUsername(userDto.getUsername())).willReturn(true);
 
     try {
@@ -82,8 +93,6 @@ public class UserServiceTest {
   @Test
   public void create_duplicateEmail() {
     // given
-    UserDto userDto = UserDto.builder().email("foo").build();
-
     given(userRepository.existsByEmail(userDto.getEmail())).willReturn(true);
 
     try {
@@ -102,24 +111,6 @@ public class UserServiceTest {
   @Test
   public void update() {
     // given
-    String encodedPassword = "foobar";
-
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("bar")
-        .password("baz")
-        .newPassword("qux")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
-        .build();
-
-    UserEntity userEntity = UserEntity.builder()
-        .username(userDto.getUsername() + " u")
-        .email(userDto.getEmail() + " e")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
-        .build();
-
     given(userRepository.findById(userDto.getId()))
         .willReturn(Optional.of(userEntity));
     given(passwordEncoder.encode(userDto.getNewPassword()))
@@ -131,30 +122,12 @@ public class UserServiceTest {
     userService.update(userDto.getId(), userDto);
 
     // then
-    assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
-    assertThat(userEntity.getEmail(), is(userDto.getEmail()));
-    assertThat(userEntity.getPassword(), is(encodedPassword));
+    UserEntityUtils.equals(userEntity, userDto, encodedPassword);
   }
 
   @Test
   public void update_notFound() {
     // given
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("bar")
-        .password("baz")
-        .newPassword("qux")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
-        .build();
-
-    UserEntity userEntity = UserEntity.builder()
-        .username(userDto.getUsername() + " u")
-        .email(userDto.getEmail() + " e")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
-        .build();
-
     given(userRepository.findById(userDto.getId()))
         .willReturn(Optional.empty());
 
@@ -164,9 +137,6 @@ public class UserServiceTest {
     } catch (BusinessException e) {
       // then
       assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_NOT_FOUND.code()));
-      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
-      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
-      assertThat(userEntity.getPassword(), is(userDto.getPassword()));
       return;
     }
 
@@ -176,24 +146,6 @@ public class UserServiceTest {
   @Test
   public void update_mismatchPassword() {
     // given
-    String encodedPassword = "foobar";
-
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("bar")
-        .password("baz")
-        .newPassword("qux")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
-        .build();
-
-    UserEntity userEntity = UserEntity.builder()
-        .username(userDto.getUsername() + " u")
-        .email(userDto.getEmail() + " e")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
-        .build();
-
     given(userRepository.findById(userDto.getId()))
         .willReturn(Optional.of(userEntity));
     given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
@@ -205,9 +157,6 @@ public class UserServiceTest {
     } catch (BusinessException e) {
       // then
       assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_PASSWORD_MISMATCH.code()));
-      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
-      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
-      assertThat(userEntity.getPassword(), is(not(encodedPassword)));
       return;
     }
 
@@ -215,26 +164,31 @@ public class UserServiceTest {
   }
 
   @Test
+  public void update_duplicateUsername() {
+    // given
+    given(userRepository.findById(userDto.getId()))
+        .willReturn(Optional.of(userEntity));
+    given(userRepository.existsByUsername(userDto.getUsername()))
+        .willReturn(true);
+    given(passwordEncoder.matches(userEntity.getPassword(), userDto.getPassword()))
+        .willReturn(true);
+
+    try {
+      // when
+      userService.update(userDto.getId(), userDto);
+    } catch (BusinessException e) {
+      // then
+      assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_USERNAME_DUPLICATED.code()));
+      return;
+    }
+
+    fail();
+  }
+
+
+  @Test
   public void update_duplicateEmail() {
     // given
-    String encodedPassword = "foobar";
-
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("bar")
-        .password("baz")
-        .newPassword("qux")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
-        .build();
-
-    UserEntity userEntity = UserEntity.builder()
-        .username(userDto.getUsername() + " u")
-        .email(userDto.getEmail() + " e")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
-        .build();
-
     given(userRepository.findById(userDto.getId()))
         .willReturn(Optional.of(userEntity));
     given(userRepository.existsByEmail(userDto.getEmail()))
@@ -248,9 +202,6 @@ public class UserServiceTest {
     } catch (BusinessException e) {
       // then
       assertThat(e.getApiError().getCode(), is(ApiErrorCode.USER_EMAIL_DUPLICATED.code()));
-      assertThat(userEntity.getUsername(), is(not(userDto.getUsername())));
-      assertThat(userEntity.getEmail(), is(not(userDto.getEmail())));
-      assertThat(userEntity.getPassword(), is(not(encodedPassword)));
       return;
     }
 
@@ -263,16 +214,14 @@ public class UserServiceTest {
     long id = 1L;
 
     given(userRepository.findById(id))
-        .willReturn(Optional.of(UserEntity.builder()
-            .roles(List.of(RoleEntity.ROLE_ADMIN))
-            .build()));
+        .willReturn(Optional.of(userEntity));
 
     // when
     UserDto userDto = userService.get(id);
 
     // then
     verify(userRepository, atMostOnce()).findById(id);
-    assertThat(userDto, is(notNullValue()));
+    UserDtoUtils.equals(userDto, userEntity);
   }
 
   @Test
@@ -300,16 +249,14 @@ public class UserServiceTest {
     String username = "foo";
 
     given(userRepository.findByUsername(username))
-        .willReturn(Optional.of(UserEntity.builder()
-            .roles(List.of(RoleEntity.ROLE_ADMIN))
-            .build()));
+        .willReturn(Optional.of(userEntity));
 
     // when
     UserDto userDto = userService.getByUsername(username);
 
     // then
     verify(userRepository, atMostOnce()).findByUsername(username);
-    assertThat(userDto, is(notNullValue()));
+    UserDtoUtils.equals(userDto, userEntity);
   }
 
   @Test
@@ -334,28 +281,15 @@ public class UserServiceTest {
   @Test
   public void getAll() {
     // given
-    UserDto userDto = UserDto.builder()
-        .id(1L)
-        .username("foo")
-        .email("bar")
-        .password("baz")
-        .newPassword("qux")
-        .roles(List.of(RoleEntity.ROLE_ADMIN.name()))
-        .build();
-
     UserEntity userEntity1 = UserEntity.builder()
-        .username(userDto.getUsername() + " u")
-        .email(userDto.getEmail() + " e")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_ADMIN))
+        .username("foo")
         .build();
+    ReflectionTestUtils.setField(userEntity1, "id", 1L);
 
     UserEntity userEntity2 = UserEntity.builder()
-        .username(userDto.getUsername() + " d")
-        .email(userDto.getEmail() + " v")
-        .password(userDto.getPassword())
-        .roles(List.of(RoleEntity.ROLE_USER))
+        .username("foofoo")
         .build();
+    ReflectionTestUtils.setField(userEntity2, "id", 2L);
 
     given(userRepository.findAll()).willReturn(List.of(userEntity1, userEntity2));
 
@@ -364,7 +298,8 @@ public class UserServiceTest {
 
     // then
     verify(userRepository, atMostOnce()).findAll();
-    assertThat(userDtos.size(), is(2));
+    UserDtoUtils.equals(userDtos.get(0), userEntity1);
+    UserDtoUtils.equals(userDtos.get(1), userEntity2);
   }
 
   @Test

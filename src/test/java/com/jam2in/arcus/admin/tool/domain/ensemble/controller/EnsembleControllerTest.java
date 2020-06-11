@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
 import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDtoUtils;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
@@ -43,13 +44,7 @@ public class EnsembleControllerTest extends BaseControllerTest {
 
   @Before
   public void before() {
-    ensembleDtoBuilder = EnsembleDto.builder()
-        .id(1L)
-        .name(StringUtils.repeat('n', EnsembleDto.SIZE_MIN_NAME))
-        .zookeepers(List.of(
-            "192.168.0.1:2181",
-            "192.168.0.2:2181",
-            "192.168.0.3:2181"));
+    ensembleDtoBuilder = EnsembleDtoUtils.createBuilder();
   }
 
   @Test

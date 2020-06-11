@@ -2,7 +2,7 @@ package com.jam2in.arcus.admin.tool.exception;
 
 import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.common.TestController;
-import com.jam2in.arcus.admin.tool.domain.user.entity.TestDto;
+import com.jam2in.arcus.admin.tool.domain.common.TestDto;
 import com.jam2in.arcus.admin.tool.domain.common.TestService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;

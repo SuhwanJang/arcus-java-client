@@ -1,6 +1,8 @@
 package com.jam2in.arcus.admin.tool.domain.user.entity;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
+import com.jam2in.arcus.admin.tool.domain.user.type.Access;
+import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,7 +23,6 @@ import javax.persistence.Table;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -33,11 +34,13 @@ public class UserEntity {
   public UserEntity(String username,
                     String email,
                     String password,
-                    Collection<RoleEntity> roles) {
+                    Role role,
+                    Collection<Access> accesses) {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.roles = roles;
+    this.role = role;
+    this.accesses = accesses;
     this.registered = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
   }
 
@@ -58,16 +61,19 @@ public class UserEntity {
   @Column(nullable = false)
   private String password;
 
+  @Column(nullable = false)
+  private Role role;
+
   @ElementCollection
   @JoinTable (
-      name = "roles",
+      name = "accesses",
       joinColumns = {
         @JoinColumn(name = "id")
       }
   )
   @Enumerated(EnumType.STRING)
-  @Column(name = "role")
-  private Collection<RoleEntity> roles;
+  @Column(name = "access")
+  private Collection<Access> accesses;
 
   public void updateUsername(String username) {
     this.username = username;
@@ -82,11 +88,19 @@ public class UserEntity {
   }
 
   public void applyAdminRole() {
-    roles = List.of(RoleEntity.ROLE_ADMIN);
+    role = Role.ROLE_ADMIN;
   }
 
   public void applyUserRole() {
-    roles = List.of(RoleEntity.ROLE_USER);
+    role = Role.ROLE_USER;
+  }
+
+  public void updateRole(Role role) {
+    this.role = role;
+  }
+
+  public void updateAccesses(Collection<Access> accesses) {
+    this.accesses = accesses;
   }
 
   public static UserEntity of(UserDto userDto) {

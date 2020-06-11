@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.dto;
 
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
+import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntityUtils;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -8,9 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
 public class EnsembleDtoTest {
@@ -33,21 +31,14 @@ public class EnsembleDtoTest {
         .build();
 
     // then
-    assertThat(ensembleDto.getId(), is(id));
-    assertThat(ensembleDto.getName(), is(name));
-    assertThat(ensembleDto.getZookeepers(), is(zookeepers));
+    EnsembleDtoUtils.equals(ensembleDto,
+        id, name, zookeepers);
   }
 
   @Test
   public void of() {
     // given
-    EnsembleEntity ensembleEntity = EnsembleEntity.builder()
-        .name("foo")
-        .zookeepers(List.of(
-            "192.168.0.1:2181",
-            "192.168.0.2:2181",
-            "192.168.0.3:2181"))
-        .build();
+    EnsembleEntity ensembleEntity = EnsembleEntityUtils.createBuilder().build();
 
     // when
     EnsembleDto ensembleDto = EnsembleDto.of(ensembleEntity);
@@ -85,16 +76,8 @@ public class EnsembleDtoTest {
     List<EnsembleDto> ensembleDtos = EnsembleDto.of(List.of(ensembleEntity1, ensembleEntity2));
 
     // then
-    assertThat(ensembleDtos, contains(
-        allOf(
-            hasProperty("name", is(ensembleEntity1.getName())),
-            hasProperty("zookeepers", is(ensembleEntity1.getZookeepers()))
-        ),
-        allOf(
-            hasProperty("name", is(ensembleEntity2.getName())),
-            hasProperty("zookeepers", is(ensembleEntity2.getZookeepers()))
-        )
-    ));
+    EnsembleDtoUtils.equals(ensembleDtos.get(0), ensembleEntity1);
+    EnsembleDtoUtils.equals(ensembleDtos.get(1), ensembleEntity2);
   }
 
 }

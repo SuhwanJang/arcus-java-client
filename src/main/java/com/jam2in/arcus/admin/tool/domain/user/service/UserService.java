@@ -1,10 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.user.service;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import com.jam2in.arcus.admin.tool.domain.user.entity.AdminEntity;
-import com.jam2in.arcus.admin.tool.domain.user.entity.RoleEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
-import com.jam2in.arcus.admin.tool.domain.user.repository.AdminRepository;
 import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
@@ -23,18 +20,14 @@ public class UserService {
 
   private final UserRepository userRepository;
 
-  private final AdminRepository adminRepository;
-
   private final EmailService emailService;
 
   private final PasswordEncoder passwordEncoder;
 
   public UserService(UserRepository userRepository,
-                     AdminRepository adminRepository,
                      EmailService emailService,
                      PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
-    this.adminRepository = adminRepository;
     this.emailService = emailService;
     this.passwordEncoder = passwordEncoder;
   }
@@ -48,16 +41,13 @@ public class UserService {
     userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
 
     if (userRepository.count() == 0) {
+      // FIXME: concurrency issue
       userEntity.applyAdminRole();
     } else {
       userEntity.applyUserRole();
     }
 
     userRepository.save(userEntity);
-
-    if (isAdmin(userEntity)) {
-      adminRepository.save(AdminEntity.builder().userEntity(userEntity).build());
-    }
 
     return UserDto.of(userEntity);
   }
@@ -84,6 +74,9 @@ public class UserService {
     if (StringUtils.length(userDto.getNewPassword()) > 0) {
       userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
     }
+
+    userEntity.updateRole(userDto.getRole());
+    userEntity.updateAccesses(userDto.getAccesses());
 
     // TODO: roles 업데이트 필요
     return UserDto.of(userEntity);
@@ -153,12 +146,6 @@ public class UserService {
     if (userRepository.existsByEmail(email)) {
       throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
     }
-  }
-
-  private boolean isAdmin(UserEntity userEntity) {
-    return userEntity.getRoles()
-        .stream().anyMatch(r ->
-            r == RoleEntity.ROLE_ADMIN);
   }
 
 }
