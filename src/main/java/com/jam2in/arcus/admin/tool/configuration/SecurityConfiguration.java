@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     http.authorizeRequests()
         .antMatchers(HttpMethod.POST,
-            "/api/*/users", "/login").permitAll()
+            "/api/*/users").permitAll()
         .antMatchers("/api/**").authenticated()
         .anyRequest().permitAll();
 
@@ -60,7 +61,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(
         authenticationManager(), jwtTokenProvider(), objectMapper);
-    jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+    jwtAuthenticationFilter.setRequiresAuthenticationRequestMatcher(
+        new AntPathRequestMatcher("/login", "POST")
+    );
 
     JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(
         authenticationManager(), jwtTokenProvider());
