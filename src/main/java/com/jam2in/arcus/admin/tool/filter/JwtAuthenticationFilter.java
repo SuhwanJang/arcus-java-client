@@ -2,9 +2,12 @@ package com.jam2in.arcus.admin.tool.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jam2in.arcus.admin.tool.bean.JwtTokenProvider;
-import com.jam2in.arcus.admin.tool.exception.ApiError;
+import com.jam2in.arcus.admin.tool.bean.UserPrincipal;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final AuthenticationManager authenticationManager;
@@ -40,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     UserDto userDto;
 
     try {
-      userDto = new ObjectMapper().readValue(request.getInputStream(), UserDto.class);
+      userDto = objectMapper.readValue(request.getInputStream(), UserDto.class);
     } catch (IOException e) {
       throw new InternalAuthenticationServiceException(e.getMessage(), e);
     }
@@ -56,6 +60,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                           FilterChain chain,
                                           Authentication authResult) {
     jwtTokenProvider.applyHeader(response, (UserDetails) authResult.getPrincipal());
+
+    try {
+      response.getWriter().write(
+          objectMapper.writeValueAsString(
+              ((UserPrincipal) authResult.getPrincipal()).getUserDto()));
+      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e);
+    }
   }
 
   @Override
