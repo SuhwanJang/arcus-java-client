@@ -46,17 +46,23 @@ public class EnsembleController {
     return ensembleService.update(id, ensembleDto);
   }
 
+  @GetMapping
+  @ResponseStatus(code = HttpStatus.OK)
+  public List<EnsembleDto> getAll() {
+    return ensembleService.getAll();
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void delete(@PathVariable long id) {
+    ensembleService.delete(id);
+  }
+
   @PutMapping("/{id}/zookeepers")
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<ZooKeeperDto> updateZooKeepers(
       @PathVariable long id, @RequestBody @Valid Collection<ZooKeeperDto> zookeeperDtos) {
     return ensembleService.updateZooKeepers(id, zookeeperDtos);
-  }
-
-  @GetMapping("/{id}")
-  @ResponseStatus(code = HttpStatus.OK)
-  public EnsembleDto get(@PathVariable long id) {
-    return ensembleService.get(id);
   }
 
   @GetMapping("/{id}/zookeepers")
@@ -69,18 +75,6 @@ public class EnsembleController {
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<ZooKeeperDto> getAllStats(@PathVariable long id) {
     return zookeeperService.getAllStats(id);
-  }
-
-  @GetMapping
-  @ResponseStatus(code = HttpStatus.OK)
-  public List<EnsembleDto> getAll() {
-    return ensembleService.getAll();
-  }
-
-  @DeleteMapping("/{id}")
-  @ResponseStatus(code = HttpStatus.OK)
-  public void delete(@PathVariable long id) {
-    ensembleService.delete(id);
   }
 
 }

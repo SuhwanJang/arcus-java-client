@@ -57,9 +57,6 @@ public enum ApiErrorCode {
   ENSEMBLE_NAME_DUPLICATED(
       "ENSEMBLE002", "name is duplicated",
       HttpStatus.CONFLICT),
-  ENSEMBLE_NO_ENSEMBLES(
-      "ENSEMBLE003", "no ensembles",
-      HttpStatus.NO_CONTENT),
 
   ZOOKEEPER_NOT_FOUND(
       "ZOOKEEPER001", "zookeeper is not found",
@@ -71,7 +68,7 @@ public enum ApiErrorCode {
       "ZOOKEEPER101", "socket timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_TIMEOUT(
-      "ZOOKEEPER103", "task timeout",
+      "ZOOKEEPER102", "task timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_REJECTED(
       "ZOOKEEPER103", "task rejected",

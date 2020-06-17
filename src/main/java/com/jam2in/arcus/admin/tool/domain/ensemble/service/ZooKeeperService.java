@@ -4,9 +4,11 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.component.ZooKeeperFourLetter
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterConsDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterMntrDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterSrvrDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.parser.ZooKeeperFourLetterConsParser;
+import com.jam2in.arcus.admin.tool.domain.ensemble.parser.ZooKeeperFourLetterMntrParser;
 import com.jam2in.arcus.admin.tool.domain.ensemble.parser.ZooKeeperFourLetterRuokParser;
 import com.jam2in.arcus.admin.tool.domain.ensemble.parser.ZooKeeperFourLetterSrvrParser;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.ZooKeeperRepository;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 public class ZooKeeperService {
 
   private static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 3000;
-  private static final int FOUR_LETTER_EXECUTE_TIMEOUT_MS = 5000;
+  private static final int FOUR_LETTER_TASK_TIMEOUT_MS = 5000;
 
   private final EnsembleService ensembleService;
 
@@ -47,7 +49,7 @@ public class ZooKeeperService {
     try {
       return zkFourLetterComponent.srvr(getEntity(id).getAddress(), FOUR_LETTER_SOCKET_TIMEOUT_MS)
           .thenApply(ZooKeeperFourLetterSrvrParser::parse)
-          .orTimeout(FOUR_LETTER_EXECUTE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+          .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .join();
     } catch (Exception e) {
       throw new BusinessException(ZooKeeperFourLetterDto.toErrorCode(e));
@@ -58,7 +60,18 @@ public class ZooKeeperService {
     try {
       return zkFourLetterComponent.cons(getEntity(id).getAddress(), FOUR_LETTER_SOCKET_TIMEOUT_MS)
           .thenApply(ZooKeeperFourLetterConsParser::parse)
-          .orTimeout(FOUR_LETTER_EXECUTE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+          .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+          .join();
+    } catch (Exception e) {
+      throw new BusinessException(ZooKeeperFourLetterDto.toErrorCode(e));
+    }
+  }
+
+  public ZooKeeperFourLetterMntrDto getMntr(long id) {
+    try {
+      return zkFourLetterComponent.mntr(getEntity(id).getAddress(), FOUR_LETTER_SOCKET_TIMEOUT_MS)
+          .thenApply(ZooKeeperFourLetterMntrParser::parse)
+          .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .join();
     } catch (Exception e) {
       throw new BusinessException(ZooKeeperFourLetterDto.toErrorCode(e));
@@ -93,7 +106,7 @@ public class ZooKeeperService {
             zookeeperDto.setStats(builder.build());
             return zookeeperDto;
           })
-          .orTimeout(FOUR_LETTER_EXECUTE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+          .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .exceptionally(throwable -> {
             zookeeperDto.setStats(ZooKeeperFourLetterDto.builder().throwable(throwable).build());
             return zookeeperDto;

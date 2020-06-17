@@ -51,4 +51,10 @@ public class ZooKeeperFourLetterComponent {
         socketTimeoutMs);
   }
 
+  @Async
+  public CompletableFuture<String> mntr(String address, int socketTimeoutMs) {
+    return fourLetter(address, FourLetterCommands.getCommandString(FourLetterCommands.mntrCmd),
+        socketTimeoutMs);
+  }
+
 }

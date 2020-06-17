@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
-import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterConsDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterMntrDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperFourLetterSrvrDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.ZooKeeperService;
 import org.springframework.http.HttpStatus;
@@ -23,11 +23,12 @@ public class ZooKeeperController {
     this.zookeeperService = zookeeperService;
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{id}/cons")
   @ResponseStatus(code = HttpStatus.OK)
-  public ZooKeeperDto get(@PathVariable long id) {
-    return zookeeperService.get(id);
+  public Collection<ZooKeeperFourLetterConsDto> getCons(@PathVariable long id) {
+    return zookeeperService.getCons(id);
   }
+
 
   @GetMapping("/{id}/srvr")
   @ResponseStatus(code = HttpStatus.OK)
@@ -35,10 +36,10 @@ public class ZooKeeperController {
     return zookeeperService.getSrvr(id);
   }
 
-  @GetMapping("/{id}/cons")
+  @GetMapping("/{id}/mntr")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ZooKeeperFourLetterConsDto> getCons(@PathVariable long id) {
-    return zookeeperService.getCons(id);
+  public ZooKeeperFourLetterMntrDto getMntr(@PathVariable long id) {
+    return zookeeperService.getMntr(id);
   }
 
 }

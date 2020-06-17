@@ -46,6 +46,19 @@ public class EnsembleService {
     return EnsembleDto.of(ensembleEntity);
   }
 
+  public List<EnsembleDto> getAll() {
+    return EnsembleDto.of(getAllEntity());
+  }
+
+  @Transactional
+  public void delete(long id) {
+    if (!ensembleRepository.existsById(id)) {
+      throw new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND);
+    }
+
+    ensembleRepository.deleteById(id);
+  }
+
   @Transactional
   public Collection<ZooKeeperDto> updateZooKeepers(long id,
                                                    Collection<ZooKeeperDto> zookeeperDtos) {
@@ -58,25 +71,8 @@ public class EnsembleService {
     return ZooKeeperDto.of(ensembleEntity.getZookeepers());
   }
 
-  public EnsembleDto get(long id) {
-    return EnsembleDto.of(getEntity(id));
-  }
-
-  public List<EnsembleDto> getAll() {
-    return EnsembleDto.of(getAllEntity());
-  }
-
   public Collection<ZooKeeperDto> getZooKeepers(long id) {
     return EnsembleDto.ofZooKeepers(getEntity(id)).getZookeepers();
-  }
-
-  @Transactional
-  public void delete(long id) {
-    if (!ensembleRepository.existsById(id)) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND);
-    }
-
-    ensembleRepository.deleteById(id);
   }
 
   private EnsembleEntity getEntity(long id) {
@@ -85,13 +81,7 @@ public class EnsembleService {
   }
 
   private List<EnsembleEntity> getAllEntity() {
-    List<EnsembleEntity> ensembles = ensembleRepository.findAll();
-
-    if (ensembles.isEmpty()) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NO_ENSEMBLES);
-    }
-
-    return ensembles;
+    return ensembleRepository.findAll();
   }
 
   private void checkDuplicateName(String name) {
