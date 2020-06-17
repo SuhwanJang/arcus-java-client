@@ -67,7 +67,7 @@ public class UserDto {
     return userDto;
   }
 
-  public static List<UserDto> of(List<UserEntity> userEntities) {
+  public static Collection<UserDto> of(Collection<UserEntity> userEntities) {
     return userEntities.stream().collect(
         ArrayList::new,
         (userDtos, userEntity) -> userDtos.add(of(userEntity)),

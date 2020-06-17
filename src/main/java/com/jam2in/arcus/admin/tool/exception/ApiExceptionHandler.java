@@ -1,6 +1,8 @@
 package com.jam2in.arcus.admin.tool.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.jam2in.arcus.admin.tool.error.ApiError;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,7 +20,7 @@ public class ApiExceptionHandler {
 
   private ResponseEntity<ApiError> createResponse(ApiError apiError) {
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
     return new ResponseEntity<>(apiError, headers, apiError.getStatus());
   }

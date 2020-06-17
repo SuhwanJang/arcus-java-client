@@ -6,7 +6,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.modelmapper.PropertyMap;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.List;
 public class EnsembleDto {
 
   @Builder
-  public EnsembleDto(Long id, String name, Collection<String> zookeepers) {
+  public EnsembleDto(Long id, String name, Collection<ZooKeeperDto> zookeepers) {
     this.id = id;
     this.name = name;
     this.zookeepers = zookeepers;
@@ -30,11 +32,11 @@ public class EnsembleDto {
   @NotEmpty
   private String name;
 
-  // TODO: validation
-  private Collection<String> zookeepers;
+  @Valid
+  private Collection<ZooKeeperDto> zookeepers;
 
   public static EnsembleDto of(EnsembleEntity ensembleEntity) {
-    return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class);
+    return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class, TYPE_MAP_NAME);
   }
 
   public static List<EnsembleDto> of(List<EnsembleEntity> ensembleEntities) {
@@ -42,6 +44,24 @@ public class EnsembleDto {
         ArrayList::new,
         (ensembleDtos, ensembleEntity) -> ensembleDtos.add(of(ensembleEntity)),
         List::addAll);
+  }
+
+  public static EnsembleDto ofZooKeepers(EnsembleEntity ensembleEntity) {
+    return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class);
+  }
+
+  private static final String TYPE_MAP_NAME = EnsembleDto.class.getSimpleName();
+
+  static {
+    ModelMapperUtils.createTypeMap(
+        EnsembleEntity.class, EnsembleDto.class,
+        TYPE_MAP_NAME).addMappings(
+            new PropertyMap<EnsembleEntity, EnsembleDto>() {
+              @Override
+              protected void configure() {
+                skip(destination.zookeepers);
+              }
+            });
   }
 
   public static final int SIZE_MIN_NAME = 4;

@@ -1,8 +1,8 @@
 package com.jam2in.arcus.admin.tool.bean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jam2in.arcus.admin.tool.exception.ApiError;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiError;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 

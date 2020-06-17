@@ -4,7 +4,7 @@ import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDtoUtils;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matchers;

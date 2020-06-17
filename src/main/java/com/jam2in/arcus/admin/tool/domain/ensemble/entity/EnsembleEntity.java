@@ -7,14 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Collection;
 
@@ -26,7 +26,7 @@ public class EnsembleEntity {
 
   @Builder
   public EnsembleEntity(String name,
-                        Collection<String> zookeepers) {
+                        Collection<ZooKeeperEntity> zookeepers) {
     this.name = name;
     this.zookeepers = zookeepers;
   }
@@ -38,22 +38,17 @@ public class EnsembleEntity {
   @Column(nullable = false, unique = true)
   private String name;
 
-  @ElementCollection
-  @JoinTable(
-      name = "zookeepers",
-      joinColumns = {
-        @JoinColumn(name = "id")
-      }
-  )
-  @Column(name = "zookeeper")
-  private Collection<String> zookeepers;
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "ensemble_id")
+  private Collection<ZooKeeperEntity> zookeepers;
 
   public void updateName(String name) {
     this.name = name;
   }
 
-  public void updateZookeepers(Collection<String> zookeepers) {
-    this.zookeepers = zookeepers;
+  public void updateZookeepers(Collection<ZooKeeperEntity> zookeepers) {
+    this.zookeepers.clear();
+    this.zookeepers.addAll(zookeepers);
   }
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {

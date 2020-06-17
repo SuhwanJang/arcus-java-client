@@ -30,6 +30,12 @@ mail:
   from: no_reply@arcus-admin.com
   username:
   password:
+executor:
+  core-pool-size: 10
+  max-pool-size: 20
+  queue-capacity: 10
+  keep-alive-seconds: 60
+  prefix: Executor-
 
 ---
 

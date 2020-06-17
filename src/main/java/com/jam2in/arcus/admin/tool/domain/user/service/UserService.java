@@ -2,7 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.user.service;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 @Service
@@ -54,7 +54,6 @@ public class UserService {
 
   @Transactional
   public UserDto update(long id, UserDto userDto) {
-    // FIXME: userRepository.save 호출하여 수정? 아니면 영속성 컨텍스트에서 entity field 수정?
     UserEntity userEntity = getEntity(id);
 
     if (!passwordEncoder.matches(userDto.getPassword(), userEntity.getPassword())) {
@@ -78,7 +77,6 @@ public class UserService {
     userEntity.updateRole(userDto.getRole());
     userEntity.updateAccesses(userDto.getAccesses());
 
-    // TODO: roles 업데이트 필요
     return UserDto.of(userEntity);
   }
 
@@ -86,7 +84,7 @@ public class UserService {
     return UserDto.of(getEntity(id));
   }
 
-  public List<UserDto> getAll() {
+  public Collection<UserDto> getAll() {
     return UserDto.of(getAllEntity());
   }
 
@@ -128,8 +126,8 @@ public class UserService {
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
   }
 
-  private List<UserEntity> getAllEntity() {
-    List<UserEntity> users = new ArrayList<>(userRepository.findAll());
+  private Collection<UserEntity> getAllEntity() {
+    Collection<UserEntity> users = new ArrayList<>(userRepository.findAll());
     if (users.isEmpty()) {
       throw new BusinessException(ApiErrorCode.NO_USER);
     }

@@ -1,13 +1,16 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
+import com.jam2in.arcus.admin.tool.domain.ensemble.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -40,9 +43,19 @@ public class EnsembleService {
       ensembleEntity.updateName(ensembleDto.getName());
     }
 
-    ensembleEntity.updateZookeepers(ensembleDto.getZookeepers());
-
     return EnsembleDto.of(ensembleEntity);
+  }
+
+  @Transactional
+  public Collection<ZooKeeperDto> updateZooKeepers(long id,
+                                                   Collection<ZooKeeperDto> zookeeperDtos) {
+    EnsembleEntity ensembleEntity = getEntity(id);
+
+    ensembleEntity.updateZookeepers(ZooKeeperEntity.of(zookeeperDtos));
+
+    ensembleRepository.save(ensembleEntity);
+
+    return ZooKeeperDto.of(ensembleEntity.getZookeepers());
   }
 
   public EnsembleDto get(long id) {
@@ -51,6 +64,10 @@ public class EnsembleService {
 
   public List<EnsembleDto> getAll() {
     return EnsembleDto.of(getAllEntity());
+  }
+
+  public Collection<ZooKeeperDto> getZooKeepers(long id) {
+    return EnsembleDto.ofZooKeepers(getEntity(id)).getZookeepers();
   }
 
   @Transactional

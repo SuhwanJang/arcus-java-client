@@ -1,7 +1,9 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
+import com.jam2in.arcus.admin.tool.domain.ensemble.service.ZooKeeperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -22,8 +25,12 @@ public class EnsembleController {
 
   private final EnsembleService ensembleService;
 
-  public EnsembleController(EnsembleService ensembleService) {
+  private final ZooKeeperService zookeeperService;
+
+  public EnsembleController(EnsembleService ensembleService,
+                            ZooKeeperService zookeeperService) {
     this.ensembleService = ensembleService;
+    this.zookeeperService = zookeeperService;
   }
 
   @PostMapping
@@ -39,16 +46,29 @@ public class EnsembleController {
     return ensembleService.update(id, ensembleDto);
   }
 
+  @PutMapping("/{id}/zookeepers")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<ZooKeeperDto> updateZooKeepers(
+      @PathVariable long id, @RequestBody @Valid Collection<ZooKeeperDto> zookeeperDtos) {
+    return ensembleService.updateZooKeepers(id, zookeeperDtos);
+  }
+
   @GetMapping("/{id}")
   @ResponseStatus(code = HttpStatus.OK)
   public EnsembleDto get(@PathVariable long id) {
     return ensembleService.get(id);
   }
 
-  @GetMapping("/{id}/servers")
+  @GetMapping("/{id}/zookeepers")
   @ResponseStatus(code = HttpStatus.OK)
-  public void getServers(@PathVariable long id) {
-    // TODO: response list of zookeeper server info
+  public Collection<ZooKeeperDto> getZooKeepers(@PathVariable long id) {
+    return ensembleService.getZooKeepers(id);
+  }
+
+  @GetMapping("/{id}/zookeepers/stats")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<ZooKeeperDto> getAllStats(@PathVariable long id) {
+    return zookeeperService.getAllStats(id);
   }
 
   @GetMapping

@@ -4,7 +4,7 @@ import com.jam2in.arcus.admin.tool.domain.user.dto.UserDtoUtils;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntityUtils;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import org.junit.Before;

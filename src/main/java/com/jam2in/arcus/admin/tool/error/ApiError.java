@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.exception;
+package com.jam2in.arcus.admin.tool.error;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonMappingException;

@@ -2,7 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.function.ThrowingSupplier;

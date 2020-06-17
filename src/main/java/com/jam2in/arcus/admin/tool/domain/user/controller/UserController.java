@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -60,7 +60,7 @@ public class UserController {
 
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public List<UserDto> getAll() {
+  public Collection<UserDto> getAll() {
     return userService.getAll();
   }
 

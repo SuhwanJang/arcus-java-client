@@ -1,7 +1,9 @@
-package com.jam2in.arcus.admin.tool.exception;
+package com.jam2in.arcus.admin.tool.error;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.jam2in.arcus.admin.tool.error.ApiError;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;

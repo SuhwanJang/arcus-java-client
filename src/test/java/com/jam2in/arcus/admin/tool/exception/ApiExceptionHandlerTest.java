@@ -4,6 +4,7 @@ import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.common.TestController;
 import com.jam2in.arcus.admin.tool.domain.common.TestDto;
 import com.jam2in.arcus.admin.tool.domain.common.TestService;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

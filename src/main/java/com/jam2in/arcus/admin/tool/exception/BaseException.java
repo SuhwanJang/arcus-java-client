@@ -1,5 +1,7 @@
 package com.jam2in.arcus.admin.tool.exception;
 
+import com.jam2in.arcus.admin.tool.error.ApiError;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import lombok.Getter;
 
 @Getter

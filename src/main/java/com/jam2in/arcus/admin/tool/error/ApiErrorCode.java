@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.exception;
+package com.jam2in.arcus.admin.tool.error;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -58,8 +58,27 @@ public enum ApiErrorCode {
       "ENSEMBLE002", "name is duplicated",
       HttpStatus.CONFLICT),
   ENSEMBLE_NO_ENSEMBLES(
-      "USER007", "no ensembles",
+      "ENSEMBLE003", "no ensembles",
       HttpStatus.NO_CONTENT),
+
+  ZOOKEEPER_NOT_FOUND(
+      "ZOOKEEPER001", "zookeeper is not found",
+      HttpStatus.NOT_FOUND),
+  ZOOKEEPER_CONNECTION_FAILED(
+      "ZOOKEEPER100", "connection failed",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  ZOOKEEPER_SOCKET_TIMEOUT(
+      "ZOOKEEPER101", "socket timeout",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  ZOOKEEPER_TASK_TIMEOUT(
+      "ZOOKEEPER103", "task timeout",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  ZOOKEEPER_TASK_REJECTED(
+      "ZOOKEEPER103", "task rejected",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  ZOOKEEPER_UNKNOWN(
+      "ZOOKEEPER104", "unknown",
+      HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 
 

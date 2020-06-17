@@ -5,7 +5,7 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDtoUtils;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntityUtils;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
-import com.jam2in.arcus.admin.tool.exception.ApiErrorCode;
+import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.junit.Before;
 import org.junit.Test;

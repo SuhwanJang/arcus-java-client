@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     http.authorizeRequests()
         .antMatchers(HttpMethod.POST,
             "/api/*/users").permitAll()
-        .antMatchers("/api/**").authenticated()
+//        .antMatchers("/api/**").authenticated()
         .anyRequest().permitAll();
 
     http.exceptionHandling()
