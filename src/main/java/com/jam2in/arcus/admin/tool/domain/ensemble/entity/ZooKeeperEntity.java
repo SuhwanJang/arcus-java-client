@@ -13,12 +13,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "zookeepers")
+@Table(
+    name = "zookeepers",
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {
+            "ensemble_id", "address"
+        })
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ZooKeeperEntity {

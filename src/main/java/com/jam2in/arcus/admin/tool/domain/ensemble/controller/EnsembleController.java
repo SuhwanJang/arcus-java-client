@@ -58,13 +58,6 @@ public class EnsembleController {
     ensembleService.delete(id);
   }
 
-  @PutMapping("/{id}/zookeepers")
-  @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ZooKeeperDto> updateZooKeepers(
-      @PathVariable long id, @RequestBody @Valid Collection<ZooKeeperDto> zookeeperDtos) {
-    return ensembleService.updateZooKeepers(id, zookeeperDtos);
-  }
-
   @GetMapping("/{id}/zookeepers")
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<ZooKeeperDto> getZooKeepers(@PathVariable long id) {

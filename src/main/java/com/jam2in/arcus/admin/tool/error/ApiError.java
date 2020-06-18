@@ -56,6 +56,14 @@ public final class ApiError {
         Collections.emptyList());
   }
 
+  public static ApiError of(ApiErrorCode apiErrorCode, Collection<Detail> details) {
+    return new ApiError(apiErrorCode, details);
+  }
+
+  public static ApiError of(ApiErrorCode apiErrorCode, Detail detail) {
+    return new ApiError(apiErrorCode, detail);
+  }
+
   public static ApiError of(ApiErrorCode apiErrorCode, InvalidFormatException exception) {
     List<JsonMappingException.Reference> references = exception.getPath();
 
@@ -91,7 +99,6 @@ public final class ApiError {
               Detail.of(
                   fieldError.getField(),
                   Objects.toString(rejectedValue, StringUtils.EMPTY),
-                  // FIXME: message source 사용
                   fieldError.getDefaultMessage()));
         },
         List::addAll));
@@ -131,6 +138,14 @@ public final class ApiError {
       this.name = name;
       this.value = value;
       this.reason = reason;
+    }
+
+    public static Detail of(String value) {
+      return of(StringUtils.EMPTY, value, StringUtils.EMPTY);
+    }
+
+    public static Detail of(String name, String value) {
+      return of(name, value, StringUtils.EMPTY);
     }
 
     public static Detail of(String name, String value, String reason) {

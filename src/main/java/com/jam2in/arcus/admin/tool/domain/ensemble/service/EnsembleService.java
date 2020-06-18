@@ -5,13 +5,18 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,6 +48,11 @@ public class EnsembleService {
       ensembleEntity.updateName(ensembleDto.getName());
     }
 
+    checkDuplicateAddress(ensembleDto, ensembleEntity);
+    ensembleEntity.updateZookeepers(ZooKeeperEntity.of(ensembleDto.getZookeepers()));
+
+    ensembleRepository.save(ensembleEntity);
+
     return EnsembleDto.of(ensembleEntity);
   }
 
@@ -57,18 +67,6 @@ public class EnsembleService {
     }
 
     ensembleRepository.deleteById(id);
-  }
-
-  @Transactional
-  public Collection<ZooKeeperDto> updateZooKeepers(long id,
-                                                   Collection<ZooKeeperDto> zookeeperDtos) {
-    EnsembleEntity ensembleEntity = getEntity(id);
-
-    ensembleEntity.updateZookeepers(ZooKeeperEntity.of(zookeeperDtos));
-
-    ensembleRepository.save(ensembleEntity);
-
-    return ZooKeeperDto.of(ensembleEntity.getZookeepers());
   }
 
   public Collection<ZooKeeperDto> getZooKeepers(long id) {
@@ -88,6 +86,36 @@ public class EnsembleService {
     if (ensembleRepository.existsByName(name)) {
       throw new BusinessException(ApiErrorCode.ENSEMBLE_NAME_DUPLICATED);
     }
+  }
+
+  private void checkDuplicateAddress(EnsembleDto ensembleDto, EnsembleEntity ensembleEntity) {
+    // FIXME: use dynamic query or querydsl
+    Map<String, ZooKeeperEntity> entityMap = ensembleEntity.getZookeepers()
+        .stream()
+        .collect(
+            HashMap::new,
+            (map, entity) -> map.put(entity.getAddress(), entity),
+            Map::putAll);
+
+    List<String> duplicateAddress = ensembleDto.getZookeepers()
+        .stream()
+        .filter(dto -> {
+          ZooKeeperEntity entity = entityMap.get(dto.getAddress());
+          return entity != null && !entity.getId().equals(dto.getId());
+        })
+        .map(ZooKeeperDto::getAddress)
+        .collect(Collectors.toList());
+
+    if (duplicateAddress.isEmpty()) {
+      return;
+    }
+
+    throw new BusinessException(
+        ApiError.of(
+          ApiErrorCode.ZOOKEEPER_ADDRESS_DUPLICATED,
+          duplicateAddress.stream().map(
+              address -> ApiError.Detail.of(StringUtils.EMPTY, address, StringUtils.EMPTY)
+          ).collect(Collectors.toList())));
   }
 
 }

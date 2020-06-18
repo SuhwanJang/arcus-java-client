@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public enum ApiErrorCode {
 
-  // FIXME: message source 사용
-
   COMMON_INTERNAL_SERVER_ERROR(
       "COMMON001", "internal server error",
       HttpStatus.INTERNAL_SERVER_ERROR),
@@ -25,6 +23,9 @@ public enum ApiErrorCode {
   COMMON_INVALID_PARAMETER(
       "COMMON006", "invalid parameter",
       HttpStatus.BAD_REQUEST),
+  COMMON_CONFLICT(
+      "COMMON007", "conflict",
+      HttpStatus.CONFLICT),
 
   COMMON_INVALID_TYPE(
       "must %s type"),
@@ -61,6 +62,9 @@ public enum ApiErrorCode {
   ZOOKEEPER_NOT_FOUND(
       "ZOOKEEPER001", "zookeeper is not found",
       HttpStatus.NOT_FOUND),
+  ZOOKEEPER_ADDRESS_DUPLICATED(
+      "ZOOKEEPER002", "address is duplicated",
+      HttpStatus.CONFLICT),
   ZOOKEEPER_CONNECTION_FAILED(
       "ZOOKEEPER100", "connection failed",
       HttpStatus.INTERNAL_SERVER_ERROR),

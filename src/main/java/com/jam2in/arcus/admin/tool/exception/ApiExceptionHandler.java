@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,14 @@ public class ApiExceptionHandler {
     return createResponse(e.getApiError());
   }
 
-  @ExceptionHandler({Exception.class, RuntimeException.class})
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<?> handleDataIntegrityViolationException(
+      DataIntegrityViolationException e) {
+    return createResponse(ApiError.of(
+        ApiErrorCode.COMMON_CONFLICT));
+  }
+
+  @ExceptionHandler(Exception.class)
   public ResponseEntity<?> handleException(Exception e) {
     log.error(e.getMessage(), e);
 

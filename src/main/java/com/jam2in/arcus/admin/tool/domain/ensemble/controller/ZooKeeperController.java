@@ -29,7 +29,6 @@ public class ZooKeeperController {
     return zookeeperService.getCons(id);
   }
 
-
   @GetMapping("/{id}/srvr")
   @ResponseStatus(code = HttpStatus.OK)
   public ZooKeeperFourLetterSrvrDto getSrvr(@PathVariable long id) {
