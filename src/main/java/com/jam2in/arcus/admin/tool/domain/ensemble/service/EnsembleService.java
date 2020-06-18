@@ -36,7 +36,7 @@ public class EnsembleService {
 
     ensembleRepository.save(ensembleEntity);
 
-    return EnsembleDto.of(ensembleEntity);
+    return EnsembleDto.ofZooKeepers(ensembleEntity);
   }
 
   @Transactional
@@ -53,7 +53,7 @@ public class EnsembleService {
 
     ensembleRepository.save(ensembleEntity);
 
-    return EnsembleDto.of(ensembleEntity);
+    return EnsembleDto.ofZooKeepers(ensembleEntity);
   }
 
   public List<EnsembleDto> getAll() {
