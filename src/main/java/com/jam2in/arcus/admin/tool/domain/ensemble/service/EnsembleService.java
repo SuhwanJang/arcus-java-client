@@ -56,6 +56,10 @@ public class EnsembleService {
     return EnsembleDto.ofZooKeepers(ensembleEntity);
   }
 
+  public EnsembleDto get(long id) {
+    return EnsembleDto.ofZooKeepers(getEntity(id));
+  }
+
   public List<EnsembleDto> getAll() {
     return EnsembleDto.of(getAllEntity());
   }

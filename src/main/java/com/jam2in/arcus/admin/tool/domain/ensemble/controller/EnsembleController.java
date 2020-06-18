@@ -46,6 +46,12 @@ public class EnsembleController {
     return ensembleService.update(id, ensembleDto);
   }
 
+  @GetMapping("/{id}")
+  @ResponseStatus(code = HttpStatus.OK)
+  public EnsembleDto get(@PathVariable long id) {
+    return ensembleService.get(id);
+  }
+
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
   public List<EnsembleDto> getAll() {
