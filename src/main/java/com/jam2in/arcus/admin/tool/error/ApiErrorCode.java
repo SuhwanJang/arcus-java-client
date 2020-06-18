@@ -82,7 +82,6 @@ public enum ApiErrorCode {
       HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 
-
   private final String code;
   private final String message;
   private final HttpStatus status;
