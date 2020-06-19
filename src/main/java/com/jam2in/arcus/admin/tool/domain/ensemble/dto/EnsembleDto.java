@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.dto;
 
+import com.jam2in.arcus.admin.tool.domain.base.dto.BaseDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EnsembleDto {
+public class EnsembleDto extends BaseDto {
 
   @Builder
   public EnsembleDto(Long id, String name, Collection<ZooKeeperDto> zookeepers) {

@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
+import com.jam2in.arcus.admin.tool.domain.base.dto.BaseDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.domain.user.type.Access;
 import com.jam2in.arcus.admin.tool.domain.user.type.Role;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class UserDto {
+public class UserDto extends BaseDto {
 
   @Builder
   public UserDto(Long id,

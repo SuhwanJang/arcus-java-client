@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
+import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
@@ -28,7 +29,7 @@ import java.util.List;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ZooKeeperEntity {
+public class ZooKeeperEntity extends BaseEntity {
 
   @Builder
   public ZooKeeperEntity(Long id, String address) {
@@ -48,6 +49,10 @@ public class ZooKeeperEntity {
   }
 
   public static Collection<ZooKeeperEntity> of(Collection<ZooKeeperDto> zookeeperDtos) {
+    if (zookeeperDtos == null) {
+      return null;
+    }
+
     return zookeeperDtos.stream().collect(
         ArrayList::new,
         (zookeperEntities, zookeeperDto) -> zookeperEntities.add(of(zookeeperDto)),

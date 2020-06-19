@@ -1,11 +1,13 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
+import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +24,7 @@ import java.util.Collection;
 @Table(name = "ensembles")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EnsembleEntity {
+public class EnsembleEntity extends BaseEntity {
 
   @Builder
   public EnsembleEntity(String name,
@@ -48,7 +50,9 @@ public class EnsembleEntity {
 
   public void updateZookeepers(Collection<ZooKeeperEntity> zookeepers) {
     this.zookeepers.clear();
-    this.zookeepers.addAll(zookeepers);
+    if (CollectionUtils.isNotEmpty(zookeepers)) {
+      this.zookeepers.addAll(zookeepers);
+    }
   }
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {

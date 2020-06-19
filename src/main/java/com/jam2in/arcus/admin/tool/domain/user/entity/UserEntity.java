@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.user.entity;
 
+import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.type.Access;
 import com.jam2in.arcus.admin.tool.domain.user.type.Role;
@@ -20,15 +21,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class UserEntity {
+public class UserEntity extends BaseEntity {
 
   @Builder
   public UserEntity(String username,
@@ -41,7 +40,6 @@ public class UserEntity {
     this.password = password;
     this.role = role;
     this.accesses = accesses;
-    this.registered = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
   }
 
   @Id
@@ -50,10 +48,6 @@ public class UserEntity {
 
   @Column(nullable = false, unique = true)
   private String username;
-
-  // FIXME: 제거
-  @Column(nullable = false)
-  private String registered;
 
   @Column(nullable = false, unique = true)
   private String email;
