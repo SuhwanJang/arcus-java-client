@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(username = "test")
 public class EnsembleControllerTest extends BaseControllerTest {
 
+  /*
   private static final String URL = "/api/v1/ensembles";
 
   @MockBean
@@ -235,5 +236,6 @@ public class EnsembleControllerTest extends BaseControllerTest {
         .andExpect(status().isOk())
         .andDo(print());
   }
+   */
 
 }

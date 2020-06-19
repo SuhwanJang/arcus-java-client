@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.is;
 
 public class EnsembleEntityTest {
 
+  /*
   @Test
   public void builder() {
     // given
@@ -81,5 +82,6 @@ public class EnsembleEntityTest {
         "192.168.10.3:2181"
     )));
   }
+   */
 
 }

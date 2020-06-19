@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.is;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EnsembleDtoUtils {
 
+  /*
   public static EnsembleDto.EnsembleDtoBuilder createBuilder() {
     return EnsembleDto.builder()
         .id(1L)
@@ -38,5 +39,6 @@ public final class EnsembleDtoUtils {
     assertThat(ensembleDto.getName(), is(ensembleEntity.getName()));
     assertThat(ensembleDto.getZookeepers(), is(ensembleEntity.getZookeepers()));
   }
+   */
 
 }

@@ -69,7 +69,7 @@ public class UserDtoTest {
     ReflectionTestUtils.setField(userEntity2, "id", 2L);
 
     // when
-    List<UserDto> userDtos = UserDto.of(List.of(userEntity1, userEntity2));
+    List<UserDto> userDtos = (List<UserDto>) UserDto.of(List.of(userEntity1, userEntity2));
 
     // then
     UserDtoUtils.equals(userDtos.get(0), userEntity1);

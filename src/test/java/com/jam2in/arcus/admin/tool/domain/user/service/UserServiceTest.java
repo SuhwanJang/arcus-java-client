@@ -294,7 +294,7 @@ public class UserServiceTest {
     given(userRepository.findAll()).willReturn(List.of(userEntity1, userEntity2));
 
     // when
-    List<UserDto> userDtos = userService.getAll();
+    List<UserDto> userDtos = (List<UserDto>) userService.getAll();
 
     // then
     verify(userRepository, atMostOnce()).findAll();
