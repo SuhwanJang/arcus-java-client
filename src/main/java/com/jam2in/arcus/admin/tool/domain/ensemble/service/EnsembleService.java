@@ -8,6 +8,7 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,6 +95,10 @@ public class EnsembleService {
 
   private void checkDuplicateAddress(EnsembleDto ensembleDto, EnsembleEntity ensembleEntity) {
     // FIXME: use dynamic query or querydsl
+    if (CollectionUtils.isEmpty(ensembleDto.getZookeepers())) {
+      return;
+    }
+
     Map<String, ZooKeeperEntity> entityMap = ensembleEntity.getZookeepers()
         .stream()
         .collect(
