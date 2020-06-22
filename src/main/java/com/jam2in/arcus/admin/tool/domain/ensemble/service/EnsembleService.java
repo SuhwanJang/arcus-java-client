@@ -1,5 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
+import com.jam2in.arcus.admin.tool.domain.ensemble.component.ZooKeeperFourLetterComponent;
+import com.jam2in.arcus.admin.tool.domain.ensemble.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
@@ -25,8 +27,16 @@ public class EnsembleService {
 
   private final EnsembleRepository ensembleRepository;
 
-  public EnsembleService(EnsembleRepository ensembleRepository) {
+  private final ZooKeeperFourLetterComponent fourLetterComponent;
+
+  private final ZooKeeperZNodeComponent znodeComponent;
+
+  public EnsembleService(EnsembleRepository ensembleRepository,
+                         ZooKeeperFourLetterComponent fourLetterComponent,
+                         ZooKeeperZNodeComponent znodeComponent) {
     this.ensembleRepository = ensembleRepository;
+    this.fourLetterComponent = fourLetterComponent;
+    this.znodeComponent = znodeComponent;
   }
 
   @Transactional
@@ -76,6 +86,16 @@ public class EnsembleService {
 
   public Collection<ZooKeeperDto> getZooKeepers(long id) {
     return EnsembleDto.ofZooKeepers(getEntity(id)).getZookeepers();
+  }
+
+  public Collection<ZooKeeperDto> getZooKeeperAllStats(long id) {
+    return fourLetterComponent.getAllStats(get(id).getZookeepers());
+  }
+
+  public Collection<String> getServiceCodes(long id) {
+    return znodeComponent.getServiceCodes(getEntity(id).getZookeepers().stream()
+        .map(ZooKeeperEntity::getAddress)
+        .collect(Collectors.joining(",")));
   }
 
   private EnsembleEntity getEntity(long id) {

@@ -70,7 +70,7 @@ public class UserController {
     userService.delete(id);
   }
 
-  @PostMapping("/resetPassword")
+  @PostMapping("/reset-password")
   @ResponseStatus(code = HttpStatus.OK)
   public void resetPassword(@RequestParam String username) {
     userService.resetPassword(username);

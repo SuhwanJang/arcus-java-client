@@ -65,20 +65,17 @@ public enum ApiErrorCode {
   ZOOKEEPER_ADDRESS_DUPLICATED(
       "ZOOKEEPER002", "address is duplicated",
       HttpStatus.CONFLICT),
-  ZOOKEEPER_CONNECTION_FAILED(
-      "ZOOKEEPER100", "connection failed",
-      HttpStatus.INTERNAL_SERVER_ERROR),
-  ZOOKEEPER_SOCKET_TIMEOUT(
-      "ZOOKEEPER101", "socket timeout",
-      HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_TIMEOUT(
-      "ZOOKEEPER102", "task timeout",
+      "ZOOKEEPER100", "task timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_REJECTED(
-      "ZOOKEEPER103", "task rejected",
+      "ZOOKEEPER101", "task rejected",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  ZOOKEEPER_CONNECTION_FAILED(
+      "ZOOKEEPER102", "connection failed",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_UNKNOWN(
-      "ZOOKEEPER104", "unknown",
+      "ZOOKEEPER199", "unknown",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 

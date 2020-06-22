@@ -3,7 +3,6 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
-import com.jam2in.arcus.admin.tool.domain.ensemble.service.ZooKeeperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +24,8 @@ public class EnsembleController {
 
   private final EnsembleService ensembleService;
 
-  private final ZooKeeperService zookeeperService;
-
-  public EnsembleController(EnsembleService ensembleService,
-                            ZooKeeperService zookeeperService) {
+  public EnsembleController(EnsembleService ensembleService) {
     this.ensembleService = ensembleService;
-    this.zookeeperService = zookeeperService;
   }
 
   @PostMapping
@@ -73,7 +68,13 @@ public class EnsembleController {
   @GetMapping("/{id}/zookeepers/stats")
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<ZooKeeperDto> getAllStats(@PathVariable long id) {
-    return zookeeperService.getAllStats(id);
+    return ensembleService.getZooKeeperAllStats(id);
+  }
+
+  @GetMapping("/{id}/service-code")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<String> getServiceCodes(@PathVariable long id) {
+    return ensembleService.getServiceCodes(id);
   }
 
 }

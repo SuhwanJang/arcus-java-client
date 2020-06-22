@@ -13,24 +13,31 @@
   <springProfile name="local">
     <property name="ROOT_LEVEL" value="info"/>
     <property name="SPRING_LEVEL" value="info"/>
+    <property name="ZOOKEEPER_LEVEL" value="info"/>
   </springProfile>
 
   <springProfile name="dev">
     <property name="ROOT_LEVEL" value="info"/>
     <property name="SPRING_LEVEL" value="info"/>
+    <property name="ZOOKEEPER_LEVEL" value="info"/>
   </springProfile>
 
   <springProfile name="prod">
+    <!-- TODO: add file appender -->
     <property name="ROOT_LEVEL" value="warn"/>
     <property name="SPRING_LEVEL" value="warn"/>
+    <property name="ZOOKEEPER_LEVEL" value="warn"/>
   </springProfile>
-
 
   <root level="${ROOT_LEVEL}">
     <appender-ref ref="console"/>
   </root>
 
   <logger name="org.springframework" level="${SPRING_LEVEL}" additivity="false">
+    <appender-ref ref="console"/>
+  </logger>
+
+  <logger name="org.apache.zookeeper" level="${ZOOKEEPER_LEVEL}" additivity="false">
     <appender-ref ref="console"/>
   </logger>
 
