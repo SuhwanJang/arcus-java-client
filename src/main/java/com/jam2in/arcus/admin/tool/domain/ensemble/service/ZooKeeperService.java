@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class ZooKeeperService {
 
+  // TODO: use property value
   private static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 3000;
   private static final int FOUR_LETTER_TASK_TIMEOUT_MS = 5000;
 

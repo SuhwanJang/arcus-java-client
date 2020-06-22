@@ -83,6 +83,7 @@ public enum ApiErrorCode {
   ;
 
   private final String code;
+  // TODO: use message source
   private final String message;
   private final HttpStatus status;
 
