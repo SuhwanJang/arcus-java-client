@@ -114,7 +114,6 @@ public class EnsembleService {
   }
 
   private void checkDuplicateAddress(EnsembleDto ensembleDto, EnsembleEntity ensembleEntity) {
-    // FIXME: use dynamic query or querydsl
     if (CollectionUtils.isEmpty(ensembleDto.getZookeepers())) {
       return;
     }
