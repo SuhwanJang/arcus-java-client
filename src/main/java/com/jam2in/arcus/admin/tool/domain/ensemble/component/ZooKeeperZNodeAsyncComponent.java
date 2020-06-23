@@ -61,6 +61,7 @@ public class ZooKeeperZNodeAsyncComponent {
           .build();
 
       client.start();
+
       if (!client.getZookeeperClient().blockUntilConnectedOrTimedOut()) {
         throw new ZooKeeperException(new ConnectException());
       }

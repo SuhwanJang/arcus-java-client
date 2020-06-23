@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,21 +119,19 @@ public class EnsembleService {
       return;
     }
 
-    Map<String, ZooKeeperEntity> entityMap = ensembleEntity.getZookeepers()
-        .stream()
-        .collect(
-            HashMap::new,
-            (map, entity) -> map.put(entity.getAddress(), entity),
-            Map::putAll);
+    Set<String> addresses = new HashSet<>();
 
-    List<String> duplicateAddress = ensembleDto.getZookeepers()
+    Set<String> duplicateAddress = ensembleDto.getZookeepers()
         .stream()
-        .filter(dto -> {
-          ZooKeeperEntity entity = entityMap.get(dto.getAddress());
-          return entity != null && !entity.getId().equals(dto.getId());
-        })
         .map(ZooKeeperDto::getAddress)
-        .collect(Collectors.toList());
+        .filter(address -> {
+          if (addresses.contains(address)) {
+            return true;
+          }
+          addresses.add(address);
+          return false;
+        })
+        .collect(Collectors.toSet());
 
     if (duplicateAddress.isEmpty()) {
       return;
