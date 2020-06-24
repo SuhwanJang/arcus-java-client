@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.dto;
 
 import com.jam2in.arcus.admin.tool.domain.base.dto.BaseDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;

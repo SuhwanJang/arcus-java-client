@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
 import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "ensembles")
@@ -57,6 +59,12 @@ public class EnsembleEntity extends BaseEntity {
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {
     return ModelMapperUtils.map(ensembleDto, EnsembleEntity.class);
+  }
+
+  public static String joiningZooKeeperAddresses(EnsembleEntity ensembleEntity) {
+    return ensembleEntity.getZookeepers().stream()
+        .map(ZooKeeperEntity::getAddress)
+        .collect(Collectors.joining(","));
   }
 
 }

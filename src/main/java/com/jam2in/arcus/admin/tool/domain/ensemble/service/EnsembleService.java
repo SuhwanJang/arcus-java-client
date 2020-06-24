@@ -1,17 +1,19 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
-import com.jam2in.arcus.admin.tool.domain.ensemble.component.ZooKeeperFourLetterComponent;
-import com.jam2in.arcus.admin.tool.domain.ensemble.component.ZooKeeperZNodeComponent;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
-import com.jam2in.arcus.admin.tool.domain.ensemble.dto.ZooKeeperDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
-import com.jam2in.arcus.admin.tool.domain.ensemble.entity.ZooKeeperEntity;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +61,7 @@ public class EnsembleService {
       ensembleEntity.updateName(ensembleDto.getName());
     }
 
-    checkDuplicateAddress(ensembleDto, ensembleEntity);
+    checkDuplicateAddress(ensembleDto);
     ensembleEntity.updateZookeepers(ZooKeeperEntity.of(ensembleDto.getZookeepers()));
 
     ensembleRepository.save(ensembleEntity);
@@ -93,9 +95,20 @@ public class EnsembleService {
   }
 
   public Collection<String> getServiceCodes(long id) {
-    return znodeComponent.getServiceCodes(getEntity(id).getZookeepers().stream()
-        .map(ZooKeeperEntity::getAddress)
-        .collect(Collectors.joining(",")));
+    return znodeComponent.getServiceCodes(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
+  }
+
+  public void createCacheCluster(long id, CacheClusterDto clusterDto) {
+    znodeComponent.createCacheCluster(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
+        clusterDto);
+  }
+
+  public void createReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
+    znodeComponent.createReplicationCacheCluster(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
+        replClusterDto);
   }
 
   private EnsembleEntity getEntity(long id) {
@@ -113,7 +126,7 @@ public class EnsembleService {
     }
   }
 
-  private void checkDuplicateAddress(EnsembleDto ensembleDto, EnsembleEntity ensembleEntity) {
+  private void checkDuplicateAddress(EnsembleDto ensembleDto) {
     if (CollectionUtils.isEmpty(ensembleDto.getZookeepers())) {
       return;
     }
