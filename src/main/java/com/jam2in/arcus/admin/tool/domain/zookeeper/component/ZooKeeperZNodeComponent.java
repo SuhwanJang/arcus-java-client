@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ServiceCodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.collections4.ListUtils;
@@ -12,8 +13,9 @@ import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.utils.CloseableUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class ZooKeeperZNodeComponent {
@@ -30,16 +32,31 @@ public class ZooKeeperZNodeComponent {
     this.znodeComponent = znodeComponent;
   }
 
-  public List<String> getServiceCodes(String addresses) {
+  public Collection<ServiceCodeDto> getServiceCodes(String addresses) {
     return handleClient(addresses,
         (client) -> znodeComponent.getAsyncNonReplServiceCodes(client)
-            .thenCombine(znodeComponent.getAsyncReplServiceCodes(client), ListUtils::union)
+            .thenCombine(znodeComponent.getAsyncReplServiceCodes(client),
+                (nonRepl, repl) ->
+                    ListUtils.union(
+                        nonRepl.stream()
+                            .map(serviceCode ->
+                                ServiceCodeDto.builder()
+                                    .serviceCode(serviceCode)
+                                    .build())
+                            .collect(Collectors.toList()),
+                        repl.stream()
+                            .map(serviceCode ->
+                                ServiceCodeDto.builder()
+                                    .serviceCode(serviceCode)
+                                    .replication(true)
+                                    .build())
+                            .collect(Collectors.toList()))
+            )
             .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
             .join());
   }
 
-  public void createCacheCluster(String addresses,
-                                 CacheClusterDto clusterDto) {
+  public void createCacheCluster(String addresses, CacheClusterDto clusterDto) {
     handleClient(addresses,
         (client) -> znodeComponent.createAsyncCacheCluster(client, clusterDto)
             .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
@@ -47,10 +64,40 @@ public class ZooKeeperZNodeComponent {
   }
 
   public void createReplicationCacheCluster(String addresses,
-                                     ReplicationCacheClusterDto replClusterDto) {
+                                            ReplicationCacheClusterDto replClusterDto) {
     handleClient(addresses,
         (client) -> znodeComponent.createAsyncReplicationCacheCluster(client, replClusterDto)
             .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+            .join());
+  }
+
+  public void deleteCacheCluster(String addresses, CacheClusterDto clusterDto) {
+    handleClient(addresses,
+        (client) -> znodeComponent.deleteAsyncCacheCluster(client, clusterDto))
+        .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        .join();
+  }
+
+  public void deleteReplicationCacheCluster(String addresses,
+                                            ReplicationCacheClusterDto replClusterDto) {
+    handleClient(addresses,
+        (client) -> znodeComponent.deleteAsyncReplicationCacheCluster(client, replClusterDto))
+        .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        .join();
+  }
+
+  public void deleteServiceCode(String addresses, String serviceCode) {
+    handleClient(addresses,
+        (client) -> znodeComponent.deleteAsyncServiceCode(client, serviceCode)
+            .orTimeout(ZNODE_TASK_TIMEOUT_MS,  TimeUnit.SECONDS)
+            .join());
+
+  }
+
+  public void deleteReplicationServiceCode(String addresses, String serviceCode) {
+    handleClient(addresses,
+        (client) -> znodeComponent.deleteAsyncReplicationServiceCode(client, serviceCode)
+            .orTimeout(ZNODE_TASK_TIMEOUT_MS,  TimeUnit.SECONDS)
             .join());
   }
 

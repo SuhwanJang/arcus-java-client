@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PathUtils {
 
-  public static String create(Object... paths) {
+  public static String path(Object... paths) {
     return StringUtils.join(paths, "/");
   }
 

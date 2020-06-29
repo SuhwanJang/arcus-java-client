@@ -12,11 +12,12 @@ import java.util.Collection;
 public class ReplicationCacheClusterDto extends CacheClusterBaseDto {
 
   @Builder
-  public ReplicationCacheClusterDto(String serviceCode, Collection<ReplicationGroup> groups) {
+  public ReplicationCacheClusterDto(String serviceCode,
+                                    Collection<ReplicationGroupDto> groups) {
     super(serviceCode);
     this.groups = groups;
   }
 
-  private Collection<ReplicationGroup> groups;
+  private Collection<ReplicationGroupDto> groups;
 
 }

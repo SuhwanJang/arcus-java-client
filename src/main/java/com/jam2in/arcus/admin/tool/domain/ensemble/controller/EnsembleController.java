@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ServiceCodeDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
@@ -75,23 +76,38 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-code")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<String> getServiceCodes(@PathVariable long id) {
+  public Collection<ServiceCodeDto> getServiceCodes(@PathVariable long id) {
     return ensembleService.getServiceCodes(id);
   }
 
-  @PostMapping("/{id}/cache-clusters")
+  @PostMapping("/{id}/cache-clusters/create")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createCacheCluster(@PathVariable long id,
                                  @RequestBody @Valid CacheClusterDto clusterDto) {
     ensembleService.createCacheCluster(id, clusterDto);
   }
 
-  @PostMapping("/{id}/repl-cache-clusters")
+  @PostMapping("/{id}/repl-cache-clusters/create")
   @ResponseStatus(code = HttpStatus.CREATED)
-  public void createReplCacheCluster(
+  public void createReplicationCacheCluster(
       @PathVariable long id,
       @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
     ensembleService.createReplicationCacheCluster(id, replClusterDto);
+  }
+
+  @PostMapping("/{id}/cache-clusters/delete")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void deleteCacheCluster(@PathVariable long id,
+                                 @RequestBody @Valid CacheClusterDto clusterDto) {
+    ensembleService.deleteCacheCluster(id, clusterDto);
+  }
+
+  @PostMapping("/{id}/repl-cache-clusters/delete")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void deleteReplicationCacheCluster(
+      @PathVariable long id,
+      @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
+    ensembleService.deleteReplicationCacheCluster(id, replClusterDto);
   }
 
 }

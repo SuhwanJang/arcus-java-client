@@ -58,16 +58,16 @@ public class ZooKeeperZNodeAsyncComponent {
     createZNode(client, ARCUS_CACHE_SERVER_LOG_PATH);
 
     createZNode(client,
-        PathUtils.create(ARCUS_CLIENT_LIST_PATH,
+        PathUtils.path(ARCUS_CLIENT_LIST_PATH,
             clusterDto.getServiceCode()));
 
     createZNode(client,
-        PathUtils.create(ARCUS_CACHE_LIST_PATH,
+        PathUtils.path(ARCUS_CACHE_LIST_PATH,
             clusterDto.getServiceCode()));
 
     CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
         createZNode(client,
-            PathUtils.create(ARCUS_CACHE_SERVER_MAPPING_PATH,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH,
                 address, clusterDto.getServiceCode()))
     );
 
@@ -81,22 +81,22 @@ public class ZooKeeperZNodeAsyncComponent {
     createZNode(client, ARCUS_REPL_CACHE_SERVER_LOG_PATH);
 
     createZNode(client,
-        PathUtils.create(ARCUS_REPL_CLIENT_LIST_PATH,
+        PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH,
             replClusterDto.getServiceCode()));
 
     createZNode(client,
-        PathUtils.create(ARCUS_REPL_CACHE_LIST_PATH,
+        PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH,
             replClusterDto.getServiceCode()));
 
     replClusterDto.getGroups().forEach(group -> {
       createZNode(client,
-          PathUtils.create(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+          PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
               group.getNode1().getNodeAddress(),
               replClusterDto.getServiceCode()
                   + "^" + group.getName()
                   + "^" + group.getNode1().getListenAddress()));
       createZNode(client,
-          PathUtils.create(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+          PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
               group.getNode2().getNodeAddress(),
               replClusterDto.getServiceCode()
                   + "^" + group.getName()
@@ -105,10 +105,56 @@ public class ZooKeeperZNodeAsyncComponent {
 
     CollectionUtils.emptyIfNull(replClusterDto.getGroups()).forEach(group ->
         createZNode(client,
-          PathUtils.create(ARCUS_REPL_GROUP_LIST_PATH,
+          PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH,
               replClusterDto.getServiceCode(), group.getName()))
     );
 
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
+  public CompletableFuture<Void> deleteAsyncCacheCluster(CuratorFramework client,
+                                                         CacheClusterDto clusterDto) {
+    CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
+        deleteZNode(client,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)
+    ));
+
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
+  public CompletableFuture<Void> deleteAsyncReplicationCacheCluster(
+      CuratorFramework client,
+      ReplicationCacheClusterDto replClusterDto) {
+    CollectionUtils.emptyIfNull(replClusterDto.getGroups()).forEach(group -> {
+      if (group.getNode1() != null) {
+        deleteZNode(client,
+            PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+                group.getNode1().getNodeAddress()));
+      }
+
+      if (group.getNode2() != null) {
+        deleteZNode(client,
+            PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+                group.getNode2().getNodeAddress()));
+      }
+    });
+
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
+  public CompletableFuture<Void> deleteAsyncServiceCode(CuratorFramework client,
+                                                        String serviceCode) {
+    // TODO
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
+  public CompletableFuture<Void> deleteAsyncReplicationServiceCode(CuratorFramework client,
+                                                                   String serviceCode) {
+    // TODO
     return CompletableFuture.completedFuture(null);
   }
 
@@ -169,6 +215,16 @@ public class ZooKeeperZNodeAsyncComponent {
       client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path);
     } catch (Exception e) {
       if (!(e instanceof KeeperException.NodeExistsException)) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private void deleteZNode(CuratorFramework client, String path) {
+    try {
+      client.delete().deletingChildrenIfNeeded().forPath(path);
+    } catch (Exception e) {
+      if (!(e instanceof KeeperException.NoNodeException)) {
         throw new RuntimeException(e);
       }
     }

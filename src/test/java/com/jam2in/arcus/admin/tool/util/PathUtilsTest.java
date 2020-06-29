@@ -13,9 +13,9 @@ public class PathUtilsTest {
     String relative1 = "foo";
     String relative2 = "bar";
 
-    assertThat(PathUtils.create(base), is("/api/v1/test"));
-    assertThat(PathUtils.create(base, relative1), is("/api/v1/test/foo"));
-    assertThat(PathUtils.create(base, relative1, relative2), is("/api/v1/test/foo/bar"));
+    assertThat(PathUtils.path(base), is("/api/v1/test"));
+    assertThat(PathUtils.path(base, relative1), is("/api/v1/test/foo"));
+    assertThat(PathUtils.path(base, relative1, relative2), is("/api/v1/test/foo/bar"));
   }
 
 }

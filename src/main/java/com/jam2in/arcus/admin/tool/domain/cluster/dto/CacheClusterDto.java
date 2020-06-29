@@ -12,7 +12,8 @@ import java.util.Collection;
 public class CacheClusterDto extends CacheClusterBaseDto {
 
   @Builder
-  public CacheClusterDto(String serviceCode, Collection<String> addresses) {
+  public CacheClusterDto(String serviceCode,
+                         Collection<String> addresses) {
     super(serviceCode);
     this.addresses = addresses;
   }

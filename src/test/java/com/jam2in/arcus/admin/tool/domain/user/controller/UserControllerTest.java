@@ -231,7 +231,7 @@ public class UserControllerTest extends BaseControllerTest {
   @Test
   public void update_invalidContent() throws Throwable {
     invalidContentNotEmpty(
-        () -> put(PathUtils.create(URL, 1L), userDtoBuilder
+        () -> put(PathUtils.path(URL, 1L), userDtoBuilder
             .username(null)
             .build()),
         "username"

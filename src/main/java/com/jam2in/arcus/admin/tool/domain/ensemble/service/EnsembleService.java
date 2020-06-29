@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ServiceCodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
@@ -94,7 +95,7 @@ public class EnsembleService {
     return fourLetterComponent.getAllStats(get(id).getZookeepers());
   }
 
-  public Collection<String> getServiceCodes(long id) {
+  public Collection<ServiceCodeDto> getServiceCodes(long id) {
     return znodeComponent.getServiceCodes(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
   }
@@ -107,8 +108,31 @@ public class EnsembleService {
 
   public void createReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
     znodeComponent.createReplicationCacheCluster(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
+  }
+
+  public void deleteServiceCode(long id, String serviceCode) {
+    znodeComponent.deleteServiceCode(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
+        serviceCode);
+  }
+
+  public void deleteCacheCluster(long id, CacheClusterDto clusterDto) {
+    znodeComponent.deleteCacheCluster(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
+        clusterDto);
+  }
+
+  public void deleteReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
+    znodeComponent.deleteReplicationCacheCluster(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
         replClusterDto);
+  }
+
+  public void deleteReplicationServiceCode(long id, String serviceCode) {
+    znodeComponent.deleteReplicationServiceCode(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
+        serviceCode);
   }
 
   private EnsembleEntity getEntity(long id) {
