@@ -2,8 +2,8 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
 import com.google.common.net.HostAndPort;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.exception.ZooKeeperException;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.util.FourLetterWordMain;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.client.FourLetterWordMain;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
