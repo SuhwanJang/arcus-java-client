@@ -80,14 +80,14 @@ public class EnsembleController {
     return ensembleService.getServiceCodes(id);
   }
 
-  @PostMapping("/{id}/cache-clusters/create")
+  @PostMapping("/{id}/cache-clusters")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createCacheCluster(@PathVariable long id,
                                  @RequestBody @Valid CacheClusterDto clusterDto) {
     ensembleService.createCacheCluster(id, clusterDto);
   }
 
-  @PostMapping("/{id}/repl-cache-clusters/create")
+  @PostMapping("/{id}/repl-cache-clusters")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createReplicationCacheCluster(
       @PathVariable long id,
@@ -95,14 +95,14 @@ public class EnsembleController {
     ensembleService.createReplicationCacheCluster(id, replClusterDto);
   }
 
-  @PostMapping("/{id}/cache-clusters/delete")
+  @DeleteMapping("/{id}/cache-clusters")
   @ResponseStatus(code = HttpStatus.OK)
   public void deleteCacheCluster(@PathVariable long id,
                                  @RequestBody @Valid CacheClusterDto clusterDto) {
     ensembleService.deleteCacheCluster(id, clusterDto);
   }
 
-  @PostMapping("/{id}/repl-cache-clusters/delete")
+  @DeleteMapping("/{id}/repl-cache-clusters")
   @ResponseStatus(code = HttpStatus.OK)
   public void deleteReplicationCacheCluster(
       @PathVariable long id,
