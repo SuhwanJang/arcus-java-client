@@ -93,14 +93,4 @@ public class FourLetterWordMain {
       }
     }
   }
-
-  public static void main(String[] args)
-      throws IOException
-  {
-    if (args.length != 3) {
-      System.out.println("Usage: FourLetterWordMain <host> <port> <cmd>");
-    } else {
-      System.out.println(send4LetterWord(args[0], Integer.parseInt(args[1]), args[2]));
-    }
-  }
 }

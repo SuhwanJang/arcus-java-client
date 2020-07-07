@@ -2,7 +2,6 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ServiceCodeDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
@@ -74,10 +73,16 @@ public class EnsembleController {
     return ensembleService.getZooKeeperAllStats(id);
   }
 
-  @GetMapping("/{id}/service-code")
+  @GetMapping("/{id}/service-codes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ServiceCodeDto> getServiceCodes(@PathVariable long id) {
+  public Collection<String> getServiceCodes(@PathVariable long id) {
     return ensembleService.getServiceCodes(id);
+  }
+
+  @GetMapping("/{id}/repl-service-codes")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<String> getReplicationServiceCodes(@PathVariable long id) {
+    return ensembleService.getReplicationServiceCodes(id);
   }
 
   @PostMapping("/{id}/cache-clusters")
@@ -95,6 +100,14 @@ public class EnsembleController {
     ensembleService.createReplicationCacheCluster(id, replClusterDto);
   }
 
+  @PostMapping("/{id}/cache-clusters/cache-node/batch-delete")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void deleteCacheNode(@PathVariable long id,
+                              @RequestBody @Valid CacheClusterDto clusterDto) {
+    ensembleService.deleteCacheCluster(id, clusterDto);
+  }
+
+  /*
   @DeleteMapping("/{id}/cache-clusters")
   @ResponseStatus(code = HttpStatus.OK)
   public void deleteCacheCluster(@PathVariable long id,
@@ -109,5 +122,6 @@ public class EnsembleController {
       @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
     ensembleService.deleteReplicationCacheCluster(id, replClusterDto);
   }
+   */
 
 }

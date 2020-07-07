@@ -2,21 +2,13 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.exception.ZooKeeperException;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.utils.CloseableUtils;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.net.ConnectException;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -42,60 +34,72 @@ public class ZooKeeperZNodeAsyncComponent {
   private static final String ARCUS_REPL_GROUP_LIST_PATH =
       "/arcus_repl/group_list";
 
-  @Async
-  public CompletableFuture<List<String>> getAsyncNonReplServiceCodes(CuratorFramework client) {
-    return getZNode(client, ARCUS_CACHE_LIST_PATH);
+  private final ZooKeeperClient zookeeperClient;
+
+  public ZooKeeperZNodeAsyncComponent(ZooKeeperClient zookeeperClient) {
+    this.zookeeperClient = zookeeperClient;
+  }
+
+  public Object openConnection(String address, int connectionTimeoutMs) {
+    return zookeeperClient.open(address, connectionTimeoutMs);
+  }
+
+  public void closeConnection(Object connection) {
+    zookeeperClient.close(connection);
   }
 
   @Async
-  public CompletableFuture<List<String>> getAsyncReplServiceCodes(CuratorFramework client) {
-    return getZNode(client, ARCUS_REPL_CACHE_LIST_PATH);
+  public CompletableFuture<Collection<String>> getAsyncServiceCodes(Object connection) {
+    return CompletableFuture.completedFuture(
+        zookeeperClient.get(connection, ARCUS_CACHE_LIST_PATH));
   }
 
   @Async
-  public CompletableFuture<Void> createAsyncCacheCluster(CuratorFramework client,
+  public CompletableFuture<Collection<String>> getAsyncReplicationServiceCodes(Object connection) {
+    return CompletableFuture.completedFuture(
+        zookeeperClient.get(connection, ARCUS_REPL_CACHE_LIST_PATH));
+  }
+
+  @Async
+  public CompletableFuture<Void> createAsyncCacheCluster(Object connection,
                                                          CacheClusterDto clusterDto) {
-    createZNode(client, ARCUS_CACHE_SERVER_LOG_PATH);
+    zookeeperClient.create(connection,
+        ARCUS_CACHE_SERVER_LOG_PATH);
 
-    createZNode(client,
-        PathUtils.path(ARCUS_CLIENT_LIST_PATH,
-            clusterDto.getServiceCode()));
+    zookeeperClient.create(connection,
+        PathUtils.path(ARCUS_CLIENT_LIST_PATH, clusterDto.getServiceCode()));
 
-    createZNode(client,
-        PathUtils.path(ARCUS_CACHE_LIST_PATH,
-            clusterDto.getServiceCode()));
+    zookeeperClient.create(connection,
+        PathUtils.path(ARCUS_CACHE_LIST_PATH, clusterDto.getServiceCode()));
 
     CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
-        createZNode(client,
-            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH,
-                address, clusterDto.getServiceCode()))
-    );
+        zookeeperClient.create(connection,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address, clusterDto.getServiceCode())));
 
     return CompletableFuture.completedFuture(null);
   }
 
   @Async
   public CompletableFuture<Void> createAsyncReplicationCacheCluster(
-      CuratorFramework client,
-      ReplicationCacheClusterDto replClusterDto) {
-    createZNode(client, ARCUS_REPL_CACHE_SERVER_LOG_PATH);
+      Object connection, ReplicationCacheClusterDto replClusterDto) {
+    zookeeperClient.create(connection,
+        ARCUS_REPL_CACHE_SERVER_LOG_PATH);
 
-    createZNode(client,
-        PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH,
-            replClusterDto.getServiceCode()));
+    zookeeperClient.create(connection,
+        PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH, replClusterDto.getServiceCode()));
 
-    createZNode(client,
-        PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH,
-            replClusterDto.getServiceCode()));
+    zookeeperClient.create(connection,
+        PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH, replClusterDto.getServiceCode()));
 
     replClusterDto.getGroups().forEach(group -> {
-      createZNode(client,
+      zookeeperClient.create(connection,
           PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
               group.getNode1().getNodeAddress(),
               replClusterDto.getServiceCode()
                   + "^" + group.getName()
                   + "^" + group.getNode1().getListenAddress()));
-      createZNode(client,
+
+      zookeeperClient.create(connection,
           PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
               group.getNode2().getNodeAddress(),
               replClusterDto.getServiceCode()
@@ -104,130 +108,45 @@ public class ZooKeeperZNodeAsyncComponent {
     });
 
     CollectionUtils.emptyIfNull(replClusterDto.getGroups()).forEach(group ->
-        createZNode(client,
-          PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH,
-              replClusterDto.getServiceCode(), group.getName()))
-    );
+        zookeeperClient.create(connection,
+            PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH,
+              replClusterDto.getServiceCode(), group.getName())));
 
     return CompletableFuture.completedFuture(null);
   }
 
   @Async
-  public CompletableFuture<Void> deleteAsyncCacheCluster(CuratorFramework client,
+  public CompletableFuture<Void> deleteAsyncCacheCluster(Object connection,
                                                          CacheClusterDto clusterDto) {
     CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
-        deleteZNode(client,
-            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)
-    ));
+        zookeeperClient.delete(connection,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)));
 
     return CompletableFuture.completedFuture(null);
   }
 
   @Async
-  public CompletableFuture<Void> deleteAsyncReplicationCacheCluster(
-      CuratorFramework client,
-      ReplicationCacheClusterDto replClusterDto) {
-    CollectionUtils.emptyIfNull(replClusterDto.getGroups()).forEach(group -> {
-      if (group.getNode1() != null) {
-        deleteZNode(client,
-            PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
-                group.getNode1().getNodeAddress()));
-      }
-
-      if (group.getNode2() != null) {
-        deleteZNode(client,
-            PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
-                group.getNode2().getNodeAddress()));
-      }
-    });
+  public CompletableFuture<Void> deleteAsyncReplicationCacheCluster(Object connection,
+                                                                    CacheClusterDto clusterDto) {
+    CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
+        zookeeperClient.delete(connection,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)));
 
     return CompletableFuture.completedFuture(null);
   }
 
   @Async
-  public CompletableFuture<Void> deleteAsyncServiceCode(CuratorFramework client,
+  public CompletableFuture<Void> deleteAsyncServiceCode(Object connection,
                                                         String serviceCode) {
     // TODO
     return CompletableFuture.completedFuture(null);
   }
 
   @Async
-  public CompletableFuture<Void> deleteAsyncReplicationServiceCode(CuratorFramework client,
+  public CompletableFuture<Void> deleteAsyncReplicationServiceCode(Object connection,
                                                                    String serviceCode) {
     // TODO
     return CompletableFuture.completedFuture(null);
-  }
-
-  @Async
-  public CompletableFuture<CuratorFramework> createAsnycClient(String addresses,
-                                                               RetryPolicy retryPolicy,
-                                                               int connectionTimeoutMs) {
-    CompletableFuture<CuratorFramework> completableFuture = new CompletableFuture<>();
-
-    CuratorFramework client = null;
-
-    try {
-      client = CuratorFrameworkFactory.builder()
-          .connectString(addresses)
-          .retryPolicy(retryPolicy)
-          .connectionTimeoutMs(connectionTimeoutMs)
-          .build();
-
-      client.start();
-
-      if (!client.getZookeeperClient().blockUntilConnectedOrTimedOut()) {
-        throw new ZooKeeperException(new ConnectException());
-      }
-
-      completableFuture.complete(client);
-    } catch (Exception e) {
-      if (client != null) {
-        CloseableUtils.closeQuietly(client);
-      }
-      if (e instanceof ZooKeeperException) {
-        throw (ZooKeeperException) e;
-      }
-      throw new ZooKeeperException(e);
-    }
-
-    return completableFuture;
-  }
-
-  @SuppressWarnings("unchecked")
-  private CompletableFuture<List<String>> getZNode(CuratorFramework client, String path) {
-    CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
-
-    try {
-      completableFuture.complete(client.getChildren().forPath(path));
-    } catch (Exception e) {
-      if (e instanceof KeeperException.NoNodeException) {
-        completableFuture.complete(Collections.EMPTY_LIST);
-      } else {
-        throw new RuntimeException(e);
-      }
-    }
-
-    return completableFuture;
-  }
-
-  private void createZNode(CuratorFramework client, String path) {
-    try {
-      client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath(path);
-    } catch (Exception e) {
-      if (!(e instanceof KeeperException.NodeExistsException)) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  private void deleteZNode(CuratorFramework client, String path) {
-    try {
-      client.delete().deletingChildrenIfNeeded().forPath(path);
-    } catch (Exception e) {
-      if (!(e instanceof KeeperException.NoNodeException)) {
-        throw new RuntimeException(e);
-      }
-    }
   }
 
 }

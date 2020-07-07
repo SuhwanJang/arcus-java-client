@@ -2,7 +2,6 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ServiceCodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
@@ -95,8 +94,13 @@ public class EnsembleService {
     return fourLetterComponent.getAllStats(get(id).getZookeepers());
   }
 
-  public Collection<ServiceCodeDto> getServiceCodes(long id) {
+  public Collection<String> getServiceCodes(long id) {
     return znodeComponent.getServiceCodes(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
+  }
+
+  public Collection<String> getReplicationServiceCodes(long id) {
+    return znodeComponent.getReplicationServiceCodes(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
   }
 
@@ -123,10 +127,10 @@ public class EnsembleService {
         clusterDto);
   }
 
-  public void deleteReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
+  public void deleteReplicationCacheCluster(long id, CacheClusterDto clusterDto) {
     znodeComponent.deleteReplicationCacheCluster(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        replClusterDto);
+        clusterDto);
   }
 
   public void deleteReplicationServiceCode(long id, String serviceCode) {
