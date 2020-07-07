@@ -13,11 +13,11 @@ public class CacheClusterDto extends CacheClusterBaseDto {
 
   @Builder
   public CacheClusterDto(String serviceCode,
-                         Collection<String> addresses) {
+                         Collection<CacheNodeDto> nodes) {
     super(serviceCode);
-    this.addresses = addresses;
+    this.nodes = nodes;
   }
 
-  private Collection<String> addresses;
+  private Collection<CacheNodeDto> nodes;
 
 }

@@ -9,10 +9,12 @@ import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ReplicationGroupDto {
+public class ReplicationCacheGroupDto {
 
   @Builder
-  public ReplicationGroupDto(String name, ReplicationNodeDto node1, ReplicationNodeDto node2) {
+  public ReplicationCacheGroupDto(String name,
+                                  ReplicationCacheNodeDto node1,
+                                  ReplicationCacheNodeDto node2) {
     this.name = name;
     this.node1 = node1;
     this.node2 = node2;
@@ -21,8 +23,8 @@ public class ReplicationGroupDto {
   @NotEmpty
   private String name;
 
-  private ReplicationNodeDto node1;
+  private ReplicationCacheNodeDto node1;
 
-  private ReplicationNodeDto node2;
+  private ReplicationCacheNodeDto node2;
 
 }

@@ -9,10 +9,10 @@ import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ReplicationNodeDto {
+public class ReplicationCacheNodeDto {
 
   @Builder
-  public ReplicationNodeDto(String nodeAddress, String listenAddress) {
+  public ReplicationCacheNodeDto(String nodeAddress, String listenAddress) {
     this.nodeAddress = nodeAddress;
     this.listenAddress = listenAddress;
   }

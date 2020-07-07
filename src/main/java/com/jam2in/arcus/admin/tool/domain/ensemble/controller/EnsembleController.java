@@ -85,14 +85,14 @@ public class EnsembleController {
     return ensembleService.getReplicationServiceCodes(id);
   }
 
-  @PostMapping("/{id}/cache-clusters")
+  @PostMapping("/{id}/service-codes")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createCacheCluster(@PathVariable long id,
                                  @RequestBody @Valid CacheClusterDto clusterDto) {
     ensembleService.createCacheCluster(id, clusterDto);
   }
 
-  @PostMapping("/{id}/repl-cache-clusters")
+  @PostMapping("/{id}/repl-service-codes")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createReplicationCacheCluster(
       @PathVariable long id,

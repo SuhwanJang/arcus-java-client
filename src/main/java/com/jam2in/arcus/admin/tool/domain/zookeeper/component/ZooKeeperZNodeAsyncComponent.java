@@ -72,9 +72,10 @@ public class ZooKeeperZNodeAsyncComponent {
     zookeeperClient.create(connection,
         PathUtils.path(ARCUS_CACHE_LIST_PATH, clusterDto.getServiceCode()));
 
-    CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
+    CollectionUtils.emptyIfNull(clusterDto.getNodes()).forEach(node ->
         zookeeperClient.create(connection,
-            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address, clusterDto.getServiceCode())));
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH,
+                node.getAddress(), clusterDto.getServiceCode())));
 
     return CompletableFuture.completedFuture(null);
   }
@@ -118,9 +119,9 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncCacheCluster(Object connection,
                                                          CacheClusterDto clusterDto) {
-    CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
+    CollectionUtils.emptyIfNull(clusterDto.getNodes()).forEach(node ->
         zookeeperClient.delete(connection,
-            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)));
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, node.getAddress())));
 
     return CompletableFuture.completedFuture(null);
   }
@@ -128,9 +129,9 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncReplicationCacheCluster(Object connection,
                                                                     CacheClusterDto clusterDto) {
-    CollectionUtils.emptyIfNull(clusterDto.getAddresses()).forEach(address ->
+    CollectionUtils.emptyIfNull(clusterDto.getNodes()).forEach(node ->
         zookeeperClient.delete(connection,
-            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)));
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, node.getAddress())));
 
     return CompletableFuture.completedFuture(null);
   }
