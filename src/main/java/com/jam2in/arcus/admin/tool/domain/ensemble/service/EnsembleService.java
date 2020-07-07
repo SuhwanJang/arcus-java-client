@@ -86,10 +86,6 @@ public class EnsembleService {
     ensembleRepository.deleteById(id);
   }
 
-  public Collection<ZooKeeperDto> getZooKeepers(long id) {
-    return EnsembleDto.ofZooKeepers(getEntity(id)).getZookeepers();
-  }
-
   public Collection<ZooKeeperDto> getZooKeeperAllStats(long id) {
     return fourLetterComponent.getAllStats(get(id).getZookeepers());
   }
@@ -106,13 +102,22 @@ public class EnsembleService {
 
   public void createCacheCluster(long id, CacheClusterDto clusterDto) {
     znodeComponent.createCacheCluster(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        clusterDto);
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), clusterDto);
   }
 
   public void createReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
     znodeComponent.createReplicationCacheCluster(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
+  }
+
+  public void deleteCacheNode(long id, String serviceCode, String cacheNodeAddress) {
+    znodeComponent.deleteCacheNode(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
+  }
+
+  public void deleteReplicationCacheNode(long id, String serviceCode, String cacheNodeAddress) {
+    znodeComponent.deleteReplicationCacheNode(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
   }
 
   public void deleteServiceCode(long id, String serviceCode) {

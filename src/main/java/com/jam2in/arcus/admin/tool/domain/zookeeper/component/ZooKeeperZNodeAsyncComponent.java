@@ -117,6 +117,24 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
+  public CompletableFuture<Void> deleteCacheNode(Object connection,
+                                                 String cacheNodeAddress) {
+    zookeeperClient.delete(connection,
+        PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, cacheNodeAddress));
+
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
+  public CompletableFuture<Void> deleteReplicationCacheNode(Object connection,
+                                                            String cacheNodeAddress) {
+    zookeeperClient.delete(connection,
+        PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, cacheNodeAddress));
+
+    return CompletableFuture.completedFuture(null);
+  }
+
+  @Async
   public CompletableFuture<Void> deleteAsyncCacheCluster(Object connection,
                                                          CacheClusterDto clusterDto) {
     CollectionUtils.emptyIfNull(clusterDto.getNodes()).forEach(node ->
