@@ -2,7 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.client;
 
 import com.google.common.net.HostAndPort;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.exception.ZooKeeperException;
-import org.apache.zookeeper.client.FourLetterWordMain;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.util.FourLetterWordMain;
 
 public class ZooKeeperFourLetterWordMain implements ZooKeeperFourLetterWord {
 
