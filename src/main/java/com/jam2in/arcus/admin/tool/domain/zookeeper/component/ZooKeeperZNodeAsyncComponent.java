@@ -193,10 +193,10 @@ public class ZooKeeperZNodeAsyncComponent {
                 PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)));
 
     zookeeperClient.delete(connection,
-        PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH, serviceCode));
+        PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode));
 
     zookeeperClient.delete(connection,
-        PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode));
+        PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH, serviceCode));
 
     zookeeperClient.delete(connection,
         PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH, serviceCode));
