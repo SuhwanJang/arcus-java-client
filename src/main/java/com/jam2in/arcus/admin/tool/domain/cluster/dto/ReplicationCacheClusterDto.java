@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +19,7 @@ public class ReplicationCacheClusterDto extends CacheClusterBaseDto {
     this.groups = groups;
   }
 
+  @Valid
   private Collection<ReplicationCacheGroupDto> groups;
 
 }

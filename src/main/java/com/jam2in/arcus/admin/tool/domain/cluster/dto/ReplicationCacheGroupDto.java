@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,8 +24,10 @@ public class ReplicationCacheGroupDto {
   @NotEmpty
   private String group;
 
+  @Valid
   private ReplicationCacheNodeDto node1;
 
+  @Valid
   private ReplicationCacheNodeDto node2;
 
 }
