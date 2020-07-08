@@ -36,42 +36,29 @@ public class ZooKeeperZNodeComponent {
         znodeAsyncComponent::getAsyncReplicationServiceCodes);
   }
 
-  public void createCacheCluster(String addresses, CacheClusterDto clusterDto) {
+  public void createServiceCode(String addresses, CacheClusterDto clusterDto) {
     handleClient(addresses,
         connection ->
-            znodeAsyncComponent.createAsyncCacheCluster(connection, clusterDto));
+            znodeAsyncComponent.createAsyncServiceCode(connection, clusterDto));
   }
 
-  public void createReplicationCacheCluster(String addresses,
+  public void createReplicationServiceCode(String addresses,
                                             ReplicationCacheClusterDto replClusterDto) {
     handleClient(addresses,
         connection ->
-            znodeAsyncComponent.createAsyncReplicationCacheCluster(connection, replClusterDto));
+            znodeAsyncComponent.createAsyncReplicationServiceCode(connection, replClusterDto));
   }
 
   public void deleteCacheNode(String addresses, String cacheNodeAddress) {
     handleClient(addresses,
         connection ->
-            znodeAsyncComponent.deleteCacheNode(connection, cacheNodeAddress));
+            znodeAsyncComponent.deleteAsyncCacheNode(connection, cacheNodeAddress));
   }
 
   public void deleteReplicationCacheNode(String addresses, String cacheNodeAddress) {
     handleClient(addresses,
         connection ->
-            znodeAsyncComponent.deleteReplicationCacheNode(connection, cacheNodeAddress));
-  }
-
-  public void deleteCacheCluster(String addresses, CacheClusterDto clusterDto) {
-    handleClient(addresses,
-        connection ->
-            znodeAsyncComponent.deleteAsyncCacheCluster(connection, clusterDto));
-  }
-
-  public void deleteReplicationCacheCluster(String addresses,
-                                            CacheClusterDto clusterDto) {
-    handleClient(addresses,
-        connection ->
-            znodeAsyncComponent.deleteAsyncReplicationCacheCluster(connection, clusterDto));
+            znodeAsyncComponent.deleteAsyncReplicationCacheNode(connection, cacheNodeAddress));
   }
 
   public void deleteServiceCode(String addresses, String serviceCode) {
@@ -84,6 +71,12 @@ public class ZooKeeperZNodeComponent {
     handleClient(addresses,
         connection ->
             znodeAsyncComponent.deleteAsyncReplicationServiceCode(connection, serviceCode));
+  }
+
+  public void deleteReplicationGroup(String addresses, String serviceCode, String group) {
+    handleClient(addresses,
+        connection ->
+            znodeAsyncComponent.deleteAsyncReplicationGroup(connection, serviceCode, group));
   }
 
   private Object handleClient(

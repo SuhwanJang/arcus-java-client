@@ -67,6 +67,21 @@ public class EnsembleController {
     return ensembleService.getZooKeeperAllStats(id);
   }
 
+  @PostMapping("/{id}/service-codes")
+  @ResponseStatus(code = HttpStatus.CREATED)
+  public void createServiceCode(@PathVariable long id,
+                                @RequestBody @Valid CacheClusterDto clusterDto) {
+    ensembleService.createServiceCode(id, clusterDto);
+  }
+
+  @PostMapping("/{id}/repl-service-codes")
+  @ResponseStatus(code = HttpStatus.CREATED)
+  public void createReplicationServiceCode(
+      @PathVariable long id,
+      @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
+    ensembleService.createReplicationServiceCode(id, replClusterDto);
+  }
+
   @GetMapping("/{id}/service-codes")
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<String> getServiceCodes(@PathVariable long id) {
@@ -79,20 +94,20 @@ public class EnsembleController {
     return ensembleService.getReplicationServiceCodes(id);
   }
 
-  @PostMapping("/{id}/service-codes")
-  @ResponseStatus(code = HttpStatus.CREATED)
-  public void createCacheCluster(@PathVariable long id,
-                                 @RequestBody @Valid CacheClusterDto clusterDto) {
-    ensembleService.createCacheCluster(id, clusterDto);
+  @DeleteMapping("/{id}/service-codes/{service-code}")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void deleteServiceCode(@PathVariable long id,
+                                @PathVariable String serviceCode) {
+    ensembleService.deleteServiceCode(id, serviceCode);
   }
 
-  @PostMapping("/{id}/repl-service-codes")
-  @ResponseStatus(code = HttpStatus.CREATED)
-  public void createReplicationCacheCluster(
-      @PathVariable long id,
-      @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
-    ensembleService.createReplicationCacheCluster(id, replClusterDto);
+  @DeleteMapping("/{id}/repl-service-codes/{service-code}")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void deleteReplicationServiceCode(@PathVariable long id,
+                                           @PathVariable String serviceCode) {
+    ensembleService.deleteReplicationServiceCode(id, serviceCode);
   }
+
 
   @DeleteMapping("/{id}/service-codes/{service-code}/cache-node/{cache-node-address}")
   @ResponseStatus(code = HttpStatus.OK)
@@ -110,21 +125,12 @@ public class EnsembleController {
     ensembleService.deleteReplicationCacheNode(id, serviceCode, cacheNodeAddress);
   }
 
-  /*
-  @DeleteMapping("/{id}/cache-clusters")
+  @DeleteMapping("/{id}/repl-service-codes/{service-code}/groups/{group}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteCacheCluster(@PathVariable long id,
-                                 @RequestBody @Valid CacheClusterDto clusterDto) {
-    ensembleService.deleteCacheCluster(id, clusterDto);
+  public void deleteReplicationGroup(@PathVariable long id,
+                                     @PathVariable String serviceCode,
+                                     @PathVariable String group) {
+    ensembleService.deleteReplicationGroup(id, serviceCode, group);
   }
-
-  @DeleteMapping("/{id}/repl-cache-clusters")
-  @ResponseStatus(code = HttpStatus.OK)
-  public void deleteReplicationCacheCluster(
-      @PathVariable long id,
-      @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
-    ensembleService.deleteReplicationCacheCluster(id, replClusterDto);
-  }
-   */
 
 }

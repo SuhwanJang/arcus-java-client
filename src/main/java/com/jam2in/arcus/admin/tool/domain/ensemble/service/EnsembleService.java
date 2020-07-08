@@ -100,13 +100,13 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
   }
 
-  public void createCacheCluster(long id, CacheClusterDto clusterDto) {
-    znodeComponent.createCacheCluster(
+  public void createServiceCode(long id, CacheClusterDto clusterDto) {
+    znodeComponent.createServiceCode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), clusterDto);
   }
 
-  public void createReplicationCacheCluster(long id, ReplicationCacheClusterDto replClusterDto) {
-    znodeComponent.createReplicationCacheCluster(
+  public void createReplicationServiceCode(long id, ReplicationCacheClusterDto replClusterDto) {
+    znodeComponent.createReplicationServiceCode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
   }
 
@@ -122,26 +122,17 @@ public class EnsembleService {
 
   public void deleteServiceCode(long id, String serviceCode) {
     znodeComponent.deleteServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        serviceCode);
-  }
-
-  public void deleteCacheCluster(long id, CacheClusterDto clusterDto) {
-    znodeComponent.deleteCacheCluster(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        clusterDto);
-  }
-
-  public void deleteReplicationCacheCluster(long id, CacheClusterDto clusterDto) {
-    znodeComponent.deleteReplicationCacheCluster(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        clusterDto);
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode);
   }
 
   public void deleteReplicationServiceCode(long id, String serviceCode) {
     znodeComponent.deleteReplicationServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)),
-        serviceCode);
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode);
+  }
+
+  public void deleteReplicationGroup(long id, String serviceCode, String group) {
+    znodeComponent.deleteReplicationGroup(
+        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
   }
 
   private EnsembleEntity getEntity(long id) {
