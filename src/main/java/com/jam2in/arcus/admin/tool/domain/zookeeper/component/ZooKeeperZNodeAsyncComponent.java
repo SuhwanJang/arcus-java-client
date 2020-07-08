@@ -67,7 +67,7 @@ public class ZooKeeperZNodeAsyncComponent {
 
   @Async
   public CompletableFuture<Void> createAsyncServiceCode(Object connection,
-                                                         CacheClusterDto clusterDto) {
+                                                        CacheClusterDto clusterDto) {
     zookeeperClient.create(connection,
         ARCUS_CACHE_SERVER_LOG_PATH);
 
@@ -88,7 +88,8 @@ public class ZooKeeperZNodeAsyncComponent {
 
   @Async
   public CompletableFuture<Void> createAsyncReplicationServiceCode(
-      Object connection, ReplicationCacheClusterDto replClusterDto) {
+      Object connection,
+      ReplicationCacheClusterDto replClusterDto) {
     zookeeperClient.create(connection,
         ARCUS_REPL_CACHE_SERVER_LOG_PATH);
 
@@ -102,21 +103,25 @@ public class ZooKeeperZNodeAsyncComponent {
         .forEach(group -> {
           zookeeperClient.create(connection,
               PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH,
-                  replClusterDto.getServiceCode(), group.getName()));
+                  replClusterDto.getServiceCode(), group.getGroup()));
 
-          zookeeperClient.create(connection,
-              PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
-                  group.getNode1().getNodeAddress(),
-                  replClusterDto.getServiceCode()
-                      + "^" + group.getName()
-                      + "^" + group.getNode1().getListenAddress()));
+          if (group.getNode1() != null) {
+            zookeeperClient.create(connection,
+                PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+                    group.getNode1().getNodeAddress(),
+                    replClusterDto.getServiceCode()
+                        + "^" + group.getGroup()
+                        + "^" + group.getNode1().getListenAddress()));
+          }
 
-          zookeeperClient.create(connection,
-              PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
-                  group.getNode2().getNodeAddress(),
-                  replClusterDto.getServiceCode()
-                      + "^" + group.getName()
-                      + "^" + group.getNode2().getListenAddress()));
+          if (group.getNode2() != null) {
+            zookeeperClient.create(connection,
+                PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH,
+                    group.getNode2().getNodeAddress(),
+                    replClusterDto.getServiceCode()
+                        + "^" + group.getGroup()
+                        + "^" + group.getNode2().getListenAddress()));
+          }
         });
 
     return CompletableFuture.completedFuture(null);

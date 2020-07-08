@@ -12,16 +12,16 @@ import javax.validation.constraints.NotEmpty;
 public class ReplicationCacheGroupDto {
 
   @Builder
-  public ReplicationCacheGroupDto(String name,
+  public ReplicationCacheGroupDto(String group,
                                   ReplicationCacheNodeDto node1,
                                   ReplicationCacheNodeDto node2) {
-    this.name = name;
+    this.group = group;
     this.node1 = node1;
     this.node2 = node2;
   }
 
   @NotEmpty
-  private String name;
+  private String group;
 
   private ReplicationCacheNodeDto node1;
 
