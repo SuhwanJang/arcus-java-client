@@ -96,40 +96,40 @@ public class EnsembleController {
 
   @DeleteMapping("/{id}/service-codes/{service-code}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteServiceCode(@PathVariable long id,
-                                @PathVariable String serviceCode) {
+  public void deleteServiceCode(@PathVariable("id") long id,
+                                @PathVariable("service-code") String serviceCode) {
     ensembleService.deleteServiceCode(id, serviceCode);
   }
 
   @DeleteMapping("/{id}/repl-service-codes/{service-code}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteReplicationServiceCode(@PathVariable long id,
-                                           @PathVariable String serviceCode) {
+  public void deleteReplicationServiceCode(@PathVariable("id") long id,
+                                           @PathVariable("service-code") String serviceCode) {
     ensembleService.deleteReplicationServiceCode(id, serviceCode);
   }
 
-
-  @DeleteMapping("/{id}/service-codes/{service-code}/cache-node/{cache-node-address}")
+  @DeleteMapping("/{id}/service-codes/{service-code}/cache-nodes/{cache-node-address}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteCacheNode(@PathVariable long id,
-                              @PathVariable String serviceCode,
-                              @PathVariable String cacheNodeAddress) {
+  public void deleteCacheNode(@PathVariable("id") long id,
+                              @PathVariable("service-code") String serviceCode,
+                              @PathVariable("cache-node-address") String cacheNodeAddress) {
     ensembleService.deleteCacheNode(id, serviceCode, cacheNodeAddress);
   }
 
-  @DeleteMapping("/{id}/repl-service-codes/{service-code}/cache-node/{cache-node-address}")
+  @DeleteMapping("/{id}/repl-service-codes/{service-code}/cache-nodes/{cache-node-address}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteReplicationCacheNode(@PathVariable long id,
-                                         @PathVariable String serviceCode,
-                                         @PathVariable String cacheNodeAddress) {
+  public void deleteReplicationCacheNode(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode,
+      @PathVariable("cache-node-address") String cacheNodeAddress) {
     ensembleService.deleteReplicationCacheNode(id, serviceCode, cacheNodeAddress);
   }
 
   @DeleteMapping("/{id}/repl-service-codes/{service-code}/groups/{group}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteReplicationGroup(@PathVariable long id,
-                                     @PathVariable String serviceCode,
-                                     @PathVariable String group) {
+  public void deleteReplicationGroup(@PathVariable("id") long id,
+                                     @PathVariable("service-code") String serviceCode,
+                                     @PathVariable("group") String group) {
     ensembleService.deleteReplicationGroup(id, serviceCode, group);
   }
 

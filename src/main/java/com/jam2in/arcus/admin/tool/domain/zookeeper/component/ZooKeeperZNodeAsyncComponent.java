@@ -143,8 +143,20 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncServiceCode(Object connection,
                                                         String serviceCode) {
-    deleteCacheServerMappingCacheNode(
-        connection, serviceCode, ARCUS_CACHE_SERVER_MAPPING_PATH);
+    CollectionUtils.emptyIfNull(
+        zookeeperClient.get(connection,
+            PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH)))
+        .stream()
+        .filter(address ->
+            CollectionUtils.emptyIfNull(
+                zookeeperClient.get(connection,
+                    PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)))
+                .stream()
+                .anyMatch(s -> StringUtils.equals(s, serviceCode)))
+        .collect(Collectors.toList())
+        .forEach(address ->
+            zookeeperClient.delete(connection,
+                PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)));
 
     zookeeperClient.delete(connection,
         PathUtils.path(ARCUS_CLIENT_LIST_PATH, serviceCode));
@@ -158,8 +170,27 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncReplicationServiceCode(Object connection,
                                                                    String serviceCode) {
-    deleteCacheServerMappingCacheNode(
-        connection, serviceCode, ARCUS_REPL_CACHE_SERVER_MAPPING_PATH);
+    CollectionUtils.emptyIfNull(
+        zookeeperClient.get(connection,
+            PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH)))
+        .stream()
+        .filter(address ->
+            CollectionUtils.emptyIfNull(
+                zookeeperClient.get(connection,
+                    PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
+                .stream()
+                .anyMatch(s -> {
+                  try {
+                    return StringUtils.equals(
+                        ZooKeeperZNodeParser.parse(s).getServiceCode(), serviceCode);
+                  } catch (IllegalArgumentException e) {
+                    return false;
+                  }
+                }))
+        .collect(Collectors.toList())
+        .forEach(address ->
+            zookeeperClient.delete(connection,
+                PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)));
 
     zookeeperClient.delete(connection,
         PathUtils.path(ARCUS_REPL_CLIENT_LIST_PATH, serviceCode));
@@ -187,7 +218,10 @@ public class ZooKeeperZNodeAsyncComponent {
             .stream()
             .anyMatch(s -> {
               try {
-                return StringUtils.equals(ZooKeeperZNodeParser.parse(s).getGroup(), group);
+                ZooKeeperZNodeParser.ReplicationCacheServerMappingZNode znode
+                    = ZooKeeperZNodeParser.parse(s);
+                return StringUtils.equals(znode.getServiceCode(), serviceCode)
+                    && StringUtils.equals(znode.getGroup(), group);
               } catch (IllegalArgumentException e) {
                 return false;
               }
@@ -198,29 +232,9 @@ public class ZooKeeperZNodeAsyncComponent {
               PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)));
 
     zookeeperClient.delete(connection,
-        PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode));
-
+        PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode, group));
 
     return CompletableFuture.completedFuture(null);
-  }
-
-  private void deleteCacheServerMappingCacheNode(Object connection,
-                                                 String serviceCode,
-                                                 String cacheServerMappingPath) {
-    CollectionUtils.emptyIfNull(
-        zookeeperClient.get(connection,
-            PathUtils.path(cacheServerMappingPath)))
-        .stream()
-        .filter(address ->
-            CollectionUtils.emptyIfNull(
-                zookeeperClient.get(connection,
-                    PathUtils.path(cacheServerMappingPath, address)))
-                .stream()
-                .anyMatch(s -> StringUtils.equals(s, serviceCode)))
-        .collect(Collectors.toList())
-        .forEach(address ->
-            zookeeperClient.delete(connection,
-                PathUtils.path(cacheServerMappingPath, address)));
   }
 
 }
