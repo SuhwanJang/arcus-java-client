@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import com.google.common.net.HostAndPort;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.yetus.audience.InterfaceAudience;
 
@@ -36,6 +37,25 @@ public class CommandSender {
   //in milliseconds, socket should connect/read within this period otherwise SocketTimeoutException
   private static final int DEFAULT_SOCKET_TIMEOUT = 5000;
 
+  /**
+   * Send the command
+   * @param address the address(host:port)
+   * @param cmd the command string
+   * @param timeout in milliseconds, maximum time to wait while connecting/reading data
+   * @return server response
+   * @throws java.io.IOException
+   */
+  public static String send(String address, String cmd, int timeout)
+      throws IOException
+  {
+    try {
+      HostAndPort hostAndPort = HostAndPort.fromString(address);
+      return send(hostAndPort.getHost(), hostAndPort.getPort(), cmd, timeout);
+    } catch (IllegalStateException e) {
+      log.error("wrong address format. address = " + address);
+      throw e;
+    }
+  }
   /**
    * Send the command
    * @param host the destination host

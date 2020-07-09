@@ -11,6 +11,7 @@ import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperFourLetterRu
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperFourLetterSrvrParser;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -29,21 +30,21 @@ public class ZooKeeperFourLetterComponent {
     this.fourLetterComponent = fourLetterComponent;
   }
 
-  public ZooKeeperFourLetterSrvrDto getSrvr(String address) {
+  public ZooKeeperFourLetterSrvrDto getSrvr(String address) throws IOException {
     return fourLetterComponent.srvr(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
         .thenApply(ZooKeeperFourLetterSrvrParser::parse)
         .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
         .join();
   }
 
-  public Collection<ZooKeeperFourLetterConsDto> getCons(String address) {
+  public Collection<ZooKeeperFourLetterConsDto> getCons(String address) throws IOException {
     return fourLetterComponent.cons(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
         .thenApply(ZooKeeperFourLetterConsParser::parse)
         .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
         .join();
   }
 
-  public ZooKeeperFourLetterMntrDto getMntr(String address) {
+  public ZooKeeperFourLetterMntrDto getMntr(String address) throws IOException {
     return fourLetterComponent.mntr(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
         .thenApply(ZooKeeperFourLetterMntrParser::parse)
         .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)

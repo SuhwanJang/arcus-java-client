@@ -2,8 +2,6 @@ package com.jam2in.arcus.admin.tool.configuration;
 
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperCuratorClient;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperFourLetterWord;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperFourLetterWordImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,10 +12,4 @@ public class ZooKeeperConfiguration {
   public ZooKeeperClient zookeeperClient() {
     return new ZooKeeperCuratorClient();
   }
-
-  @Bean
-  public ZooKeeperFourLetterWord zookeeperFourLetterWord() {
-    return new ZooKeeperFourLetterWordImpl();
-  }
-
 }
