@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.jam2in.arcus.admin.tool.domain.zookeeper.util;
+package com.jam2in.arcus.admin.tool.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,36 +32,36 @@ import org.apache.yetus.audience.InterfaceAudience;
 
 @InterfaceAudience.Public
 @Slf4j
-public class FourLetterWordMain {
+public class CommandSender {
   //in milliseconds, socket should connect/read within this period otherwise SocketTimeoutException
   private static final int DEFAULT_SOCKET_TIMEOUT = 5000;
 
   /**
-   * Send the 4letterword
+   * Send the command
    * @param host the destination host
    * @param port the destination port
-   * @param cmd the 4letterword
+   * @param cmd the command string
    * @return server response
    * @throws java.io.IOException
    */
-  public static String send4LetterWord(String host, int port, String cmd)
+  public static String send(String host, int port, String cmd)
       throws IOException
   {
-    return send4LetterWord(host, port, cmd, DEFAULT_SOCKET_TIMEOUT);
+    return send(host, port, cmd, DEFAULT_SOCKET_TIMEOUT);
   }
   /**
-   * Send the 4letterword
+   * Send the command
    * @param host the destination host
    * @param port the destination port
-   * @param cmd the 4letterword
+   * @param cmd the command string
    * @param timeout in milliseconds, maximum time to wait while connecting/reading data
    * @return server response
    * @throws java.io.IOException
    */
-  public static String send4LetterWord(String host, int port, String cmd, int timeout)
+  public static String send(String host, int port, String cmd, int timeout)
       throws IOException
   {
-    log.info("connecting to " + host + " " + port);
+    log.info("connecting to " + host + " " + port + " cmd = " + cmd);
     Socket sock = new Socket();
     InetSocketAddress hostaddress= host != null ? new InetSocketAddress(host, port) :
         new InetSocketAddress(InetAddress.getByName(null), port);
@@ -85,7 +85,7 @@ public class FourLetterWordMain {
       }
       return sb.toString();
     } catch (SocketTimeoutException e) {
-      throw new IOException("Exception while executing four letter word: " + cmd, e);
+      throw new IOException("Exception while executing command: " + cmd, e);
     } finally {
       sock.close();
       if (reader != null) {

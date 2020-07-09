@@ -2,9 +2,9 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.client;
 
 import com.google.common.net.HostAndPort;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.exception.ZooKeeperException;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.util.FourLetterWordMain;
+import com.jam2in.arcus.admin.tool.util.CommandSender;
 
-public class ZooKeeperFourLetterWordMain implements ZooKeeperFourLetterWord {
+public class ZooKeeperFourLetterWordImpl implements ZooKeeperFourLetterWord {
 
   @Override
   public String ruok(String address, int socketTimeoutMs) {
@@ -31,12 +31,11 @@ public class ZooKeeperFourLetterWordMain implements ZooKeeperFourLetterWord {
     try {
       HostAndPort hostAndPort = HostAndPort.fromString(address);
 
-      return FourLetterWordMain.send4LetterWord(
+      return CommandSender.send(
           hostAndPort.getHost(), hostAndPort.getPort(),
           command, socketTimeoutMs);
     } catch (Exception e) {
       throw new ZooKeeperException(e);
     }
   }
-
 }
