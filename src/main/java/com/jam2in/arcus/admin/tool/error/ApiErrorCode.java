@@ -14,17 +14,14 @@ public enum ApiErrorCode {
   COMMON_INVALID_CONTENT(
       "COMMON003", "invalid content",
       HttpStatus.BAD_REQUEST),
-  COMMON_ACCESS_DENIED(
-      "COMMON004", "access denied",
-      HttpStatus.FORBIDDEN),
-  COMMON_INVALID_USERNAME_OR_PASSWORD(
-      "COMMON005", "invalid username or password",
-      HttpStatus.UNAUTHORIZED),
   COMMON_INVALID_PARAMETER(
-      "COMMON006", "invalid parameter",
+      "COMMON004", "invalid parameter",
       HttpStatus.BAD_REQUEST),
+  COMMON_ACCESS_DENIED(
+      "COMMON005", "access denied",
+      HttpStatus.FORBIDDEN),
   COMMON_CONFLICT(
-      "COMMON007", "conflict",
+      "COMMON006", "conflict",
       HttpStatus.CONFLICT),
 
   COMMON_INVALID_TYPE(
@@ -51,6 +48,9 @@ public enum ApiErrorCode {
   NO_USER(
       "USER007", "no user",
       HttpStatus.NO_CONTENT),
+  USER_INVALID_USERNAME_OR_PASSWORD(
+      "USER008", "invalid username or password",
+      HttpStatus.UNAUTHORIZED),
 
   ENSEMBLE_NOT_FOUND(
       "ENSEMBLE001", "ensemble is not found",

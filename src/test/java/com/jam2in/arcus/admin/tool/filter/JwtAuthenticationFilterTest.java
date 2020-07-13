@@ -90,9 +90,9 @@ public class JwtAuthenticationFilterTest extends BaseControllerTest {
         .andExpect(status().isUnauthorized())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.code").value(
-            ApiErrorCode.COMMON_INVALID_USERNAME_OR_PASSWORD.code()))
+            ApiErrorCode.USER_INVALID_USERNAME_OR_PASSWORD.code()))
         .andExpect(jsonPath("$.message").value(
-            ApiErrorCode.COMMON_INVALID_USERNAME_OR_PASSWORD.message()))
+            ApiErrorCode.USER_INVALID_USERNAME_OR_PASSWORD.message()))
         .andExpect(jsonPath("$.details", is(empty())))
         .andDo(print());
   }
