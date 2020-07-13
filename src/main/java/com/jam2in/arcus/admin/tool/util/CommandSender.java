@@ -19,7 +19,7 @@ public class CommandSender {
   private static final int DEFAULT_SOCKET_TIMEOUT = 5000;
 
   /**
-   * Send the command
+   * Send the command.
    *
    * @param address the address(host:port)
    * @param cmd     the command string
@@ -40,7 +40,7 @@ public class CommandSender {
   }
 
   /**
-   * Send the command
+   * Send the command.
    *
    * @param host the destination host
    * @param port the destination port
@@ -54,7 +54,7 @@ public class CommandSender {
   }
 
   /**
-   * Send the command
+   * Send the command.
    *
    * @param host    the destination host
    * @param port    the destination port
