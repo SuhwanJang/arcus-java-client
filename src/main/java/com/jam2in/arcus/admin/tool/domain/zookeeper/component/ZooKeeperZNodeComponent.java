@@ -24,16 +24,12 @@ public class ZooKeeperZNodeComponent {
     this.znodeAsyncComponent = znodeComponent;
   }
 
-  @SuppressWarnings("unchecked")
   public Collection<String> getServiceCodes(String addresses) {
-    return (Collection<String>) handleClient(addresses,
-        znodeAsyncComponent::getAsyncServiceCodes);
+    return handleClient(addresses, znodeAsyncComponent::getAsyncServiceCodes);
   }
 
-  @SuppressWarnings("unchecked")
   public Collection<String> getReplicationServiceCodes(String addresses) {
-    return (Collection<String>) handleClient(addresses,
-        znodeAsyncComponent::getAsyncReplicationServiceCodes);
+    return handleClient(addresses, znodeAsyncComponent::getAsyncReplicationServiceCodes);
   }
 
   public void createServiceCode(String addresses, CacheClusterDto clusterDto) {
@@ -79,9 +75,9 @@ public class ZooKeeperZNodeComponent {
             znodeAsyncComponent.deleteAsyncReplicationGroup(connection, serviceCode, group));
   }
 
-  private Object handleClient(
+  private <T> T handleClient(
       String addresses,
-      Functions.FailableFunction<Object, CompletableFuture<?>, Exception> function) {
+      Functions.FailableFunction<Object, CompletableFuture<T>, Exception> function) {
     Object connection = null;
 
     try {
