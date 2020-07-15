@@ -133,4 +133,19 @@ public class EnsembleController {
     ensembleService.deleteReplicationGroup(id, serviceCode, group);
   }
 
+  @GetMapping("/{id}/service-codes/{service-code}/cache-cluster")
+  @ResponseStatus(code = HttpStatus.OK)
+  public CacheClusterDto getCacheCluster(@PathVariable("id") long id,
+                                         @PathVariable("service-code") String serviceCode) {
+    return ensembleService.getCacheCluster(id, serviceCode);
+  }
+
+  @GetMapping("/{id}/repl-service-codes/{service-code}/repl-cache-cluster")
+  @ResponseStatus(code = HttpStatus.OK)
+  public ReplicationCacheClusterDto getReplicationCacheCluster(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
+    return ensembleService.getReplicationCacheCluster(id, serviceCode);
+  }
+
 }

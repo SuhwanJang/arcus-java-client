@@ -12,9 +12,10 @@ import javax.validation.constraints.NotEmpty;
 public class ReplicationCacheNodeDto {
 
   @Builder
-  public ReplicationCacheNodeDto(String nodeAddress, String listenAddress) {
+  public ReplicationCacheNodeDto(String nodeAddress, String listenAddress, CacheNodeStatDto stat) {
     this.nodeAddress = nodeAddress;
     this.listenAddress = listenAddress;
+    this.stat = stat;
   }
 
   @NotEmpty
@@ -22,5 +23,11 @@ public class ReplicationCacheNodeDto {
 
   @NotEmpty
   private String listenAddress;
+
+  private CacheNodeStatDto stat;
+
+  public void setStat(CacheNodeStatDto stat) {
+    this.stat = stat;
+  }
 
 }

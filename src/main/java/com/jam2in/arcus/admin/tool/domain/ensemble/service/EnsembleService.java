@@ -1,6 +1,8 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
+import com.jam2in.arcus.admin.tool.domain.cluster.component.CacheClusterComponent;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
@@ -33,12 +35,16 @@ public class EnsembleService {
 
   private final ZooKeeperZNodeComponent znodeComponent;
 
+  private final CacheClusterComponent cacheClusterComponent;
+
   public EnsembleService(EnsembleRepository ensembleRepository,
                          ZooKeeperFourLetterComponent fourLetterComponent,
-                         ZooKeeperZNodeComponent znodeComponent) {
+                         ZooKeeperZNodeComponent znodeComponent,
+                         CacheClusterComponent cacheClusterComponent) {
     this.ensembleRepository = ensembleRepository;
     this.fourLetterComponent = fourLetterComponent;
     this.znodeComponent = znodeComponent;
+    this.cacheClusterComponent = cacheClusterComponent;
   }
 
   @Transactional
@@ -133,6 +139,21 @@ public class EnsembleService {
   public void deleteReplicationGroup(long id, String serviceCode, String group) {
     znodeComponent.deleteReplicationGroup(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
+  }
+
+  public CacheClusterDto getCacheCluster(long id, String serviceCode) {
+    return CacheClusterDto.builder().serviceCode(serviceCode).nodes(
+        cacheClusterComponent.getAllStats(znodeComponent.getCacheCluster(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode)
+            .stream().map(address -> CacheNodeDto.builder().address(address).build())
+            .collect(Collectors.toList()))).build();
+  }
+
+  public ReplicationCacheClusterDto getReplicationCacheCluster(long id, String serviceCode) {
+    return ReplicationCacheClusterDto.builder().serviceCode(serviceCode).groups(
+        cacheClusterComponent.getReplicationAllStats(
+            znodeComponent.getCacheClusterGroups(EnsembleEntity.joiningZooKeeperAddresses(
+                getEntity(id)), serviceCode))).build();
   }
 
   private EnsembleEntity getEntity(long id) {

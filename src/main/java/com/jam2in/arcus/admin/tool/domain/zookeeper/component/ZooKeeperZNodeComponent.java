@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.lang3.Functions;
@@ -73,6 +74,17 @@ public class ZooKeeperZNodeComponent {
     handleClient(addresses,
         connection ->
             znodeAsyncComponent.deleteAsyncReplicationGroup(connection, serviceCode, group));
+  }
+
+  public Collection<String> getCacheCluster(String addresses, String serviceCode) {
+    return handleClient(addresses,
+        (client) -> znodeAsyncComponent.getAsyncCacheCluster(client, serviceCode));
+  }
+
+  public Collection<ReplicationCacheGroupDto> getCacheClusterGroups(
+      String addresses, String serviceCode) {
+    return handleClient(addresses,
+        (client) -> znodeAsyncComponent.getAsyncReplicationCacheCluster(client, serviceCode));
   }
 
   private <T> T handleClient(

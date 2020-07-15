@@ -2,6 +2,8 @@ package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperZNodeParser;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
@@ -242,4 +244,63 @@ public class ZooKeeperZNodeAsyncComponent {
     return CompletableFuture.completedFuture(null);
   }
 
+  @Async
+  public CompletableFuture<Collection<String>> getAsyncCacheCluster(Object connection,
+                                                                    String serviceCode) {
+    return CompletableFuture.completedFuture(
+        CollectionUtils.emptyIfNull(
+            zookeeperClient.get(connection,
+                PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH)))
+        .stream()
+        .filter(address ->
+            CollectionUtils.emptyIfNull(
+                zookeeperClient.get(connection,
+                    PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)))
+                .stream()
+                .anyMatch(s -> StringUtils.equals(s, serviceCode)))
+        .collect(Collectors.toList()));
+  }
+
+  @Async
+  public CompletableFuture<Collection<ReplicationCacheGroupDto>> getAsyncReplicationCacheCluster(
+      Object connection, String serviceCode) {
+    return CompletableFuture.completedFuture(
+        CollectionUtils.emptyIfNull(
+            zookeeperClient.get(connection,
+                PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode)))
+        .stream()
+        .sorted()
+        .map(group -> {
+          ReplicationCacheGroupDto.ReplicationCacheGroupDtoBuilder builder =
+              ReplicationCacheGroupDto.builder();
+          builder.group(group);
+          CollectionUtils.emptyIfNull(
+              zookeeperClient.get(connection, ARCUS_REPL_CACHE_SERVER_MAPPING_PATH))
+              .stream()
+              .sorted()
+              .forEach(address ->
+                CollectionUtils.emptyIfNull(
+                    zookeeperClient.get(connection,
+                        PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
+                .forEach(s -> {
+                  try {
+                    ZooKeeperZNodeParser.ReplicationCacheServerMappingZNode znode
+                        = ZooKeeperZNodeParser.parse(s);
+                    if (StringUtils.equals(znode.getServiceCode(), serviceCode)
+                        && StringUtils.equals(znode.getGroup(), group)) {
+                      if (builder.build().getNode1() == null) {
+                        builder.node1(ReplicationCacheNodeDto.builder().nodeAddress(address)
+                            .listenAddress(znode.getListenAddress()).build());
+                      } else if (builder.build().getNode2() == null) {
+                        builder.node2(ReplicationCacheNodeDto.builder().nodeAddress(address)
+                            .listenAddress(znode.getListenAddress()).build());
+                      }
+                    }
+                  } catch (IllegalArgumentException e) {
+                    // failed parse, but just iterate next element.
+                  }
+                }));
+          return builder.build();
+        }).collect(Collectors.toList()));
+  }
 }
