@@ -91,17 +91,19 @@ public final class ApiError {
       return of(apiErrorCode);
     }
 
-    return new ApiError(apiErrorCode, (Collection<Detail>) fieldErrors.stream().collect(
-        ArrayList<Detail>::new,
-        (details, fieldError) -> {
-          Object rejectedValue = fieldError.getRejectedValue();
-          details.add(
-              Detail.of(
-                  fieldError.getField(),
-                  Objects.toString(rejectedValue, StringUtils.EMPTY),
-                  fieldError.getDefaultMessage()));
-        },
-        List::addAll));
+    return new ApiError(apiErrorCode, (Collection<Detail>) fieldErrors
+        .stream()
+        .collect(
+            ArrayList<Detail>::new,
+            (details, fieldError) -> {
+              Object rejectedValue = fieldError.getRejectedValue();
+              details.add(
+                  Detail.of(
+                      fieldError.getField(),
+                      Objects.toString(rejectedValue, StringUtils.EMPTY),
+                      fieldError.getDefaultMessage()));
+              },
+            List::addAll));
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode,

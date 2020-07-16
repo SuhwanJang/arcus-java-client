@@ -53,10 +53,12 @@ public class ZooKeeperEntity extends BaseEntity {
       return null;
     }
 
-    return zookeeperDtos.stream().collect(
-        ArrayList::new,
-        (zookeperEntities, zookeeperDto) -> zookeperEntities.add(of(zookeeperDto)),
-        List::addAll);
+    return zookeeperDtos
+        .stream()
+        .collect(
+            ArrayList::new,
+            (zookeperEntities, zookeeperDto) -> zookeperEntities.add(of(zookeeperDto)),
+            List::addAll);
   }
 
 }

@@ -1,12 +1,16 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.AliveCacheNodesDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.AliveReplicationCacheNodesDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperZNodeParser;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -14,10 +18,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class ZooKeeperZNodeAsyncComponent {
+
+  private static final int MAX_REPLICATION_NODE_COUNT_PER_GROUP = 2;
 
   private static final String ARCUS_CACHE_SERVER_LOG_PATH =
       "/arcus/cache_server_log";
@@ -189,8 +197,11 @@ public class ZooKeeperZNodeAsyncComponent {
                 .anyMatch(s -> {
                   try {
                     return StringUtils.equals(
-                        ZooKeeperZNodeParser.parse(s).getServiceCode(), serviceCode);
+                        ZooKeeperZNodeParser
+                            .parseReplicationCacheServerMapping(s)
+                            .getServiceCode(), serviceCode);
                   } catch (IllegalArgumentException e) {
+                    log.info("Failed to parse znode, {}", address);
                     return false;
                   }
                 }))
@@ -226,10 +237,11 @@ public class ZooKeeperZNodeAsyncComponent {
             .anyMatch(s -> {
               try {
                 ZooKeeperZNodeParser.ReplicationCacheServerMappingZNode znode
-                    = ZooKeeperZNodeParser.parse(s);
+                    = ZooKeeperZNodeParser.parseReplicationCacheServerMapping(s);
                 return StringUtils.equals(znode.getServiceCode(), serviceCode)
                     && StringUtils.equals(znode.getGroup(), group);
               } catch (IllegalArgumentException e) {
+                log.info(e.getMessage(), e);
                 return false;
               }
             }))
@@ -245,8 +257,28 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<Collection<String>> getAsyncCacheCluster(Object connection,
-                                                                    String serviceCode) {
+  public CompletableFuture<Collection<CacheNodeDto>> getAsyncCacheNodes(Object connection,
+                                                                        String serviceCode) {
+    AliveCacheNodesDto aliveCacheNodes = new AliveCacheNodesDto();
+
+    CollectionUtils.emptyIfNull(
+        zookeeperClient.get(connection,
+            PathUtils.path(ARCUS_CACHE_LIST_PATH, serviceCode)))
+        .forEach(znode -> {
+          try {
+            String address = ZooKeeperZNodeParser
+                .parseCacheList(znode)
+                .getAddress();
+            aliveCacheNodes.putAliveNode(address,
+                CacheNodeDto
+                    .builder()
+                    .address(address)
+                    .build());
+          } catch (IllegalArgumentException e) {
+            log.info("Failed to parse znode, {}", znode);
+          }
+        });
+
     return CompletableFuture.completedFuture(
         CollectionUtils.emptyIfNull(
             zookeeperClient.get(connection,
@@ -258,12 +290,38 @@ public class ZooKeeperZNodeAsyncComponent {
                     PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)))
                 .stream()
                 .anyMatch(s -> StringUtils.equals(s, serviceCode)))
+        .map(address ->
+          CacheNodeDto
+              .builder()
+              .address(address)
+              .alive(aliveCacheNodes.isAliveNode(address))
+              .build())
         .collect(Collectors.toList()));
   }
 
   @Async
-  public CompletableFuture<Collection<ReplicationCacheGroupDto>> getAsyncReplicationCacheCluster(
+  public CompletableFuture<Collection<ReplicationCacheGroupDto>> getAsyncReplicationCacheNodes(
       Object connection, String serviceCode) {
+    AliveReplicationCacheNodesDto aliveCacheNodes = new AliveReplicationCacheNodesDto();
+
+    CollectionUtils.emptyIfNull(
+        zookeeperClient.get(connection,
+            PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH, serviceCode)))
+        .forEach(znode -> {
+          try {
+            ZooKeeperZNodeParser.ReplicationCacheListZNode parsedZnode =
+                ZooKeeperZNodeParser.parseReplicationCacheList(znode);
+            aliveCacheNodes.putAliveNode(parsedZnode.getAddress(),
+                ReplicationCacheNodeDto
+                    .builder()
+                    .role(parsedZnode.getRole())
+                    .nodeAddress(parsedZnode.getAddress())
+                    .build());
+          } catch (IllegalArgumentException e) {
+            log.info("Failed to parse znode, {}", znode);
+          }
+        });
+
     return CompletableFuture.completedFuture(
         CollectionUtils.emptyIfNull(
             zookeeperClient.get(connection,
@@ -274,6 +332,9 @@ public class ZooKeeperZNodeAsyncComponent {
           ReplicationCacheGroupDto.ReplicationCacheGroupDtoBuilder builder =
               ReplicationCacheGroupDto.builder();
           builder.group(group);
+
+          final AtomicInteger nodeCount = new AtomicInteger(0);
+
           CollectionUtils.emptyIfNull(
               zookeeperClient.get(connection, ARCUS_REPL_CACHE_SERVER_MAPPING_PATH))
               .stream()
@@ -282,25 +343,40 @@ public class ZooKeeperZNodeAsyncComponent {
                 CollectionUtils.emptyIfNull(
                     zookeeperClient.get(connection,
                         PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
-                .forEach(s -> {
+                .stream()
+                .takeWhile(znode -> nodeCount.get() != MAX_REPLICATION_NODE_COUNT_PER_GROUP)
+                .forEach(znode -> {
                   try {
-                    ZooKeeperZNodeParser.ReplicationCacheServerMappingZNode znode
-                        = ZooKeeperZNodeParser.parse(s);
-                    if (StringUtils.equals(znode.getServiceCode(), serviceCode)
-                        && StringUtils.equals(znode.getGroup(), group)) {
-                      if (builder.build().getNode1() == null) {
-                        builder.node1(ReplicationCacheNodeDto.builder().nodeAddress(address)
-                            .listenAddress(znode.getListenAddress()).build());
-                      } else if (builder.build().getNode2() == null) {
-                        builder.node2(ReplicationCacheNodeDto.builder().nodeAddress(address)
-                            .listenAddress(znode.getListenAddress()).build());
+                    ZooKeeperZNodeParser.ReplicationCacheServerMappingZNode parsedZnode
+                        = ZooKeeperZNodeParser.parseReplicationCacheServerMapping(znode);
+                    if (StringUtils.equals(parsedZnode.getServiceCode(), serviceCode)
+                        && StringUtils.equals(parsedZnode.getGroup(), group)) {
+                      if (nodeCount.getAndIncrement() == 0) {
+                        builder.node1(
+                            ReplicationCacheNodeDto
+                                .builder()
+                                .nodeAddress(address)
+                                .listenAddress(parsedZnode.getListenAddress())
+                                .role(aliveCacheNodes.getRole(address))
+                                .alive(aliveCacheNodes.isAliveNode(address))
+                                .build());
+                      } else {
+                        builder.node2(
+                            ReplicationCacheNodeDto
+                                .builder()
+                                .nodeAddress(address)
+                                .listenAddress(parsedZnode.getListenAddress())
+                                .role(aliveCacheNodes.getRole(address))
+                                .alive(aliveCacheNodes.isAliveNode(address))
+                                .build());
                       }
                     }
                   } catch (IllegalArgumentException e) {
-                    // failed parse, but just iterate next element.
+                    log.info("Failed to parse znode, {}", znode);
                   }
                 }));
           return builder.build();
         }).collect(Collectors.toList()));
   }
+
 }

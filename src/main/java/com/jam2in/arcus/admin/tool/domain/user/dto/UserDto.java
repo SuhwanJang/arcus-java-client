@@ -69,10 +69,12 @@ public class UserDto extends BaseDto {
   }
 
   public static Collection<UserDto> of(Collection<UserEntity> userEntities) {
-    return userEntities.stream().collect(
-        ArrayList::new,
-        (userDtos, userEntity) -> userDtos.add(of(userEntity)),
-        List::addAll);
+    return userEntities
+        .stream()
+        .collect(
+            ArrayList::new,
+            (userDtos, userEntity) -> userDtos.add(of(userEntity)),
+            List::addAll);
   }
 
   public static final int SIZE_MIN_USERNAME = 4;

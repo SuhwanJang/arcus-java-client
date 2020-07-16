@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -12,11 +13,19 @@ import javax.validation.constraints.NotEmpty;
 public class ReplicationCacheNodeDto {
 
   @Builder
-  public ReplicationCacheNodeDto(String nodeAddress, String listenAddress, CacheNodeStatDto stat) {
+  public ReplicationCacheNodeDto(ReplicationRole role,
+                                 String nodeAddress,
+                                 String listenAddress,
+                                 CacheNodeStatsDto stats,
+                                 boolean alive) {
+    this.role = role;
     this.nodeAddress = nodeAddress;
     this.listenAddress = listenAddress;
-    this.stat = stat;
+    this.stats = stats;
+    this.alive = alive;
   }
+
+  private ReplicationRole role;
 
   @NotEmpty
   private String nodeAddress;
@@ -24,10 +33,9 @@ public class ReplicationCacheNodeDto {
   @NotEmpty
   private String listenAddress;
 
-  private CacheNodeStatDto stat;
+  @Setter
+  private CacheNodeStatsDto stats;
 
-  public void setStat(CacheNodeStatDto stat) {
-    this.stat = stat;
-  }
+  private boolean alive;
 
 }

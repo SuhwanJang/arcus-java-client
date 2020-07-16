@@ -2,8 +2,8 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.component.CacheClusterComponent;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
@@ -93,7 +93,8 @@ public class EnsembleService {
   }
 
   public Collection<ZooKeeperDto> getZooKeepers(long id) {
-    return CollectionUtils.emptyIfNull(get(id).getZookeepers()).stream()
+    return CollectionUtils.emptyIfNull(get(id).getZookeepers())
+        .stream()
         .map(zookeeperDto -> fourLetterComponent.getStats(zookeeperDto.getAddress())
             .thenApply(stats -> {
               zookeeperDto.setStats(stats);
@@ -153,24 +154,58 @@ public class EnsembleService {
   }
 
   public CacheClusterDto getCacheNodes(long id, String serviceCode) {
-    return CacheClusterDto.builder()
-        .serviceCode(serviceCode)
+    return CacheClusterDto
+        .builder()
         .nodes(
-            cacheClusterComponent.getAllStats(
-                znodeComponent.getCacheCluster(
-                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode).stream()
-                    .map(address -> CacheNodeDto.builder().address(address).build())
-                    .collect(Collectors.toList())))
+            CollectionUtils.emptyIfNull(
+                znodeComponent.getCacheNodes(
+                    EnsembleEntity.joiningZooKeeperAddresses(
+                        getEntity(id)), serviceCode))
+                .stream()
+                .map(cacheNodeDto -> cacheClusterComponent.getStats(cacheNodeDto.getAddress())
+                    .thenApply(stats -> {
+                      cacheNodeDto.setStats(stats);
+                      return cacheNodeDto;
+                    }))
+                .collect(Collectors.toList())
+                .stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList())
+        )
         .build();
   }
 
   public ReplicationCacheClusterDto getReplicationCacheNodes(long id, String serviceCode) {
-    return ReplicationCacheClusterDto.builder()
-        .serviceCode(serviceCode)
+    return ReplicationCacheClusterDto
+        .builder()
         .groups(
-            cacheClusterComponent.getReplicationAllStats(
-                znodeComponent.getCacheClusterGroups(
-                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode)))
+            CollectionUtils.emptyIfNull(
+                znodeComponent.getReplicationCacheNodes(
+                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
+                .stream()
+                .map(group -> {
+                  CompletableFuture<ReplicationCacheGroupDto> future = null;
+                  if (group.getNode1() != null) {
+                    future = cacheClusterComponent.getStats(group.getNode1().getNodeAddress())
+                        .thenApply(stats -> {
+                          group.getNode1().setStats(stats);
+                          return group;
+                        });
+                    if (group.getNode2() != null) {
+                      future.thenCombine(
+                          cacheClusterComponent.getStats(group.getNode2().getNodeAddress()),
+                          (grp, node2Stats) -> {
+                            group.getNode2().setStats(node2Stats);
+                            return group;
+                          });
+                    }
+                  }
+                  return future == null ? CompletableFuture.completedFuture(group) : future;
+                })
+                .collect(Collectors.toList())
+                .stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList()))
         .build();
   }
 
@@ -215,9 +250,10 @@ public class EnsembleService {
     throw new BusinessException(
         ApiError.of(
           ApiErrorCode.ZOOKEEPER_ADDRESS_DUPLICATED,
-          duplicateAddress.stream().map(
-              address -> ApiError.Detail.of(StringUtils.EMPTY, address, StringUtils.EMPTY)
-          ).collect(Collectors.toList())));
+          duplicateAddress
+              .stream()
+              .map(address -> ApiError.Detail.of(StringUtils.EMPTY, address, StringUtils.EMPTY))
+              .collect(Collectors.toList())));
   }
 
 }

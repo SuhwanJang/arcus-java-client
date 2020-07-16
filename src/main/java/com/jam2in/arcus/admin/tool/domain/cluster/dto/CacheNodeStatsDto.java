@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class CacheNodeStatDto {
+public class CacheNodeStatsDto {
 
   private final String host;
 
@@ -19,12 +19,13 @@ public class CacheNodeStatDto {
   private final ApiError error;
 
   @Builder
-  public CacheNodeStatDto(String host, String port, String version, String zkTimeout,
-                          Throwable throwable) {
+  public CacheNodeStatsDto(String host, String port, String version, String zkTimeout,
+                           Throwable throwable) {
     this.host = host;
     this.port = port;
     this.version = version;
     this.zkTimeout = zkTimeout;
     this.error = ZooKeeperApiErrorUtil.toError(throwable);
   }
+
 }

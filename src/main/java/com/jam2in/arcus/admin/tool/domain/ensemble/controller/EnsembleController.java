@@ -135,7 +135,7 @@ public class EnsembleController {
   @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
   public CacheClusterDto getCacheNodes(@PathVariable("id") long id,
-                                         @PathVariable("service-code") String serviceCode) {
+                                       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheNodes(id, serviceCode);
   }
 

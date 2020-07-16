@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -12,18 +13,18 @@ import javax.validation.constraints.NotEmpty;
 public class CacheNodeDto {
 
   @Builder
-  public CacheNodeDto(String address, CacheNodeStatDto stat) {
+  public CacheNodeDto(String address, CacheNodeStatsDto stats, boolean alive) {
     this.address = address;
-    this.stat = stat;
+    this.stats = stats;
+    this.alive = alive;
   }
 
   @NotEmpty
   private String address;
 
-  private CacheNodeStatDto stat;
+  @Setter
+  private CacheNodeStatsDto stats;
 
-  public void setStat(CacheNodeStatDto stat) {
-    this.stat = stat;
-  }
+  private boolean alive;
 
 }

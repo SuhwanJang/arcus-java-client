@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
@@ -27,21 +28,20 @@ public class ZooKeeperDto {
   @NotEmpty
   private String address;
 
+  @Setter
   private ZooKeeperFourLetterDto stats;
-
-  public void setStats(ZooKeeperFourLetterDto stats) {
-    this.stats = stats;
-  }
 
   public static ZooKeeperDto of(ZooKeeperEntity zookeeperEntity) {
     return ModelMapperUtils.map(zookeeperEntity, ZooKeeperDto.class);
   }
 
   public static Collection<ZooKeeperDto> of(Collection<ZooKeeperEntity> zookeeperEntities) {
-    return zookeeperEntities.stream().collect(
-        ArrayList::new,
-        (zookeeperDtos, zookeeperEntity) -> zookeeperDtos.add(of(zookeeperEntity)),
-        List::addAll);
+    return zookeeperEntities
+        .stream()
+        .collect(
+            ArrayList::new,
+            (zookeeperDtos, zookeeperEntity) -> zookeeperDtos.add(of(zookeeperEntity)),
+            List::addAll);
   }
 
 }

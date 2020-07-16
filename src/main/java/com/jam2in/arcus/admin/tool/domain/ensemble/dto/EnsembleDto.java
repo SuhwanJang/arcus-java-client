@@ -42,10 +42,11 @@ public class EnsembleDto extends BaseDto {
   }
 
   public static Collection<EnsembleDto> of(Collection<EnsembleEntity> ensembleEntities) {
-    return ensembleEntities.stream().collect(
-        ArrayList::new,
-        (ensembleDtos, ensembleEntity) -> ensembleDtos.add(of(ensembleEntity)),
-        List::addAll);
+    return ensembleEntities
+        .stream().collect(
+            ArrayList::new,
+            (ensembleDtos, ensembleEntity) -> ensembleDtos.add(of(ensembleEntity)),
+            List::addAll);
   }
 
   public static EnsembleDto ofZooKeepers(EnsembleEntity ensembleEntity) {

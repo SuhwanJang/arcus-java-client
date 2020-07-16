@@ -62,7 +62,8 @@ public class EnsembleEntity extends BaseEntity {
   }
 
   public static String joiningZooKeeperAddresses(EnsembleEntity ensembleEntity) {
-    return ensembleEntity.getZookeepers().stream()
+    return ensembleEntity.getZookeepers()
+        .stream()
         .map(ZooKeeperEntity::getAddress)
         .collect(Collectors.joining(","));
   }

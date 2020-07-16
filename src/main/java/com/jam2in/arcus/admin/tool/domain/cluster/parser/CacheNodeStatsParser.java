@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.cluster.parser;
 
 import com.google.common.net.HostAndPort;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeStatDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeStatsDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,30 +9,29 @@ import org.apache.commons.lang3.StringUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public final class CacheNodeStatParser {
+public final class CacheNodeStatsParser {
 
   private static final String LINE_VERSION = "STAT version ";
   private static final String LINE_ZK_TIMEOUT = "STAT zk_timeout ";
 
   private static void parseVersion(
-      CacheNodeStatDto.CacheNodeStatDtoBuilder builder,
+      CacheNodeStatsDto.CacheNodeStatsDtoBuilder builder,
       String line) {
     builder.version(StringUtils.substringAfter(line, LINE_VERSION));
   }
 
   private static void parseZkTimeout(
-      CacheNodeStatDto.CacheNodeStatDtoBuilder builder,
+      CacheNodeStatsDto.CacheNodeStatsDtoBuilder builder,
       String line) {
     builder.zkTimeout(StringUtils.substringAfter(line, LINE_ZK_TIMEOUT));
   }
 
-  public static CacheNodeStatDto parse(String address, String stat) {
-    CacheNodeStatDto.CacheNodeStatDtoBuilder builder =
-        CacheNodeStatDto.builder();
+  @SuppressWarnings("UnstableApiUsage")
+  public static CacheNodeStatsDto parse(String address, String stats) {
+    CacheNodeStatsDto.CacheNodeStatsDtoBuilder builder =
+        CacheNodeStatsDto.builder();
 
-    String[] stats = stat.split("\n");
-
-    for (String line : stats) {
+    for (String line : stats.split("\n")) {
       try {
         if (line.startsWith(LINE_VERSION)) {
           parseVersion(builder, line);
@@ -41,7 +40,7 @@ public final class CacheNodeStatParser {
           break;
         }
       } catch (Exception e) {
-        log.error("cache node stat parsing error", e);
+        log.error("cache node stats parsing error", e);
       }
     }
 
@@ -49,4 +48,5 @@ public final class CacheNodeStatParser {
     return builder.host(hostAndPort.getHost()).port(Integer.toString(hostAndPort.getPort()))
         .build();
   }
+
 }
