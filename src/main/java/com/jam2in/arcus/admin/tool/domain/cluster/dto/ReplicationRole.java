@@ -1,10 +1,13 @@
 package com.jam2in.arcus.admin.tool.domain.cluster.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ReplicationRole {
 
+  @JsonProperty("master")
   MASTER,
+  @JsonProperty("slave")
   SLAVE
   ;
 
