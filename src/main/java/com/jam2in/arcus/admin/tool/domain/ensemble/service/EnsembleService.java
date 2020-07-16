@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.component.CacheClusterComponent;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
@@ -153,60 +154,51 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
   }
 
-  public CacheClusterDto getCacheNodes(long id, String serviceCode) {
-    return CacheClusterDto
-        .builder()
-        .nodes(
-            CollectionUtils.emptyIfNull(
-                znodeComponent.getCacheNodes(
-                    EnsembleEntity.joiningZooKeeperAddresses(
-                        getEntity(id)), serviceCode))
-                .stream()
-                .map(cacheNodeDto -> cacheClusterComponent.getStats(cacheNodeDto.getAddress())
-                    .thenApply(stats -> {
-                      cacheNodeDto.setStats(stats);
-                      return cacheNodeDto;
-                    }))
-                .collect(Collectors.toList())
-                .stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList())
-        )
-        .build();
+  public Collection<CacheNodeDto> getCacheNodes(long id, String serviceCode) {
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getCacheNodes(
+            EnsembleEntity.joiningZooKeeperAddresses(
+                getEntity(id)), serviceCode))
+        .stream()
+        .map(cacheNodeDto -> cacheClusterComponent.getStats(cacheNodeDto.getAddress())
+            .thenApply(stats -> {
+              cacheNodeDto.setStats(stats);
+              return cacheNodeDto;
+            }))
+        .collect(Collectors.toList())
+        .stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
   }
 
-  public ReplicationCacheClusterDto getReplicationCacheNodes(long id, String serviceCode) {
-    return ReplicationCacheClusterDto
-        .builder()
-        .groups(
-            CollectionUtils.emptyIfNull(
-                znodeComponent.getReplicationCacheNodes(
-                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
-                .stream()
-                .map(group -> {
-                  CompletableFuture<ReplicationCacheGroupDto> future = null;
-                  if (group.getNode1() != null) {
-                    future = cacheClusterComponent.getStats(group.getNode1().getNodeAddress())
-                        .thenApply(stats -> {
-                          group.getNode1().setStats(stats);
-                          return group;
-                        });
-                    if (group.getNode2() != null) {
-                      future.thenCombine(
-                          cacheClusterComponent.getStats(group.getNode2().getNodeAddress()),
-                          (grp, node2Stats) -> {
-                            group.getNode2().setStats(node2Stats);
-                            return group;
-                          });
-                    }
-                  }
-                  return future == null ? CompletableFuture.completedFuture(group) : future;
-                })
-                .collect(Collectors.toList())
-                .stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList()))
-        .build();
+  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(long id, String serviceCode) {
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getReplicationCacheNodes(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
+        .stream()
+        .map(group -> {
+          CompletableFuture<ReplicationCacheGroupDto> future = null;
+          if (group.getNode1() != null) {
+            future = cacheClusterComponent.getStats(group.getNode1().getNodeAddress())
+                .thenApply(stats -> {
+                  group.getNode1().setStats(stats);
+                  return group;
+                });
+            if (group.getNode2() != null) {
+              future.thenCombine(
+                  cacheClusterComponent.getStats(group.getNode2().getNodeAddress()),
+                  (grp, node2Stats) -> {
+                    group.getNode2().setStats(node2Stats);
+                    return group;
+                  });
+            }
+          }
+          return future == null ? CompletableFuture.completedFuture(group) : future;
+        })
+        .collect(Collectors.toList())
+        .stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
   }
 
   private EnsembleEntity getEntity(long id) {

@@ -1,7 +1,10 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
@@ -134,14 +137,14 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public CacheClusterDto getCacheNodes(@PathVariable("id") long id,
-                                       @PathVariable("service-code") String serviceCode) {
+  public Collection<CacheNodeDto> getCacheNodes(@PathVariable("id") long id,
+                                                               @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheNodes(id, serviceCode);
   }
 
   @GetMapping("/{id}/repl-service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public ReplicationCacheClusterDto getReplicationCacheNodes(
+  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheNodes(id, serviceCode);
