@@ -65,7 +65,7 @@ public class CommandSender {
    */
   public static String send(String host, int port, String cmd, int timeout)
       throws IOException {
-    log.info("connecting to " + host + " " + port + " cmd = " + cmd);
+    log.info("connecting to {}:{} cmd={}", host, port, cmd);
     Socket sock = new Socket();
     InetSocketAddress hostaddress = host != null ? new InetSocketAddress(host, port) :
         new InetSocketAddress(InetAddress.getByName(null), port);
