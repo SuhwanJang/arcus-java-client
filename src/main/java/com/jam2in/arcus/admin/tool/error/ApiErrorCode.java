@@ -67,16 +67,29 @@ public enum ApiErrorCode {
       HttpStatus.CONFLICT),
   ZOOKEEPER_TASK_TIMEOUT(
       "ZOOKEEPER100", "task timeout",
-      HttpStatus.INTERNAL_SERVER_ERROR),
+      HttpStatus.GATEWAY_TIMEOUT),
   ZOOKEEPER_TASK_REJECTED(
       "ZOOKEEPER101", "task rejected",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_CONNECTION_FAILED(
       "ZOOKEEPER102", "connection failed",
-      HttpStatus.INTERNAL_SERVER_ERROR),
+      HttpStatus.BAD_GATEWAY),
   ZOOKEEPER_UNKNOWN(
       "ZOOKEEPER199", "unknown",
       HttpStatus.INTERNAL_SERVER_ERROR),
+
+  CACHE_TASK_TIMEOUT(
+      "CACHE100", "task timeout",
+      HttpStatus.GATEWAY_TIMEOUT),
+  CACHE_TASK_REJECTED(
+      "CACHE101", "task rejected",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  CACHE_CONNECTION_FAILED(
+      "CACHE102", "connection failed",
+      HttpStatus.BAD_GATEWAY),
+  CACHE_UNKNOWN(
+      "CACHE199", "unknown",
+      HttpStatus.INTERNAL_SERVER_ERROR)
   ;
 
   private final String code;
