@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 
 import com.google.common.net.HostAndPort;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class CommandSender {
@@ -65,7 +66,7 @@ public class CommandSender {
    */
   public static String send(String host, int port, String cmd, int timeout)
       throws IOException {
-    log.info("connecting to {}:{} cmd={}", host, port, cmd);
+    log.info("connecting to {}:{} cmd={}", host, port, cmd.trim());
     Socket sock = new Socket();
     InetSocketAddress hostaddress = host != null ? new InetSocketAddress(host, port) :
         new InetSocketAddress(InetAddress.getByName(null), port);
