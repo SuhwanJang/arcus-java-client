@@ -102,7 +102,7 @@ public final class ApiError {
                       fieldError.getField(),
                       Objects.toString(rejectedValue, StringUtils.EMPTY),
                       fieldError.getDefaultMessage()));
-              },
+            },
             List::addAll));
   }
 

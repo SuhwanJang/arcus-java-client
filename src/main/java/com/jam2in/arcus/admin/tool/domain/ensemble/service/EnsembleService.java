@@ -129,11 +129,13 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
   }
 
+  @SuppressWarnings("unused")
   public void deleteCacheNode(long id, String serviceCode, String cacheNodeAddress) {
     znodeComponent.deleteCacheNode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
   }
 
+  @SuppressWarnings("unused")
   public void deleteReplicationCacheNode(long id, String serviceCode, String cacheNodeAddress) {
     znodeComponent.deleteReplicationCacheNode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
@@ -171,7 +173,8 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(long id, String serviceCode) {
+  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(long id,
+                                                                       String serviceCode) {
     return CollectionUtils.emptyIfNull(
         znodeComponent.getReplicationCacheNodes(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))

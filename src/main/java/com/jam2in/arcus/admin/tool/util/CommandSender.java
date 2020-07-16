@@ -11,7 +11,6 @@ import java.net.SocketTimeoutException;
 
 import com.google.common.net.HostAndPort;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class CommandSender {
