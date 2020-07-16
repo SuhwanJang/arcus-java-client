@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.dto;
 
-import com.jam2in.arcus.admin.tool.domain.base.dto.BaseDto;
+import com.jam2in.arcus.admin.tool.domain.common.dto.DateDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EnsembleDto extends BaseDto {
+public class EnsembleDto extends DateDto {
 
   @Builder
   public EnsembleDto(Long id, String name, Collection<ZooKeeperDto> zookeepers) {

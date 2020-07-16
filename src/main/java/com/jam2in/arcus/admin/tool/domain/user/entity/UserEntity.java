@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.user.entity;
 
-import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
+import com.jam2in.arcus.admin.tool.domain.common.entity.DateEntity;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.type.Access;
 import com.jam2in.arcus.admin.tool.domain.user.type.Role;
@@ -27,7 +27,7 @@ import java.util.Collection;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class UserEntity extends BaseEntity {
+public class UserEntity extends DateEntity {
 
   @Builder
   public UserEntity(String username,

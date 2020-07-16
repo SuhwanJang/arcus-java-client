@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.base.dto;
+package com.jam2in.arcus.admin.tool.domain.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BaseDto {
+public class DateDto {
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime createdDate;

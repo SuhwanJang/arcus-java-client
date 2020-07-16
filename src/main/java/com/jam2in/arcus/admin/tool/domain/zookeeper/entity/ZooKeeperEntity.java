@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.entity;
 
-import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
+import com.jam2in.arcus.admin.tool.domain.common.entity.DateEntity;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
@@ -29,7 +29,7 @@ import java.util.List;
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ZooKeeperEntity extends BaseEntity {
+public class ZooKeeperEntity extends DateEntity {
 
   @Builder
   public ZooKeeperEntity(Long id, String address) {

@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.base.entity;
+package com.jam2in.arcus.admin.tool.domain.common.entity;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BaseEntity {
+public class DateEntity {
 
   @CreatedDate
   private LocalDateTime createdDate;

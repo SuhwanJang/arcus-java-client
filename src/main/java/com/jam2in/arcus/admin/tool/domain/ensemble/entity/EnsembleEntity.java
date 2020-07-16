@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
-import com.jam2in.arcus.admin.tool.domain.base.entity.BaseEntity;
+import com.jam2in.arcus.admin.tool.domain.common.entity.DateEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Table(name = "ensembles")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EnsembleEntity extends BaseEntity {
+public class EnsembleEntity extends DateEntity {
 
   @Builder
   public EnsembleEntity(String name,
