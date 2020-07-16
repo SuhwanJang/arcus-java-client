@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 public class ZooKeeperZNodeComponent {
 
   // TODO: use property value
-  private static final int ZNODE_CONNECTION_TIMEOUT_MS = 3000;
-  private static final int ZNODE_TASK_TIMEOUT_MS = 10000;
+  private static final int ZNODE_CONNECTION_TIMEOUT_MS = 10000;
+  private static final int ZNODE_TASK_TIMEOUT_MS = 15000;
 
   private final ZooKeeperZNodeAsyncComponent znodeAsyncComponent;
 

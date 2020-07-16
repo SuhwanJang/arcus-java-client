@@ -1,6 +1,5 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
-import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterConsDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterMntrDto;
@@ -15,14 +14,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 public class ZooKeeperFourLetterComponent {
 
   // TODO: use property value
-  public static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 3000;
-  public static final int FOUR_LETTER_TASK_TIMEOUT_MS = 6000;
+  public static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 10000;
+  public static final int FOUR_LETTER_TASK_TIMEOUT_MS = 15000;
 
   private final ZooKeeperFourLetterAsyncComponent fourLetterComponent;
 
@@ -51,36 +49,21 @@ public class ZooKeeperFourLetterComponent {
         .join();
   }
 
-  public Collection<ZooKeeperDto> getAllStats(Collection<ZooKeeperDto> zookeepers) {
-    return zookeepers.stream()
-        .map(this::getStats)
-        .collect(Collectors.toList())
-        .stream()
-        .map(CompletableFuture::join)
-        .collect(Collectors.toList());
-  }
-
-  private CompletableFuture<ZooKeeperDto> getStats(ZooKeeperDto zookeeperDto) {
+  public CompletableFuture<ZooKeeperFourLetterDto> getStats(String address) {
     try {
-      return fourLetterComponent.ruok(zookeeperDto.getAddress(), FOUR_LETTER_SOCKET_TIMEOUT_MS)
+      return fourLetterComponent.ruok(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
           .thenApply(ruok ->
               ZooKeeperFourLetterDto.builder().ruok(ZooKeeperFourLetterRuokParser.parse(ruok)))
           .thenCombine(
-              fourLetterComponent.srvr(zookeeperDto.getAddress(), FOUR_LETTER_SOCKET_TIMEOUT_MS),
+              fourLetterComponent.srvr(address, FOUR_LETTER_SOCKET_TIMEOUT_MS),
               (builder, srvr) ->
-                  builder.srvr(ZooKeeperFourLetterSrvrParser.parse(srvr)))
-          .thenApply(builder -> {
-            zookeeperDto.setStats(builder.build());
-            return zookeeperDto;
-          })
+                  builder.srvr(ZooKeeperFourLetterSrvrParser.parse(srvr)).build())
           .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-          .exceptionally(throwable -> {
-            zookeeperDto.setStats(ZooKeeperFourLetterDto.builder().throwable(throwable).build());
-            return zookeeperDto;
-          });
+          .exceptionally(throwable ->
+              ZooKeeperFourLetterDto.builder().throwable(throwable).build());
     } catch (Exception e) {
-      zookeeperDto.setStats(ZooKeeperFourLetterDto.builder().throwable(e).build());
-      return CompletableFuture.completedFuture(zookeeperDto);
+      return CompletableFuture.completedFuture(
+          ZooKeeperFourLetterDto.builder().throwable(e).build());
     }
   }
 

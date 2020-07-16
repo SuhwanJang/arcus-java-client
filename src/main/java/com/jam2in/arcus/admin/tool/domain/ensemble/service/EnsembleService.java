@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +79,7 @@ public class EnsembleService {
     return EnsembleDto.ofZooKeepers(getEntity(id));
   }
 
-  public List<EnsembleDto> getAll() {
+  public Collection<EnsembleDto> getAll() {
     return EnsembleDto.of(getAllEntity());
   }
 
@@ -92,18 +92,29 @@ public class EnsembleService {
     ensembleRepository.deleteById(id);
   }
 
-  public Collection<ZooKeeperDto> getZooKeeperAllStats(long id) {
-    return fourLetterComponent.getAllStats(get(id).getZookeepers());
+  public Collection<ZooKeeperDto> getZooKeepers(long id) {
+    return CollectionUtils.emptyIfNull(get(id).getZookeepers()).stream()
+        .map(zookeeperDto -> fourLetterComponent.getStats(zookeeperDto.getAddress())
+            .thenApply(stats -> {
+              zookeeperDto.setStats(stats);
+              return zookeeperDto;
+            }))
+        .collect(Collectors.toList())
+        .stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
   }
 
   public Collection<String> getServiceCodes(long id) {
-    return znodeComponent.getServiceCodes(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getServiceCodes(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
   }
 
   public Collection<String> getReplicationServiceCodes(long id) {
-    return znodeComponent.getReplicationServiceCodes(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)));
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getReplicationServiceCodes(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
   }
 
   public void createServiceCode(long id, CacheClusterDto clusterDto) {
@@ -141,19 +152,26 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
   }
 
-  public CacheClusterDto getCacheCluster(long id, String serviceCode) {
-    return CacheClusterDto.builder().serviceCode(serviceCode).nodes(
-        cacheClusterComponent.getAllStats(znodeComponent.getCacheCluster(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode)
-            .stream().map(address -> CacheNodeDto.builder().address(address).build())
-            .collect(Collectors.toList()))).build();
+  public CacheClusterDto getCacheNodes(long id, String serviceCode) {
+    return CacheClusterDto.builder()
+        .serviceCode(serviceCode)
+        .nodes(
+            cacheClusterComponent.getAllStats(
+                znodeComponent.getCacheCluster(
+                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode).stream()
+                    .map(address -> CacheNodeDto.builder().address(address).build())
+                    .collect(Collectors.toList())))
+        .build();
   }
 
-  public ReplicationCacheClusterDto getReplicationCacheCluster(long id, String serviceCode) {
-    return ReplicationCacheClusterDto.builder().serviceCode(serviceCode).groups(
-        cacheClusterComponent.getReplicationAllStats(
-            znodeComponent.getCacheClusterGroups(EnsembleEntity.joiningZooKeeperAddresses(
-                getEntity(id)), serviceCode))).build();
+  public ReplicationCacheClusterDto getReplicationCacheNodes(long id, String serviceCode) {
+    return ReplicationCacheClusterDto.builder()
+        .serviceCode(serviceCode)
+        .groups(
+            cacheClusterComponent.getReplicationAllStats(
+                znodeComponent.getCacheClusterGroups(
+                    EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode)))
+        .build();
   }
 
   private EnsembleEntity getEntity(long id) {
@@ -161,8 +179,8 @@ public class EnsembleService {
         .orElseThrow(() -> new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND));
   }
 
-  private List<EnsembleEntity> getAllEntity() {
-    return ensembleRepository.findAll();
+  private Collection<EnsembleEntity> getAllEntity() {
+    return CollectionUtils.emptyIfNull(ensembleRepository.findAll());
   }
 
   private void checkDuplicateName(String name) {

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/ensembles")
@@ -51,7 +50,7 @@ public class EnsembleController {
 
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public List<EnsembleDto> getAll() {
+  public Collection<EnsembleDto> getAll() {
     return ensembleService.getAll();
   }
 
@@ -64,7 +63,7 @@ public class EnsembleController {
   @GetMapping("/{id}/zookeepers")
   @ResponseStatus(code = HttpStatus.OK)
   public Collection<ZooKeeperDto> getZooKeepers(@PathVariable long id) {
-    return ensembleService.getZooKeeperAllStats(id);
+    return ensembleService.getZooKeepers(id);
   }
 
   @PostMapping("/{id}/service-codes")
@@ -133,19 +132,19 @@ public class EnsembleController {
     ensembleService.deleteReplicationGroup(id, serviceCode, group);
   }
 
-  @GetMapping("/{id}/service-codes/{service-code}/cache-cluster")
+  @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public CacheClusterDto getCacheCluster(@PathVariable("id") long id,
+  public CacheClusterDto getCacheNodes(@PathVariable("id") long id,
                                          @PathVariable("service-code") String serviceCode) {
-    return ensembleService.getCacheCluster(id, serviceCode);
+    return ensembleService.getCacheNodes(id, serviceCode);
   }
 
-  @GetMapping("/{id}/repl-service-codes/{service-code}/repl-cache-cluster")
+  @GetMapping("/{id}/repl-service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public ReplicationCacheClusterDto getReplicationCacheCluster(
+  public ReplicationCacheClusterDto getReplicationCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
-    return ensembleService.getReplicationCacheCluster(id, serviceCode);
+    return ensembleService.getReplicationCacheNodes(id, serviceCode);
   }
 
 }

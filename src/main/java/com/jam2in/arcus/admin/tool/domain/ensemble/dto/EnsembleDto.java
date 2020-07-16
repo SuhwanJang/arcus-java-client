@@ -41,7 +41,7 @@ public class EnsembleDto extends BaseDto {
     return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class, TYPE_MAP_NAME);
   }
 
-  public static List<EnsembleDto> of(List<EnsembleEntity> ensembleEntities) {
+  public static Collection<EnsembleDto> of(Collection<EnsembleEntity> ensembleEntities) {
     return ensembleEntities.stream().collect(
         ArrayList::new,
         (ensembleDtos, ensembleEntity) -> ensembleDtos.add(of(ensembleEntity)),
