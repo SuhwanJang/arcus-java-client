@@ -139,7 +139,7 @@ public class EnsembleController {
     return ensembleService.getCacheNodes(id, serviceCode);
   }
 
-  @GetMapping("/{id}/repl-service-codes/{service-code}/cache-nodes")
+  @GetMapping("/{id}/repl-service-codes/{service-code}/repl-cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
   public ReplicationCacheClusterDto getReplicationCacheNodes(
       @PathVariable("id") long id,
