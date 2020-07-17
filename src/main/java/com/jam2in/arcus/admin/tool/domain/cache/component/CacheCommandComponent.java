@@ -25,10 +25,14 @@ public class CacheCommandComponent {
       return commandAsyncComponent.stats(address, SOCKET_TIMEOUT_MS)
           .thenApply(stat -> CacheNodeStatsParser.parse(address, stat))
           .orTimeout(TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-          .exceptionally(throwable -> CacheNodeStatsDto.builder().throwable(throwable).build());
+          .exceptionally(throwable -> CacheNodeStatsDto.builder()
+              .throwable(throwable)
+              .build());
     } catch (Exception e) {
       return CompletableFuture.completedFuture(
-          CacheNodeStatsDto.builder().throwable(e).build());
+          CacheNodeStatsDto.builder()
+              .throwable(e)
+              .build());
     }
   }
 

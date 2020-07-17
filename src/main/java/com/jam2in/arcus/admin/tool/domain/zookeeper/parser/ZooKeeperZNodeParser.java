@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 public final class ZooKeeperZNodeParser {
 
   public static CacheListZNode parseCacheList(String znode) {
-    return CacheListZNode
-        .builder()
+    return CacheListZNode.builder()
         .address(znode.split("\\^")[0].split("-")[0])
         .build();
   }
@@ -22,8 +21,7 @@ public final class ZooKeeperZNodeParser {
       throw new IllegalArgumentException();
     }
 
-    return ReplicationCacheListZNode
-        .builder()
+    return ReplicationCacheListZNode.builder()
         .group(splitted[0])
         .role(ReplicationRole.of(splitted[1]))
         .address(splitted[2].split("-")[0])
@@ -37,8 +35,7 @@ public final class ZooKeeperZNodeParser {
       throw new IllegalArgumentException();
     }
 
-    return ReplicationCacheServerMappingZNode
-        .builder()
+    return ReplicationCacheServerMappingZNode.builder()
         .serviceCode(splitted[0])
         .group(splitted[1])
         .listenAddress(splitted[2])

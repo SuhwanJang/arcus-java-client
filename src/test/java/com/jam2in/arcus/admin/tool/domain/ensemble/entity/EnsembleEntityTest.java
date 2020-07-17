@@ -49,7 +49,9 @@ public class EnsembleEntityTest {
   @Test
   public void updateName() {
     // given
-    EnsembleEntity ensembleEntity = EnsembleEntity.builder().name("foo").build();
+    EnsembleEntity ensembleEntity = EnsembleEntity.builder()
+        .name("foo")
+        .build();
 
     // when
     ensembleEntity.updateName("bar");

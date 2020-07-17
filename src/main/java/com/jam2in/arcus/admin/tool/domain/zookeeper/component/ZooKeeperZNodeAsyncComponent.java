@@ -270,8 +270,7 @@ public class ZooKeeperZNodeAsyncComponent {
                 .parseCacheList(znode)
                 .getAddress();
             aliveCacheNodes.putAliveNode(address,
-                CacheNodeDto
-                    .builder()
+                CacheNodeDto.builder()
                     .address(address)
                     .build());
           } catch (IllegalArgumentException e) {
@@ -291,8 +290,7 @@ public class ZooKeeperZNodeAsyncComponent {
                 .stream()
                 .anyMatch(s -> StringUtils.equals(s, serviceCode)))
         .map(address ->
-          CacheNodeDto
-              .builder()
+          CacheNodeDto.builder()
               .address(address)
               .alive(aliveCacheNodes.isAliveNode(address))
               .build())
@@ -312,8 +310,7 @@ public class ZooKeeperZNodeAsyncComponent {
             ZooKeeperZNodeParser.ReplicationCacheListZNode parsedZnode =
                 ZooKeeperZNodeParser.parseReplicationCacheList(znode);
             aliveCacheNodes.putAliveNode(parsedZnode.getAddress(),
-                ReplicationCacheNodeDto
-                    .builder()
+                ReplicationCacheNodeDto.builder()
                     .role(parsedZnode.getRole())
                     .nodeAddress(parsedZnode.getAddress())
                     .build());
@@ -353,8 +350,7 @@ public class ZooKeeperZNodeAsyncComponent {
                         && StringUtils.equals(parsedZnode.getGroup(), group)) {
                       if (nodeCount.getAndIncrement() == 0) {
                         builder.node1(
-                            ReplicationCacheNodeDto
-                                .builder()
+                            ReplicationCacheNodeDto.builder()
                                 .nodeAddress(address)
                                 .listenAddress(parsedZnode.getListenAddress())
                                 .role(aliveCacheNodes.getRole(address))
@@ -362,8 +358,7 @@ public class ZooKeeperZNodeAsyncComponent {
                                 .build());
                       } else {
                         builder.node2(
-                            ReplicationCacheNodeDto
-                                .builder()
+                            ReplicationCacheNodeDto.builder()
                                 .nodeAddress(address)
                                 .listenAddress(parsedZnode.getListenAddress())
                                 .role(aliveCacheNodes.getRole(address))

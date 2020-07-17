@@ -53,17 +53,22 @@ public class ZooKeeperFourLetterComponent {
     try {
       return fourLetterComponent.ruok(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
           .thenApply(ruok ->
-              ZooKeeperFourLetterDto.builder().ruok(ZooKeeperFourLetterRuokParser.parse(ruok)))
+              ZooKeeperFourLetterDto.builder()
+                  .ruok(ZooKeeperFourLetterRuokParser.parse(ruok)))
           .thenCombine(
               fourLetterComponent.srvr(address, FOUR_LETTER_SOCKET_TIMEOUT_MS),
               (builder, srvr) ->
                   builder.srvr(ZooKeeperFourLetterSrvrParser.parse(srvr)).build())
           .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .exceptionally(throwable ->
-              ZooKeeperFourLetterDto.builder().throwable(throwable).build());
+              ZooKeeperFourLetterDto.builder()
+                  .throwable(throwable)
+                  .build());
     } catch (Exception e) {
       return CompletableFuture.completedFuture(
-          ZooKeeperFourLetterDto.builder().throwable(e).build());
+          ZooKeeperFourLetterDto.builder()
+              .throwable(e)
+              .build());
     }
   }
 

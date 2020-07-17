@@ -54,7 +54,9 @@ public class UserEntityTest {
   @Test
   public void updateEmail() {
     // given
-    UserEntity userEntity = UserEntity.builder().email("foo").build();
+    UserEntity userEntity = UserEntity.builder()
+        .email("foo")
+        .build();
 
     // when
     userEntity.updateEmail("bar");
@@ -66,7 +68,9 @@ public class UserEntityTest {
   @Test
   public void updatePassword() {
     // given
-    UserEntity userEntity = UserEntity.builder().password("foo").build();
+    UserEntity userEntity = UserEntity.builder()
+        .password("foo")
+        .build();
 
     // when
     userEntity.updatePassword("bar");
