@@ -5,6 +5,7 @@ import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -127,7 +128,7 @@ public class UserService {
   }
 
   private Collection<UserEntity> getAllEntity() {
-    Collection<UserEntity> users = new ArrayList<>(userRepository.findAll());
+    Collection<UserEntity> users = CollectionUtils.emptyIfNull(userRepository.findAll());
     if (users.isEmpty()) {
       throw new BusinessException(ApiErrorCode.NO_USER);
     }
