@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.cache.dto;
 
-import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.cache.util.CacheApiErrorUtil;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class CacheNodeStatsDto {
     this.port = port;
     this.version = version;
     this.zkTimeout = zkTimeout;
-    this.error = ZooKeeperApiErrorUtil.toError(throwable);
+    this.error = CacheApiErrorUtil.toError(throwable);
   }
 
 }
