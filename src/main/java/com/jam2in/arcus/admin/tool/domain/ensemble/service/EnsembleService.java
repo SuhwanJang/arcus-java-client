@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
-import com.jam2in.arcus.admin.tool.domain.cache.component.CacheComponent;
+import com.jam2in.arcus.admin.tool.domain.cache.component.CacheCommandComponent;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
@@ -36,16 +36,16 @@ public class EnsembleService {
 
   private final ZooKeeperZNodeComponent znodeComponent;
 
-  private final CacheComponent cacheClusterComponent;
+  private final CacheCommandComponent commandComponent;
 
   public EnsembleService(EnsembleRepository ensembleRepository,
                          ZooKeeperFourLetterComponent fourLetterComponent,
                          ZooKeeperZNodeComponent znodeComponent,
-                         CacheComponent cacheClusterComponent) {
+                         CacheCommandComponent commandComponent) {
     this.ensembleRepository = ensembleRepository;
     this.fourLetterComponent = fourLetterComponent;
     this.znodeComponent = znodeComponent;
-    this.cacheClusterComponent = cacheClusterComponent;
+    this.commandComponent = commandComponent;
   }
 
   @Transactional
@@ -162,7 +162,7 @@ public class EnsembleService {
             EnsembleEntity.joiningZooKeeperAddresses(
                 getEntity(id)), serviceCode))
         .stream()
-        .map(cacheNodeDto -> cacheClusterComponent.getStats(cacheNodeDto.getAddress())
+        .map(cacheNodeDto -> commandComponent.stats(cacheNodeDto.getAddress())
             .thenApply(stats -> {
               cacheNodeDto.setStats(stats);
               return cacheNodeDto;
@@ -182,14 +182,14 @@ public class EnsembleService {
         .map(group -> {
           CompletableFuture<ReplicationCacheGroupDto> future = null;
           if (group.getNode1() != null) {
-            future = cacheClusterComponent.getStats(group.getNode1().getNodeAddress())
+            future = commandComponent.stats(group.getNode1().getNodeAddress())
                 .thenApply(stats -> {
                   group.getNode1().setStats(stats);
                   return group;
                 });
             if (group.getNode2() != null) {
               future.thenCombine(
-                  cacheClusterComponent.getStats(group.getNode2().getNodeAddress()),
+                  commandComponent.stats(group.getNode2().getNodeAddress()),
                   (grp, node2Stats) -> {
                     group.getNode2().setStats(node2Stats);
                     return group;

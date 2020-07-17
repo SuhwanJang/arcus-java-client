@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class CacheAsyncComponent {
+public class CacheCommandAsyncComponent {
 
   @Async
   public CompletableFuture<String> stats(String address, int socketTimeoutMs) throws IOException {
