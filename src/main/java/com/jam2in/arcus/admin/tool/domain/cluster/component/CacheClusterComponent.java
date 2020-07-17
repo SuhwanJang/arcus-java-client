@@ -22,7 +22,7 @@ public class CacheClusterComponent {
 
   public CompletableFuture<CacheNodeStatsDto> getStats(String address) {
     try {
-      return cacheClusterAsyncComponent.stat(address, SOCKET_TIMEOUT_MS)
+      return cacheClusterAsyncComponent.stats(address, SOCKET_TIMEOUT_MS)
           .thenApply(stat -> CacheNodeStatsParser.parse(address, stat))
           .orTimeout(TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .exceptionally(throwable -> CacheNodeStatsDto.builder().throwable(throwable).build());

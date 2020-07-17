@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 public class CacheClusterAsyncComponent {
 
   @Async
-  public CompletableFuture<String> stat(String address, int socketTimeoutMs) throws IOException {
+  public CompletableFuture<String> stats(String address, int socketTimeoutMs) throws IOException {
     return CompletableFuture.completedFuture(
         CommandSender.send(address, "stats\r\n", socketTimeoutMs));
   }
