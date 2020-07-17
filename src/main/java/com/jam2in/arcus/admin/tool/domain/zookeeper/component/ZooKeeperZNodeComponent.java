@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
@@ -79,13 +80,28 @@ public class ZooKeeperZNodeComponent {
 
   public Collection<CacheNodeDto> getCacheNodes(String addresses, String serviceCode) {
     return handleClient(addresses,
-        (client) -> znodeAsyncComponent.getAsyncCacheNodes(client, serviceCode));
+        client ->
+            znodeAsyncComponent.getAsyncCacheNodes(client, serviceCode));
   }
 
-  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(
-      String addresses, String serviceCode) {
+  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(String addresses,
+                                                                       String serviceCode) {
     return handleClient(addresses,
-        (client) -> znodeAsyncComponent.getAsyncReplicationCacheNodes(client, serviceCode));
+        client ->
+            znodeAsyncComponent.getAsyncReplicationCacheNodes(client, serviceCode));
+  }
+
+  public Collection<CacheClientsDto> getCacheClients(String addresses, String serviceCode) {
+    return handleClient(addresses,
+        client ->
+            znodeAsyncComponent.getAsyncCacheClients(client, serviceCode));
+  }
+
+  public Collection<CacheClientsDto> getReplicationCacheClients(String addresses,
+                                                                String serviceCode) {
+    return handleClient(addresses,
+        client ->
+            znodeAsyncComponent.getAsyncReplicationCacheClients(client, serviceCode));
   }
 
   private <T> T handleClient(

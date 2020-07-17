@@ -1,12 +1,15 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.parser;
 
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationRole;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public final class ZooKeeperZNodeParser {
 
   public static CacheListZNode parseCacheList(String znode) {
@@ -39,6 +42,24 @@ public final class ZooKeeperZNodeParser {
         .serviceCode(splitted[0])
         .group(splitted[1])
         .listenAddress(splitted[2])
+        .build();
+  }
+
+  public static CacheClientsDto parseCacheClientList(String znode) {
+    String[] splitted = znode.split("_");
+
+    if (splitted.length != 7) {
+      throw new IllegalArgumentException();
+    }
+
+    return CacheClientsDto.builder()
+        .host(splitted[0])
+        .address(splitted[1])
+        .poolSize(splitted[2])
+        .client(splitted[3])
+        .version(splitted[4])
+        .date(splitted[5])
+        .sessionId(splitted[6])
         .build();
   }
 

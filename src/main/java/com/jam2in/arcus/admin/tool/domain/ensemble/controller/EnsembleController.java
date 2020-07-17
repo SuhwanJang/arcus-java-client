@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
@@ -97,23 +98,26 @@ public class EnsembleController {
 
   @DeleteMapping("/{id}/service-codes/{service-code}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteServiceCode(@PathVariable("id") long id,
-                                @PathVariable("service-code") String serviceCode) {
+  public void deleteServiceCode(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
     ensembleService.deleteServiceCode(id, serviceCode);
   }
 
   @DeleteMapping("/{id}/repl-service-codes/{service-code}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteReplicationServiceCode(@PathVariable("id") long id,
-                                           @PathVariable("service-code") String serviceCode) {
+  public void deleteReplicationServiceCode(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
     ensembleService.deleteReplicationServiceCode(id, serviceCode);
   }
 
   @DeleteMapping("/{id}/service-codes/{service-code}/cache-nodes/{cache-node-address}")
   @ResponseStatus(code = HttpStatus.OK)
-  public void deleteCacheNode(@PathVariable("id") long id,
-                              @PathVariable("service-code") String serviceCode,
-                              @PathVariable("cache-node-address") String cacheNodeAddress) {
+  public void deleteCacheNode(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode,
+      @PathVariable("cache-node-address") String cacheNodeAddress) {
     ensembleService.deleteCacheNode(id, serviceCode, cacheNodeAddress);
   }
 
@@ -136,8 +140,9 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<CacheNodeDto> getCacheNodes(@PathVariable("id") long id,
-                                                @PathVariable("service-code") String serviceCode) {
+  public Collection<CacheNodeDto> getCacheNodes(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheNodes(id, serviceCode);
   }
 
@@ -147,6 +152,22 @@ public class EnsembleController {
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheNodes(id, serviceCode);
+  }
+
+  @GetMapping("/{id}/service-codes/{service-code}/clients")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<CacheClientsDto> getCacheClients(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
+    return ensembleService.getCacheClients(id, serviceCode);
+  }
+
+  @GetMapping("/{id}/repl-service-codes/{service-code}/clients")
+  @ResponseStatus(code = HttpStatus.OK)
+  public Collection<CacheClientsDto> getReplicationCacheClients(
+      @PathVariable("id") long id,
+      @PathVariable("service-code") String serviceCode) {
+    return ensembleService.getReplicationCacheClients(id, serviceCode);
   }
 
 }

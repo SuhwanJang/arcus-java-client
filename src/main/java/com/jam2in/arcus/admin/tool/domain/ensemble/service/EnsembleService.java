@@ -1,6 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
 import com.jam2in.arcus.admin.tool.domain.cache.component.CacheCommandComponent;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
@@ -202,6 +203,18 @@ public class EnsembleService {
         .stream()
         .map(CompletableFuture::join)
         .collect(Collectors.toList());
+  }
+
+  public Collection<CacheClientsDto> getCacheClients(long id, String serviceCode) {
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getCacheClients(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
+  }
+
+  public Collection<CacheClientsDto> getReplicationCacheClients(long id, String serviceCode) {
+    return CollectionUtils.emptyIfNull(
+        znodeComponent.getReplicationCacheClients(
+            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
   }
 
   private EnsembleEntity getEntity(long id) {
