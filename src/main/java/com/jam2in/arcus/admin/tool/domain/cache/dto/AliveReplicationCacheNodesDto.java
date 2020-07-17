@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cluster.dto;
+package com.jam2in.arcus.admin.tool.domain.cache.dto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,10 +9,6 @@ public class AliveReplicationCacheNodesDto {
 
   public void putAliveNode(String address, ReplicationCacheNodeDto cacheNodeDto) {
     map.put(address, cacheNodeDto);
-  }
-
-  public ReplicationCacheNodeDto getAliveNode(String address) {
-    return map.get(address);
   }
 
   public boolean isAliveNode(String address) {

@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cluster.util;
+package com.jam2in.arcus.admin.tool.domain.cache.util;
 
 import com.jam2in.arcus.admin.tool.domain.zookeeper.exception.ZooKeeperException;
 import com.jam2in.arcus.admin.tool.error.ApiError;

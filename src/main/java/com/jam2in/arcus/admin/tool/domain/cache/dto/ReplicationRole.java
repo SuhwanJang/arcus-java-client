@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cluster.dto;
+package com.jam2in.arcus.admin.tool.domain.cache.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;

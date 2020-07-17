@@ -1,10 +1,10 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
-import com.jam2in.arcus.admin.tool.domain.cluster.component.CacheClusterComponent;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.cache.component.CacheComponent;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
@@ -36,12 +36,12 @@ public class EnsembleService {
 
   private final ZooKeeperZNodeComponent znodeComponent;
 
-  private final CacheClusterComponent cacheClusterComponent;
+  private final CacheComponent cacheClusterComponent;
 
   public EnsembleService(EnsembleRepository ensembleRepository,
                          ZooKeeperFourLetterComponent fourLetterComponent,
                          ZooKeeperZNodeComponent znodeComponent,
-                         CacheClusterComponent cacheClusterComponent) {
+                         CacheComponent cacheClusterComponent) {
     this.ensembleRepository = ensembleRepository;
     this.fourLetterComponent = fourLetterComponent;
     this.znodeComponent = znodeComponent;

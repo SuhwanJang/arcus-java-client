@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.parser;
 
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationRole;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationRole;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

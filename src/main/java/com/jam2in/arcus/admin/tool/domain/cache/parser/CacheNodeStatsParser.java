@@ -1,7 +1,7 @@
-package com.jam2in.arcus.admin.tool.domain.cluster.parser;
+package com.jam2in.arcus.admin.tool.domain.cache.parser;
 
 import com.google.common.net.HostAndPort;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeStatsDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeStatsDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

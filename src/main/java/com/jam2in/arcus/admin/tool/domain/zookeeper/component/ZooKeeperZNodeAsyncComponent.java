@@ -1,12 +1,12 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.AliveCacheNodesDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.AliveReplicationCacheNodesDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheGroupDto;
-import com.jam2in.arcus.admin.tool.domain.cluster.dto.ReplicationCacheNodeDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.AliveCacheNodesDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.AliveReplicationCacheNodesDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperZNodeParser;
 import com.jam2in.arcus.admin.tool.util.PathUtils;

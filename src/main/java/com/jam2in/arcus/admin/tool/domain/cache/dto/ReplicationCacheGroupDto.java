@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cluster.dto;
+package com.jam2in.arcus.admin.tool.domain.cache.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
