@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 import com.google.common.net.HostAndPort;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +87,6 @@ public class CommandSender {
         sb.append(line).append("\n");
       }
       return sb.toString();
-    } catch (SocketTimeoutException e) {
-      throw new IOException("Exception while executing command: " + cmd, e);
     } finally {
       sock.close();
       if (reader != null) {
