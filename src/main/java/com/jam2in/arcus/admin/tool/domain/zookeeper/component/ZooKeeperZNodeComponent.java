@@ -10,7 +10,6 @@ import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.lang3.Functions;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
