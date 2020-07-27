@@ -83,7 +83,7 @@ public class EnsembleService {
   }
 
   public List<EnsembleDto> getAll() {
-    return EnsembleDto.of(getAllEntity());
+    return EnsembleDto.of(ListUtils.emptyIfNull(ensembleRepository.findAll()));
   }
 
   @Transactional
@@ -221,10 +221,6 @@ public class EnsembleService {
   private EnsembleEntity getEntity(long id) {
     return ensembleRepository.findById(id)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND));
-  }
-
-  private List<EnsembleEntity> getAllEntity() {
-    return ListUtils.emptyIfNull(ensembleRepository.findAll());
   }
 
   private void checkDuplicateName(String name) {

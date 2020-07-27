@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -39,6 +41,14 @@ public class KubernetesDto {
 
   public static KubernetesDto of(KubernetesEntity kubernetesEntity) {
     return ModelMapperUtils.map(kubernetesEntity, KubernetesDto.class);
+  }
+
+  public static List<KubernetesDto> of(List<KubernetesEntity> kubernetesEntities) {
+    return kubernetesEntities
+        .stream().collect(
+            ArrayList::new,
+            (kubernetesDtos, kubernetesEntity) -> kubernetesDtos.add(of(kubernetesEntity)),
+            List::addAll);
   }
 
   public static final int SIZE_MIN_NAME = 4;

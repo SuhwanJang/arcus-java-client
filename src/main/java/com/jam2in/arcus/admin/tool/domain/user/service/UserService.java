@@ -85,7 +85,7 @@ public class UserService {
   }
 
   public List<UserDto> getAll() {
-    return UserDto.of(getAllEntity());
+    return UserDto.of(ListUtils.emptyIfNull(userRepository.findAll()));
   }
 
   public UserDto getByUsername(String username) {
@@ -124,10 +124,6 @@ public class UserService {
   private UserEntity getEntityByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
-  }
-
-  private List<UserEntity> getAllEntity() {
-    return ListUtils.emptyIfNull(userRepository.findAll());
   }
 
   private void checkDuplicateUsername(String username) {

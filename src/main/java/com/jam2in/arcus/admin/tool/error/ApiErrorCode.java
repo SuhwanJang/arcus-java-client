@@ -49,6 +49,16 @@ public enum ApiErrorCode {
       "USER008", "invalid username or password",
       HttpStatus.UNAUTHORIZED),
 
+  KUBERNETES_NOT_FOUND(
+      "KUBERNETES001", "kubernetes is not found",
+      HttpStatus.NOT_FOUND),
+  KUBERNETES_NAME_DUPLICATED(
+      "KUBERNETES002", "name is duplicated",
+      HttpStatus.CONFLICT),
+  KUBERNETES_ADDRESS_DUPLICATED(
+      "KUBERNETES003", "address is duplicated",
+      HttpStatus.CONFLICT),
+
   ENSEMBLE_NOT_FOUND(
       "ENSEMBLE001", "ensemble is not found",
       HttpStatus.NOT_FOUND),
