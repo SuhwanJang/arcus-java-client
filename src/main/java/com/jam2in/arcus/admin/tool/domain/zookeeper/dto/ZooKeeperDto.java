@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,7 +17,8 @@ import java.util.List;
 public class ZooKeeperDto {
 
   @Builder
-  public ZooKeeperDto(Long id, String address) {
+  public ZooKeeperDto(Long id,
+                      String address) {
     this.id = id;
     this.address = address;
   }
@@ -35,7 +35,7 @@ public class ZooKeeperDto {
     return ModelMapperUtils.map(zookeeperEntity, ZooKeeperDto.class);
   }
 
-  public static Collection<ZooKeeperDto> of(Collection<ZooKeeperEntity> zookeeperEntities) {
+  public static List<ZooKeeperDto> of(List<ZooKeeperEntity> zookeeperEntities) {
     return zookeeperEntities
         .stream()
         .collect(

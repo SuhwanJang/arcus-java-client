@@ -2,17 +2,16 @@ package com.jam2in.arcus.admin.tool.domain.user.service;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
+import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
-import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -85,7 +84,7 @@ public class UserService {
     return UserDto.of(getEntity(id));
   }
 
-  public Collection<UserDto> getAll() {
+  public List<UserDto> getAll() {
     return UserDto.of(getAllEntity());
   }
 
@@ -127,12 +126,8 @@ public class UserService {
         .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
   }
 
-  private Collection<UserEntity> getAllEntity() {
-    Collection<UserEntity> users = CollectionUtils.emptyIfNull(userRepository.findAll());
-    if (users.isEmpty()) {
-      throw new BusinessException(ApiErrorCode.NO_USER);
-    }
-    return users;
+  private List<UserEntity> getAllEntity() {
+    return ListUtils.emptyIfNull(userRepository.findAll());
   }
 
   private void checkDuplicateUsername(String username) {

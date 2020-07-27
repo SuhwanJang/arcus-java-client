@@ -12,19 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class ReplicationCacheNodeDto {
 
-  @Builder
-  public ReplicationCacheNodeDto(ReplicationRole role,
-                                 String nodeAddress,
-                                 String listenAddress,
-                                 CacheNodeStatsDto stats,
-                                 boolean alive) {
-    this.role = role;
-    this.nodeAddress = nodeAddress;
-    this.listenAddress = listenAddress;
-    this.stats = stats;
-    this.alive = alive;
-  }
-
   private ReplicationRole role;
 
   @NotEmpty
@@ -37,5 +24,18 @@ public class ReplicationCacheNodeDto {
   private CacheNodeStatsDto stats;
 
   private boolean alive;
+
+  @Builder
+  public ReplicationCacheNodeDto(ReplicationRole role,
+                                 String nodeAddress,
+                                 String listenAddress,
+                                 CacheNodeStatsDto stats,
+                                 boolean alive) {
+    this.role = role;
+    this.nodeAddress = nodeAddress;
+    this.listenAddress = listenAddress;
+    this.stats = stats;
+    this.alive = alive;
+  }
 
 }

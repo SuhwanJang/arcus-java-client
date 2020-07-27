@@ -6,6 +6,17 @@ import lombok.Getter;
 @Getter
 public class ZooKeeperFourLetterConsDto {
 
+  @Builder
+  public ZooKeeperFourLetterConsDto(String address,
+                                    String queued,
+                                    String received,
+                                    String sent) {
+    this.address = address;
+    this.queued = queued;
+    this.received = received;
+    this.sent = sent;
+  }
+
   private final String address;
 
   private final String queued;
@@ -13,13 +24,5 @@ public class ZooKeeperFourLetterConsDto {
   private final String received;
 
   private final String sent;
-
-  @Builder
-  public ZooKeeperFourLetterConsDto(String address, String queued, String received, String sent) {
-    this.address = address;
-    this.queued = queued;
-    this.received = received;
-    this.sent = sent;
-  }
 
 }

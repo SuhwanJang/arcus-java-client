@@ -19,7 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
@@ -27,13 +27,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class EnsembleEntity extends DateEntity {
-
-  @Builder
-  public EnsembleEntity(String name,
-                        Collection<ZooKeeperEntity> zookeepers) {
-    this.name = name;
-    this.zookeepers = zookeepers;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,13 +37,20 @@ public class EnsembleEntity extends DateEntity {
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "ensemble_id")
-  private Collection<ZooKeeperEntity> zookeepers;
+  private List<ZooKeeperEntity> zookeepers;
+
+  @Builder
+  public EnsembleEntity(String name,
+                        List<ZooKeeperEntity> zookeepers) {
+    this.name = name;
+    this.zookeepers = zookeepers;
+  }
 
   public void updateName(String name) {
     this.name = name;
   }
 
-  public void updateZookeepers(Collection<ZooKeeperEntity> zookeepers) {
+  public void updateZookeepers(List<ZooKeeperEntity> zookeepers) {
     this.zookeepers.clear();
     if (CollectionUtils.isNotEmpty(zookeepers)) {
       this.zookeepers.addAll(zookeepers);

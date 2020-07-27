@@ -11,7 +11,7 @@ import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class ZooKeeperService {
@@ -34,7 +34,7 @@ public class ZooKeeperService {
     }
   }
 
-  public Collection<ZooKeeperFourLetterConsDto> getCons(long id) {
+  public List<ZooKeeperFourLetterConsDto> getCons(long id) {
     try {
       return fourLetterComponent.getCons(getEntity(id).getAddress());
     } catch (Exception e) {

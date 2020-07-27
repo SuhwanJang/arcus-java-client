@@ -10,13 +10,13 @@ import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperZNodeParser;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -64,16 +64,16 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<Collection<String>> getAsyncServiceCodes(Object connection) {
+  public CompletableFuture<List<String>> getAsyncServiceCodes(Object connection) {
     return CompletableFuture.completedFuture(
-        CollectionUtils.emptyIfNull(
+        ListUtils.emptyIfNull(
             zookeeperClient.get(connection, ARCUS_CACHE_LIST_PATH)));
   }
 
   @Async
-  public CompletableFuture<Collection<String>> getAsyncReplicationServiceCodes(Object connection) {
+  public CompletableFuture<List<String>> getAsyncReplicationServiceCodes(Object connection) {
     return CompletableFuture.completedFuture(
-        CollectionUtils.emptyIfNull(
+        ListUtils.emptyIfNull(
             zookeeperClient.get(connection, ARCUS_REPL_CACHE_LIST_PATH)));
   }
 
@@ -89,7 +89,7 @@ public class ZooKeeperZNodeAsyncComponent {
     zookeeperClient.create(connection,
         PathUtils.path(ARCUS_CACHE_LIST_PATH, clusterDto.getServiceCode()));
 
-    CollectionUtils.emptyIfNull(clusterDto.getNodes())
+    ListUtils.emptyIfNull(clusterDto.getNodes())
         .forEach(node ->
             zookeeperClient.create(connection,
                 PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH,
@@ -111,7 +111,7 @@ public class ZooKeeperZNodeAsyncComponent {
     zookeeperClient.create(connection,
         PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH, replClusterDto.getServiceCode()));
 
-    CollectionUtils.emptyIfNull(replClusterDto.getGroups())
+    ListUtils.emptyIfNull(replClusterDto.getGroups())
         .forEach(group -> {
           zookeeperClient.create(connection,
               PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH,
@@ -160,12 +160,12 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncServiceCode(Object connection,
                                                         String serviceCode) {
-    CollectionUtils.emptyIfNull(
+    ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH)))
         .stream()
         .filter(address ->
-            CollectionUtils.emptyIfNull(
+            ListUtils.emptyIfNull(
                 zookeeperClient.get(connection,
                     PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)))
                 .stream()
@@ -187,12 +187,12 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> deleteAsyncReplicationServiceCode(Object connection,
                                                                    String serviceCode) {
-    CollectionUtils.emptyIfNull(
+    ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH)))
         .stream()
         .filter(address ->
-            CollectionUtils.emptyIfNull(
+            ListUtils.emptyIfNull(
                 zookeeperClient.get(connection,
                     PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
                 .stream()
@@ -228,11 +228,11 @@ public class ZooKeeperZNodeAsyncComponent {
   public CompletableFuture<Void> deleteAsyncReplicationGroup(Object connection,
                                                              String serviceCode,
                                                              String group) {
-    CollectionUtils.emptyIfNull(
+    ListUtils.emptyIfNull(
         zookeeperClient.get(connection, ARCUS_REPL_CACHE_SERVER_MAPPING_PATH))
         .stream()
         .filter(address ->
-            CollectionUtils.emptyIfNull(
+            ListUtils.emptyIfNull(
                 zookeeperClient.get(connection,
                     PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
             .stream()
@@ -259,11 +259,11 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<Collection<CacheNodeDto>> getAsyncCacheNodes(Object connection,
+  public CompletableFuture<List<CacheNodeDto>> getAsyncCacheNodes(Object connection,
                                                                         String serviceCode) {
     Map<String, CacheNodeDto> aliveCacheNodeMap = new HashMap<>();
 
-    CollectionUtils.emptyIfNull(
+    ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(ARCUS_CACHE_LIST_PATH, serviceCode)))
         .forEach(znode -> {
@@ -281,12 +281,12 @@ public class ZooKeeperZNodeAsyncComponent {
         });
 
     return CompletableFuture.completedFuture(
-        CollectionUtils.emptyIfNull(
+        ListUtils.emptyIfNull(
             zookeeperClient.get(connection,
                 PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH)))
         .stream()
         .filter(address ->
-            CollectionUtils.emptyIfNull(
+            ListUtils.emptyIfNull(
                 zookeeperClient.get(connection,
                     PathUtils.path(ARCUS_CACHE_SERVER_MAPPING_PATH, address)))
                 .stream()
@@ -300,11 +300,11 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<Collection<ReplicationCacheGroupDto>> getAsyncReplicationCacheNodes(
+  public CompletableFuture<List<ReplicationCacheGroupDto>> getAsyncReplicationCacheNodes(
       Object connection, String serviceCode) {
     Map<String, ReplicationCacheNodeDto> aliveCacheNodeMap = new HashMap<>();
 
-    CollectionUtils.emptyIfNull(
+    ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(ARCUS_REPL_CACHE_LIST_PATH, serviceCode)))
         .forEach(znode -> {
@@ -322,7 +322,7 @@ public class ZooKeeperZNodeAsyncComponent {
         });
 
     return CompletableFuture.completedFuture(
-        CollectionUtils.emptyIfNull(
+        ListUtils.emptyIfNull(
             zookeeperClient.get(connection,
                 PathUtils.path(ARCUS_REPL_GROUP_LIST_PATH, serviceCode)))
         .stream()
@@ -334,12 +334,12 @@ public class ZooKeeperZNodeAsyncComponent {
 
           final AtomicInteger nodeCount = new AtomicInteger(0);
 
-          CollectionUtils.emptyIfNull(
+          ListUtils.emptyIfNull(
               zookeeperClient.get(connection, ARCUS_REPL_CACHE_SERVER_MAPPING_PATH))
               .stream()
               .sorted()
               .forEach(address ->
-                CollectionUtils.emptyIfNull(
+                ListUtils.emptyIfNull(
                     zookeeperClient.get(connection,
                         PathUtils.path(ARCUS_REPL_CACHE_SERVER_MAPPING_PATH, address)))
                 .stream()
@@ -380,23 +380,23 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<Collection<CacheClientsDto>> getAsyncCacheClients(
+  public CompletableFuture<List<CacheClientsDto>> getAsyncCacheClients(
       Object connection, String serviceCode) {
     return CompletableFuture.completedFuture(
         getCacheClients(connection, serviceCode, ARCUS_CLIENT_LIST_PATH));
   }
 
   @Async
-  public CompletableFuture<Collection<CacheClientsDto>> getAsyncReplicationCacheClients(
+  public CompletableFuture<List<CacheClientsDto>> getAsyncReplicationCacheClients(
       Object connection, String serviceCode) {
     return CompletableFuture.completedFuture(
         getCacheClients(connection, serviceCode, ARCUS_REPL_CLIENT_LIST_PATH));
   }
 
-  private Collection<CacheClientsDto> getCacheClients(Object connection,
+  private List<CacheClientsDto> getCacheClients(Object connection,
                                                       String serviceCode,
                                                       String path) {
-    return CollectionUtils.emptyIfNull(
+    return ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(path, serviceCode)))
         .stream()

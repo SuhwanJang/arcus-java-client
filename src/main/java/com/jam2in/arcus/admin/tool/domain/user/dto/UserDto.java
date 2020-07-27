@@ -14,29 +14,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class UserDto extends DateDto {
-
-  @Builder
-  public UserDto(Long id,
-                 String username,
-                 String email,
-                 String password,
-                 String newPassword,
-                 Role role,
-                 Collection<Access> accesses) {
-    this.id = id;
-    this.username = username;
-    this.email = email;
-    this.newPassword = newPassword;
-    this.password = password;
-    this.role = role;
-    this.accesses = accesses;
-  }
 
   private Long id;
 
@@ -57,7 +39,24 @@ public class UserDto extends DateDto {
 
   private Role role;
 
-  private Collection<Access> accesses;
+  private List<Access> accesses;
+
+  @Builder
+  public UserDto(Long id,
+                 String username,
+                 String email,
+                 String password,
+                 String newPassword,
+                 Role role,
+                 List<Access> accesses) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.newPassword = newPassword;
+    this.password = password;
+    this.role = role;
+    this.accesses = accesses;
+  }
 
   public static UserDto of(UserEntity userEntity) {
     UserDto userDto = ModelMapperUtils.map(
@@ -68,7 +67,7 @@ public class UserDto extends DateDto {
     return userDto;
   }
 
-  public static Collection<UserDto> of(Collection<UserEntity> userEntities) {
+  public static List<UserDto> of(List<UserEntity> userEntities) {
     return userEntities
         .stream()
         .collect(

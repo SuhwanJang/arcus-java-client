@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -31,12 +30,6 @@ import java.util.List;
 @Getter
 public class ZooKeeperEntity extends DateEntity {
 
-  @Builder
-  public ZooKeeperEntity(Long id, String address) {
-    this.id = id;
-    this.address = address;
-  }
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -44,11 +37,17 @@ public class ZooKeeperEntity extends DateEntity {
   @Column(nullable = false)
   private String address;
 
+  @Builder
+  public ZooKeeperEntity(Long id, String address) {
+    this.id = id;
+    this.address = address;
+  }
+
   public static ZooKeeperEntity of(ZooKeeperDto zookeeperDto) {
     return ModelMapperUtils.map(zookeeperDto, ZooKeeperEntity.class);
   }
 
-  public static Collection<ZooKeeperEntity> of(Collection<ZooKeeperDto> zookeeperDtos) {
+  public static List<ZooKeeperEntity> of(List<ZooKeeperDto> zookeeperDtos) {
     if (zookeeperDtos == null) {
       return null;
     }

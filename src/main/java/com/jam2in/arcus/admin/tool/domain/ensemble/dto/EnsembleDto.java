@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,7 +21,9 @@ import java.util.List;
 public class EnsembleDto extends DateDto {
 
   @Builder
-  public EnsembleDto(Long id, String name, Collection<ZooKeeperDto> zookeepers) {
+  public EnsembleDto(Long id,
+                     String name,
+                     List<ZooKeeperDto> zookeepers) {
     this.id = id;
     this.name = name;
     this.zookeepers = zookeepers;
@@ -35,13 +36,13 @@ public class EnsembleDto extends DateDto {
   private String name;
 
   @Valid
-  private Collection<ZooKeeperDto> zookeepers;
+  private List<ZooKeeperDto> zookeepers;
 
   public static EnsembleDto of(EnsembleEntity ensembleEntity) {
     return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class, TYPE_MAP_NAME);
   }
 
-  public static Collection<EnsembleDto> of(Collection<EnsembleEntity> ensembleEntities) {
+  public static List<EnsembleDto> of(List<EnsembleEntity> ensembleEntities) {
     return ensembleEntities
         .stream().collect(
             ArrayList::new,

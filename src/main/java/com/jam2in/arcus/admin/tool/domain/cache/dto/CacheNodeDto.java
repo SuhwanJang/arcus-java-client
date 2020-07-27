@@ -12,13 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class CacheNodeDto {
 
-  @Builder
-  public CacheNodeDto(String address, CacheNodeStatsDto stats, boolean alive) {
-    this.address = address;
-    this.stats = stats;
-    this.alive = alive;
-  }
-
   @NotEmpty
   private String address;
 
@@ -26,5 +19,12 @@ public class CacheNodeDto {
   private CacheNodeStatsDto stats;
 
   private boolean alive;
+
+  @Builder
+  public CacheNodeDto(String address, CacheNodeStatsDto stats, boolean alive) {
+    this.address = address;
+    this.stats = stats;
+    this.alive = alive;
+  }
 
 }

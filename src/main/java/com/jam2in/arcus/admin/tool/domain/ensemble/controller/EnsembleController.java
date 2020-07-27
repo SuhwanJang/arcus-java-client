@@ -6,8 +6,8 @@ import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/ensembles")
@@ -53,7 +54,7 @@ public class EnsembleController {
 
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<EnsembleDto> getAll() {
+  public List<EnsembleDto> getAll() {
     return ensembleService.getAll();
   }
 
@@ -65,7 +66,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/zookeepers")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ZooKeeperDto> getZooKeepers(@PathVariable long id) {
+  public List<ZooKeeperDto> getZooKeepers(@PathVariable long id) {
     return ensembleService.getZooKeepers(id);
   }
 
@@ -86,13 +87,13 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<String> getServiceCodes(@PathVariable long id) {
+  public List<String> getServiceCodes(@PathVariable long id) {
     return ensembleService.getServiceCodes(id);
   }
 
   @GetMapping("/{id}/repl-service-codes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<String> getReplicationServiceCodes(@PathVariable long id) {
+  public List<String> getReplicationServiceCodes(@PathVariable long id) {
     return ensembleService.getReplicationServiceCodes(id);
   }
 
@@ -140,7 +141,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<CacheNodeDto> getCacheNodes(
+  public List<CacheNodeDto> getCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheNodes(id, serviceCode);
@@ -148,7 +149,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/repl-service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(
+  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheNodes(id, serviceCode);
@@ -156,7 +157,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/clients")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<CacheClientsDto> getCacheClients(
+  public List<CacheClientsDto> getCacheClients(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheClients(id, serviceCode);
@@ -164,7 +165,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/repl-service-codes/{service-code}/clients")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<CacheClientsDto> getReplicationCacheClients(
+  public List<CacheClientsDto> getReplicationCacheClients(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheClients(id, serviceCode);

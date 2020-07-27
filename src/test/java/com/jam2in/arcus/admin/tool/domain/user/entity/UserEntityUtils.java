@@ -7,7 +7,6 @@ import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,7 +45,7 @@ public final class UserEntityUtils {
                             String email,
                             String password,
                             Role role,
-                            Collection<Access> accesses) {
+                            List<Access> accesses) {
     assertThat(userEntity.getId(), is(nullValue()));
     assertThat(userEntity.getUsername(), is(username));
     assertThat(userEntity.getEmail(), is(email));

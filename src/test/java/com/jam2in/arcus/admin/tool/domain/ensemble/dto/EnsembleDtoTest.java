@@ -1,16 +1,5 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.dto;
 
-import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
-import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntityUtils;
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 public class EnsembleDtoTest {
 
   /*
@@ -19,7 +8,7 @@ public class EnsembleDtoTest {
     // given
     long id = 1L;
     String name = "foo";
-    Collection<String> zookeepers = List.of(
+    List<String> zookeepers = List.of(
         "192.168.0.1:2181",
         "192.168.0.2:2181",
         "192.168.0.3:2181");

@@ -15,8 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
   public UserDetails getUserDetails(Claims claims) {
     return new User(claims.getSubject(),
       StringUtils.EMPTY,
-      ((Collection<String>) claims.get(roles))
+      ((List<String>) claims.get(roles))
           .stream()
           .map(SimpleGrantedAuthority::new)
           .collect(Collectors.toList())

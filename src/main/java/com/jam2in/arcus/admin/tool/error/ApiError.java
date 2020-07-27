@@ -17,7 +17,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,19 +30,19 @@ public final class ApiError {
   private final HttpStatus status;
   private final String code;
   private final String message;
-  private final Collection<Detail> details;
+  private final List<Detail> details;
 
   private ApiError(HttpStatus status,
                   String code,
                   String message,
-                  Collection<Detail> details) {
+                  List<Detail> details) {
     this.status = status;
     this.code = code;
     this.message = message;
     this.details = details;
   }
 
-  private ApiError(ApiErrorCode apiErrorCode, Collection<Detail> details) {
+  private ApiError(ApiErrorCode apiErrorCode, List<Detail> details) {
     this(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(), details);
   }
 
@@ -56,7 +55,7 @@ public final class ApiError {
         Collections.emptyList());
   }
 
-  public static ApiError of(ApiErrorCode apiErrorCode, Collection<Detail> details) {
+  public static ApiError of(ApiErrorCode apiErrorCode, List<Detail> details) {
     return new ApiError(apiErrorCode, details);
   }
 
@@ -84,14 +83,14 @@ public final class ApiError {
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode, BindingResult bindingResult) {
-    Collection<org.springframework.validation.FieldError> fieldErrors =
+    List<org.springframework.validation.FieldError> fieldErrors =
         bindingResult.getFieldErrors();
 
     if (CollectionUtils.isEmpty(fieldErrors)) {
       return of(apiErrorCode);
     }
 
-    return new ApiError(apiErrorCode, (Collection<Detail>) fieldErrors
+    return new ApiError(apiErrorCode, (List<Detail>) fieldErrors
         .stream()
         .collect(
             ArrayList<Detail>::new,

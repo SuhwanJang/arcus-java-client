@@ -6,11 +6,10 @@ import com.jam2in.arcus.admin.tool.domain.user.type.Access;
 import com.jam2in.arcus.admin.tool.domain.user.type.Role;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class UserEntityTest {
 
@@ -21,7 +20,7 @@ public class UserEntityTest {
     String email = "foo@bar.com";
     String password = "baz";
     Role role = Role.ROLE_ADMIN;
-    Collection<Access> accesses = List.of(
+    List<Access> accesses = List.of(
         Access.ACCESS_CACHE_CLUSTER_MANAGEMENT,
         Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT);
 

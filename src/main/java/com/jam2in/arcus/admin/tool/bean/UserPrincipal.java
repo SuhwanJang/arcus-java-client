@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.bean;
 
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ public class UserPrincipal extends User {
   public UserPrincipal(UserDto userDto, String password) {
     super(userDto.getUsername(), password, Stream.concat(
         Stream.of(userDto.getRole()),
-        CollectionUtils.emptyIfNull(userDto.getAccesses()).stream())
+        ListUtils.emptyIfNull(userDto.getAccesses()).stream())
         .collect(Collectors.toList()));
 
     this.userDto = userDto;

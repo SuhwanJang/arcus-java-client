@@ -27,6 +27,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.11.0")
   implementation("com.google.guava:guava:29.0-jre")
   implementation("io.jsonwebtoken:jjwt:0.9.1")
+  implementation("io.fabric8:kubernetes-client:4.10.3")
   implementation("org.apache.commons:commons-lang3:3.10")
   implementation("org.apache.commons:commons-collections4:4.4")
   implementation("org.apache.curator:curator-framework:4.2.0")

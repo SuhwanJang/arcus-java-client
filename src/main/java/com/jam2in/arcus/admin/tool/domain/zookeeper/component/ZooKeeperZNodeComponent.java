@@ -11,6 +11,7 @@ import org.apache.commons.lang3.Functions;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +28,11 @@ public class ZooKeeperZNodeComponent {
     this.znodeAsyncComponent = znodeComponent;
   }
 
-  public Collection<String> getServiceCodes(String addresses) {
+  public List<String> getServiceCodes(String addresses) {
     return handleClient(addresses, znodeAsyncComponent::getAsyncServiceCodes);
   }
 
-  public Collection<String> getReplicationServiceCodes(String addresses) {
+  public List<String> getReplicationServiceCodes(String addresses) {
     return handleClient(addresses, znodeAsyncComponent::getAsyncReplicationServiceCodes);
   }
 
@@ -78,26 +79,26 @@ public class ZooKeeperZNodeComponent {
             znodeAsyncComponent.deleteAsyncReplicationGroup(connection, serviceCode, group));
   }
 
-  public Collection<CacheNodeDto> getCacheNodes(String addresses, String serviceCode) {
+  public List<CacheNodeDto> getCacheNodes(String addresses, String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncCacheNodes(client, serviceCode));
   }
 
-  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(String addresses,
+  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(String addresses,
                                                                        String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncReplicationCacheNodes(client, serviceCode));
   }
 
-  public Collection<CacheClientsDto> getCacheClients(String addresses, String serviceCode) {
+  public List<CacheClientsDto> getCacheClients(String addresses, String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncCacheClients(client, serviceCode));
   }
 
-  public Collection<CacheClientsDto> getReplicationCacheClients(String addresses,
+  public List<CacheClientsDto> getReplicationCacheClients(String addresses,
                                                                 String serviceCode) {
     return handleClient(addresses,
         client ->

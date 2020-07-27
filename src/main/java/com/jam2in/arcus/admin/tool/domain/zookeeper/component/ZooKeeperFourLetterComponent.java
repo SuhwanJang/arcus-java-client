@@ -11,7 +11,7 @@ import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperFourLetterSr
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +35,7 @@ public class ZooKeeperFourLetterComponent {
         .join();
   }
 
-  public Collection<ZooKeeperFourLetterConsDto> getCons(String address) throws IOException {
+  public List<ZooKeeperFourLetterConsDto> getCons(String address) throws IOException {
     return fourLetterComponent.cons(address, FOUR_LETTER_SOCKET_TIMEOUT_MS)
         .thenApply(ZooKeeperFourLetterConsParser::parse)
         .orTimeout(FOUR_LETTER_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)

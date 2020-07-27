@@ -12,15 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class ReplicationCacheGroupDto {
 
-  @Builder
-  public ReplicationCacheGroupDto(String group,
-                                  ReplicationCacheNodeDto node1,
-                                  ReplicationCacheNodeDto node2) {
-    this.group = group;
-    this.node1 = node1;
-    this.node2 = node2;
-  }
-
   @NotEmpty
   private String group;
 
@@ -29,5 +20,14 @@ public class ReplicationCacheGroupDto {
 
   @Valid
   private ReplicationCacheNodeDto node2;
+
+  @Builder
+  public ReplicationCacheGroupDto(String group,
+                                  ReplicationCacheNodeDto node1,
+                                  ReplicationCacheNodeDto node2) {
+    this.group = group;
+    this.node1 = node1;
+    this.node2 = node2;
+  }
 
 }

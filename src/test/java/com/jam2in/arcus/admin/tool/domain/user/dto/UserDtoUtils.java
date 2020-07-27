@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +36,7 @@ public final class UserDtoUtils {
                             String password,
                             String newPassword,
                             Role role,
-                            Collection<Access> accesses) {
+                            List<Access> accesses) {
     assertThat(userDto.getId(), is(id));
     assertThat(userDto.getUsername(), is(username));
     assertThat(userDto.getEmail(), is(email));

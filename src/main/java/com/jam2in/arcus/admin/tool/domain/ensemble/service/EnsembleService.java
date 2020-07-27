@@ -6,23 +6,24 @@ import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
 import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
+import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
+import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
-import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
-import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
-import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class EnsembleService {
     return EnsembleDto.ofZooKeepers(getEntity(id));
   }
 
-  public Collection<EnsembleDto> getAll() {
+  public List<EnsembleDto> getAll() {
     return EnsembleDto.of(getAllEntity());
   }
 
@@ -94,8 +95,8 @@ public class EnsembleService {
     ensembleRepository.deleteById(id);
   }
 
-  public Collection<ZooKeeperDto> getZooKeepers(long id) {
-    return CollectionUtils.emptyIfNull(get(id).getZookeepers())
+  public List<ZooKeeperDto> getZooKeepers(long id) {
+    return ListUtils.emptyIfNull(get(id).getZookeepers())
         .stream()
         .map(zookeeperDto -> fourLetterComponent.getStats(zookeeperDto.getAddress())
             .thenApply(stats -> {
@@ -108,14 +109,14 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public Collection<String> getServiceCodes(long id) {
-    return CollectionUtils.emptyIfNull(
+  public List<String> getServiceCodes(long id) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getServiceCodes(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
   }
 
-  public Collection<String> getReplicationServiceCodes(long id) {
-    return CollectionUtils.emptyIfNull(
+  public List<String> getReplicationServiceCodes(long id) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getReplicationServiceCodes(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
   }
@@ -157,8 +158,8 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
   }
 
-  public Collection<CacheNodeDto> getCacheNodes(long id, String serviceCode) {
-    return CollectionUtils.emptyIfNull(
+  public List<CacheNodeDto> getCacheNodes(long id, String serviceCode) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getCacheNodes(
             EnsembleEntity.joiningZooKeeperAddresses(
                 getEntity(id)), serviceCode))
@@ -174,9 +175,9 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public Collection<ReplicationCacheGroupDto> getReplicationCacheNodes(long id,
-                                                                       String serviceCode) {
-    return CollectionUtils.emptyIfNull(
+  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(long id,
+                                                                 String serviceCode) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheNodes(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
         .stream()
@@ -205,14 +206,14 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public Collection<CacheClientsDto> getCacheClients(long id, String serviceCode) {
-    return CollectionUtils.emptyIfNull(
+  public List<CacheClientsDto> getCacheClients(long id, String serviceCode) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getCacheClients(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
   }
 
-  public Collection<CacheClientsDto> getReplicationCacheClients(long id, String serviceCode) {
-    return CollectionUtils.emptyIfNull(
+  public List<CacheClientsDto> getReplicationCacheClients(long id, String serviceCode) {
+    return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheClients(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
   }
@@ -222,8 +223,8 @@ public class EnsembleService {
         .orElseThrow(() -> new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND));
   }
 
-  private Collection<EnsembleEntity> getAllEntity() {
-    return CollectionUtils.emptyIfNull(ensembleRepository.findAll());
+  private List<EnsembleEntity> getAllEntity() {
+    return ListUtils.emptyIfNull(ensembleRepository.findAll());
   }
 
   private void checkDuplicateName(String name) {

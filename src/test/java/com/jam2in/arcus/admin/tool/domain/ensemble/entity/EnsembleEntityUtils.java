@@ -1,14 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.entity;
 
-import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EnsembleEntityUtils {
@@ -28,7 +21,7 @@ public final class EnsembleEntityUtils {
   public static void equals(EnsembleDto ensembleDto,
                             Long id,
                             String name,
-                            Collection<String> zookeepers) {
+                            List<String> zookeepers) {
     assertThat(ensembleDto.getId(), is(id));
     assertThat(ensembleDto.getName(), is(name));
     assertThat(ensembleDto.getZookeepers(), is(zookeepers));

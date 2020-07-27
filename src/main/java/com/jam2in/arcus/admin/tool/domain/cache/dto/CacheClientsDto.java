@@ -6,6 +6,20 @@ import lombok.Getter;
 @Getter
 public class CacheClientsDto {
 
+  private final String host;
+
+  private final String address;
+
+  private final String poolSize;
+
+  private final String client;
+
+  private final String version;
+
+  private final String date;
+
+  private final String sessionId;
+
   @Builder
   public CacheClientsDto(String host,
                          String address,
@@ -22,19 +36,5 @@ public class CacheClientsDto {
     this.date = date;
     this.sessionId = sessionId;
   }
-
-  private final String host;
-
-  private final String address;
-
-  private final String poolSize;
-
-  private final String client;
-
-  private final String version;
-
-  private final String date;
-
-  private final String sessionId;
 
 }

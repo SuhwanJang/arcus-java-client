@@ -21,26 +21,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class UserEntity extends DateEntity {
-
-  @Builder
-  public UserEntity(String username,
-                    String email,
-                    String password,
-                    Role role,
-                    Collection<Access> accesses) {
-    this.username = username;
-    this.email = email;
-    this.password = password;
-    this.role = role;
-    this.accesses = accesses;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +45,19 @@ public class UserEntity extends DateEntity {
   @Column(nullable = false)
   private Role role;
 
+  @Builder
+  public UserEntity(String username,
+                    String email,
+                    String password,
+                    Role role,
+                    List<Access> accesses) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+    this.accesses = accesses;
+  }
+
   @ElementCollection
   @JoinTable (
       name = "accesses",
@@ -67,7 +67,7 @@ public class UserEntity extends DateEntity {
   )
   @Enumerated(EnumType.STRING)
   @Column(name = "access")
-  private Collection<Access> accesses;
+  private List<Access> accesses;
 
   public void updateUsername(String username) {
     this.username = username;
@@ -93,7 +93,7 @@ public class UserEntity extends DateEntity {
     this.role = role;
   }
 
-  public void updateAccesses(Collection<Access> accesses) {
+  public void updateAccesses(List<Access> accesses) {
     this.accesses = accesses;
   }
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/zookeepers")
@@ -25,7 +25,7 @@ public class ZooKeeperController {
 
   @GetMapping("/{id}/cons")
   @ResponseStatus(code = HttpStatus.OK)
-  public Collection<ZooKeeperFourLetterConsDto> getCons(@PathVariable long id) {
+  public List<ZooKeeperFourLetterConsDto> getCons(@PathVariable long id) {
     return zookeeperService.getCons(id);
   }
 

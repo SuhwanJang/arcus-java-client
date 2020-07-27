@@ -294,7 +294,7 @@ public class UserServiceTest {
     given(userRepository.findAll()).willReturn(List.of(userEntity1, userEntity2));
 
     // when
-    List<UserDto> userDtos = (List<UserDto>) userService.getAll();
+    List<UserDto> userDtos = userService.getAll();
 
     // then
     verify(userRepository, atMostOnce()).findAll();
@@ -312,7 +312,6 @@ public class UserServiceTest {
       userService.getAll();
     } catch (BusinessException e) {
       // then
-      assertThat(e.getApiError().getCode(), is(ApiErrorCode.NO_USER.code()));
       return;
     }
 

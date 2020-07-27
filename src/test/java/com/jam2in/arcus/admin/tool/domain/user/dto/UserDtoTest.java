@@ -1,13 +1,12 @@
 package com.jam2in.arcus.admin.tool.domain.user.dto;
 
+import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntityUtils;
 import com.jam2in.arcus.admin.tool.domain.user.type.Access;
 import com.jam2in.arcus.admin.tool.domain.user.type.Role;
-import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collection;
 import java.util.List;
 
 public class UserDtoTest {
@@ -21,7 +20,7 @@ public class UserDtoTest {
     String password = "baz";
     String newPassword = "qux";
     Role role = Role.ROLE_ADMIN;
-    Collection<Access> accesses = List.of(
+    List<Access> accesses = List.of(
         Access.ACCESS_CACHE_CLUSTER_MANAGEMENT,
         Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT);
 

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -42,7 +41,7 @@ public final class ZooKeeperFourLetterConsParser {
   }
 
 
-  public static Collection<ZooKeeperFourLetterConsDto> parse(String cons) {
+  public static List<ZooKeeperFourLetterConsDto> parse(String cons) {
     return Stream.of(cons.split("\n"))
         .collect(
             ArrayList::new,

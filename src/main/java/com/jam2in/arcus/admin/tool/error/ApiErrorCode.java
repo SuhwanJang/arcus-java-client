@@ -45,9 +45,6 @@ public enum ApiErrorCode {
   USER_PASSWORD_MISMATCH(
       "USER006", "password is mismatch",
       HttpStatus.FORBIDDEN),
-  NO_USER(
-      "USER007", "no user",
-      HttpStatus.NO_CONTENT),
   USER_INVALID_USERNAME_OR_PASSWORD(
       "USER008", "invalid username or password",
       HttpStatus.UNAUTHORIZED),

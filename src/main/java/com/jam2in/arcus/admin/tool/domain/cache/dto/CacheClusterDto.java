@@ -6,20 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class CacheClusterDto extends CacheClusterBaseDto {
 
+  @Valid
+  private List<CacheNodeDto> nodes;
+
   @Builder
   public CacheClusterDto(String serviceCode,
-                         Collection<CacheNodeDto> nodes) {
+                         List<CacheNodeDto> nodes) {
     super(serviceCode);
     this.nodes = nodes;
   }
-
-  @Valid
-  private Collection<CacheNodeDto> nodes;
 
 }

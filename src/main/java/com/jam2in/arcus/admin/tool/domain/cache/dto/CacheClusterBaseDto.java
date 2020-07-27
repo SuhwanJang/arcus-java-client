@@ -10,11 +10,11 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class CacheClusterBaseDto {
 
+  @NotEmpty
+  protected String serviceCode;
+
   protected CacheClusterBaseDto(String serviceCode) {
     this.serviceCode = serviceCode;
   }
-
-  @NotEmpty
-  protected String serviceCode;
 
 }
