@@ -183,14 +183,16 @@ public class EnsembleService {
         .stream()
         .map(group -> {
           CompletableFuture<ReplicationCacheGroupDto> future = null;
+
           if (group.getNode1() != null) {
             future = commandComponent.stats(group.getNode1().getNodeAddress())
                 .thenApply(stats -> {
                   group.getNode1().setStats(stats);
                   return group;
                 });
+
             if (group.getNode2() != null) {
-              future.thenCombine(
+              future = future.thenCombine(
                   commandComponent.stats(group.getNode2().getNodeAddress()),
                   (grp, node2Stats) -> {
                     group.getNode2().setStats(node2Stats);
@@ -198,6 +200,7 @@ public class EnsembleService {
                   });
             }
           }
+
           return future == null ? CompletableFuture.completedFuture(group) : future;
         })
         .collect(Collectors.toList())
