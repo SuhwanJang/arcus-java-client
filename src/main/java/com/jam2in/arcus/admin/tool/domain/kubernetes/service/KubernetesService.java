@@ -49,6 +49,8 @@ public class KubernetesService {
 
     kubernetesEntity.updateToken(kubernetesDto.getToken());
 
+    kubernetesRepository.save(kubernetesEntity);
+
     return KubernetesDto.of(kubernetesEntity);
   }
 

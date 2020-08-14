@@ -58,3 +58,8 @@ public class KubernetesController {
   }
 
 }
+
+// https://1.255.51.181:6443/apis/jam2in.com/v1/memcacheds
+// https://1.255.51.181:6443/api/v1/namespaces/default/pods
+// https://1.255.51.181:6443/apis/jam2in.com/v1/namespaces/default/memcacheds
+// https://1.255.51.181:6443/api/v1/namespaces/default/pods/jam2in-arcus-mc-0

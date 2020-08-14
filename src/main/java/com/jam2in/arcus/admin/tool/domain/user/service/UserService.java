@@ -77,6 +77,8 @@ public class UserService {
     userEntity.updateRole(userDto.getRole());
     userEntity.updateAccesses(userDto.getAccesses());
 
+    userRepository.save(userEntity);
+
     return UserDto.of(userEntity);
   }
 
