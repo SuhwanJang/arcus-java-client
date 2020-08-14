@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.agent.entity;
 
-import com.jam2in.arcus.admin.tool.domain.agent.dto.AgentDto;
+import com.jam2in.arcus.admin.tool.domain.agent.dto.AdminAgentDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name = "agents")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class AgentEntity {
+public class AdminAgentEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +40,8 @@ public class AgentEntity {
     this.token = token;
   }
 
-  public static AgentEntity of(AgentDto agentDto) {
-    return ModelMapperUtils.map(agentDto, AgentEntity.class);
+  public static AdminAgentEntity of(AdminAgentDto adminAgentDto) {
+    return ModelMapperUtils.map(adminAgentDto, AdminAgentEntity.class);
   }
 
 }

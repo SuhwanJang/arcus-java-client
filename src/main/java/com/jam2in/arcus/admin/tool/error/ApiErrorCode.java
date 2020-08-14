@@ -59,6 +59,31 @@ public enum ApiErrorCode {
       "KUBERNETES003", "address is duplicated",
       HttpStatus.CONFLICT),
 
+  AGENT_NOT_FOUND(
+      "AGENT001", "agent is not found",
+      HttpStatus.NOT_FOUND),
+  AGENT_TASK_TIMEOUT(
+      "AGENT100", "task timeout",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  AGENT_TASK_REJECTED(
+      "AGENT101", "task rejected",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  AGENT_CONNECTION_FAILED(
+      "AGENT102", "connection failed",
+      HttpStatus.BAD_GATEWAY),
+  AGENT_ACCESS_DENIED(
+      "AGENT103", "access denied",
+      HttpStatus.FORBIDDEN),
+  AGENT_NOT_FOUND_PROCESS_INFORMATION(
+      "AGENT104", "not found process information",
+      HttpStatus.NOT_FOUND),
+  AGENT_FAILED_TO_EXECUTE_COMMAND(
+      "AGENT105", "failed to execute command",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+  AGENT_UNKNOWN(
+      "AGENT199", "unknown",
+      HttpStatus.INTERNAL_SERVER_ERROR),
+
   ENSEMBLE_NOT_FOUND(
       "ENSEMBLE001", "ensemble is not found",
       HttpStatus.NOT_FOUND),
@@ -74,7 +99,7 @@ public enum ApiErrorCode {
       HttpStatus.CONFLICT),
   ZOOKEEPER_TASK_TIMEOUT(
       "ZOOKEEPER100", "task timeout",
-      HttpStatus.GATEWAY_TIMEOUT),
+      HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_REJECTED(
       "ZOOKEEPER101", "task rejected",
       HttpStatus.INTERNAL_SERVER_ERROR),
@@ -87,7 +112,7 @@ public enum ApiErrorCode {
 
   CACHE_TASK_TIMEOUT(
       "CACHE100", "task timeout",
-      HttpStatus.GATEWAY_TIMEOUT),
+      HttpStatus.INTERNAL_SERVER_ERROR),
   CACHE_TASK_REJECTED(
       "CACHE101", "task rejected",
       HttpStatus.INTERNAL_SERVER_ERROR),
@@ -96,7 +121,7 @@ public enum ApiErrorCode {
       HttpStatus.BAD_GATEWAY),
   CACHE_UNKNOWN(
       "CACHE199", "unknown",
-      HttpStatus.INTERNAL_SERVER_ERROR)
+      HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 
   private final String code;

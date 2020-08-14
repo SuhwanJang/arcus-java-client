@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.agent.dto;
 
-import com.jam2in.arcus.admin.tool.domain.agent.entity.AgentEntity;
+import com.jam2in.arcus.admin.tool.domain.agent.entity.AdminAgentEntity;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class AgentDto {
+public class AdminAgentDto {
 
   private Long id;
 
@@ -27,18 +27,18 @@ public class AgentDto {
   private String token;
 
   @Builder
-  public AgentDto(Long id,
-                  String ip,
-                  Integer port,
-                  String token) {
+  public AdminAgentDto(Long id,
+                       String ip,
+                       Integer port,
+                       String token) {
     this.id = id;
     this.ip = ip;
     this.port = port;
     this.token = token;
   }
 
-  public static AgentDto of(AgentEntity agentEntity) {
-    return ModelMapperUtils.map(agentEntity, AgentDto.class);
+  public static AdminAgentDto of(AdminAgentEntity adminAgentEntity) {
+    return ModelMapperUtils.map(adminAgentEntity, AdminAgentDto.class);
   }
 
   public static final int SIZE_MIN_PORT = 1;
