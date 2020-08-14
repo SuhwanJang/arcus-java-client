@@ -10,6 +10,14 @@ import java.util.List;
 @Getter
 public class ZooKeeperFourLetterDto {
 
+  private final String ruok;
+
+  private final ZooKeeperFourLetterSrvrDto srvr;
+
+  private final List<ZooKeeperFourLetterConsDto> cons;
+
+  private final ApiError error;
+
   @Builder
   public ZooKeeperFourLetterDto(String ruok,
                                 ZooKeeperFourLetterSrvrDto srvr,
@@ -20,13 +28,5 @@ public class ZooKeeperFourLetterDto {
     this.cons = cons;
     this.error = ZooKeeperApiErrorUtil.toError(throwable);
   }
-
-  private final String ruok;
-
-  private final ZooKeeperFourLetterSrvrDto srvr;
-
-  private final List<ZooKeeperFourLetterConsDto> cons;
-
-  private final ApiError error;
 
 }

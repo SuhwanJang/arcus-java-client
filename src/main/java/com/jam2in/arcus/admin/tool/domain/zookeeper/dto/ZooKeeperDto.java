@@ -16,13 +16,6 @@ import java.util.List;
 @Getter
 public class ZooKeeperDto {
 
-  @Builder
-  public ZooKeeperDto(Long id,
-                      String address) {
-    this.id = id;
-    this.address = address;
-  }
-
   private Long id;
 
   @NotEmpty
@@ -30,6 +23,13 @@ public class ZooKeeperDto {
 
   @Setter
   private ZooKeeperFourLetterDto stats;
+
+  @Builder
+  public ZooKeeperDto(Long id,
+                      String address) {
+    this.id = id;
+    this.address = address;
+  }
 
   public static ZooKeeperDto of(ZooKeeperEntity zookeeperEntity) {
     return ModelMapperUtils.map(zookeeperEntity, ZooKeeperDto.class);

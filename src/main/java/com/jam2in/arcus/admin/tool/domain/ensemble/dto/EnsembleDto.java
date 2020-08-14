@@ -20,15 +20,6 @@ import java.util.List;
 @Getter
 public class EnsembleDto extends DateDto {
 
-  @Builder
-  public EnsembleDto(Long id,
-                     String name,
-                     List<ZooKeeperDto> zookeepers) {
-    this.id = id;
-    this.name = name;
-    this.zookeepers = zookeepers;
-  }
-
   private Long id;
 
   @Size(min = SIZE_MIN_NAME, max = SIZE_MAX_NAME)
@@ -37,6 +28,15 @@ public class EnsembleDto extends DateDto {
 
   @Valid
   private List<ZooKeeperDto> zookeepers;
+
+  @Builder
+  public EnsembleDto(Long id,
+                     String name,
+                     List<ZooKeeperDto> zookeepers) {
+    this.id = id;
+    this.name = name;
+    this.zookeepers = zookeepers;
+  }
 
   public static EnsembleDto of(EnsembleEntity ensembleEntity) {
     return ModelMapperUtils.map(ensembleEntity, EnsembleDto.class, TYPE_MAP_NAME);
