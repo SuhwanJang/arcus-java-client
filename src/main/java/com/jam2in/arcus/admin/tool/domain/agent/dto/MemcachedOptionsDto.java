@@ -7,20 +7,21 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class MemcachedOptionsDto {
 
-  @NotEmpty
+  @NotNull
   @Min(1)
   private Integer memlimit;
 
-  @NotEmpty
+  @NotNull
   @Min(1)
   private Integer connections;
 
-  @NotEmpty
+  @NotNull
   @Min(1)
   private Integer threads;
 

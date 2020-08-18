@@ -1,15 +1,17 @@
 package com.jam2in.arcus.admin.tool.domain.agent.service;
 
+import com.jam2in.arcus.admin.tool.domain.agent.component.AdminAgentComponent;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.AdminAgentDto;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
 import com.jam2in.arcus.admin.tool.domain.agent.entity.AdminAgentEntity;
 import com.jam2in.arcus.admin.tool.domain.agent.repository.AdminAgentRepository;
+import com.jam2in.arcus.admin.tool.domain.common.validator.AddressValidator;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
-import lombok.Getter;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -18,9 +20,12 @@ import java.util.Optional;
 public class AdminAgentService {
 
   private final AdminAgentRepository adminAgentRepository;
+  private final AdminAgentComponent adminAgentComponent;
 
-  public AdminAgentService(AdminAgentRepository adminAgentRepository) {
+  public AdminAgentService(AdminAgentRepository adminAgentRepository,
+                           AdminAgentComponent adminAgentComponent) {
     this.adminAgentRepository = adminAgentRepository;
+    this.adminAgentComponent = adminAgentComponent;
   }
 
   @Transactional
@@ -44,21 +49,42 @@ public class AdminAgentService {
   public void startZooKeeperServer(String address) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.startZooKeeperServer(
+        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        ipPort.port,
+        adminAgentEntity.getToken());
   }
 
   public void stopZooKeeperServer(String address) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.stopZooKeeperServer(
+        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        ipPort.port,
+        adminAgentEntity.getToken());
   }
 
   public void startMemcachedServer(String address, MemcachedOptionsDto memcachedOptionsDto) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.startMemcachedServer(
+        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        ipPort.port,
+        adminAgentEntity.getToken(),
+        memcachedOptionsDto);
   }
 
   public void stopMemcachedServer(String address) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.stopMemcachedServer(
+        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        ipPort.port,
+        adminAgentEntity.getToken());
   }
 
   private AdminAgentEntity getEntityByIp(String ip) {
@@ -75,19 +101,18 @@ public class AdminAgentService {
     public IpPort(String address) {
       String[] splitted = address.split(":", 2);
 
-      ip = splitted[0];
-
-      if (splitted.length == 2) {
-        if (NumberUtils.isDigits(splitted[1])) {
-          port = Integer.parseInt(splitted[1]);
-        } else {
-          port = 0;
-        }
-      } else {
-        port = 0;
+      if (splitted.length < 2
+          || StringUtils.isEmpty(splitted[0])
+          || StringUtils.isEmpty((splitted[1]))
+          || !NumberUtils.isDigits(splitted[1])
+          || Integer.parseInt(splitted[1]) < AddressValidator.SIZE_MIN_PORT
+          || Integer.parseInt(splitted[1]) > AddressValidator.SIZE_MAX_PORT) {
+        throw new BusinessException(ApiErrorCode.COMMON_INVALID_PARAMETER);
       }
-    }
 
+      ip = splitted[0];
+      port = Integer.parseInt(splitted[1]);
+    }
   }
 
 }

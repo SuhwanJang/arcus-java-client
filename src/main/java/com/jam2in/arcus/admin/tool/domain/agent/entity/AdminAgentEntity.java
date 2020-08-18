@@ -3,6 +3,7 @@ package com.jam2in.arcus.admin.tool.domain.agent.entity;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.AdminAgentDto;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,6 +32,15 @@ public class AdminAgentEntity {
 
   @Column(nullable = false)
   private String token;
+
+  @Builder
+  public AdminAgentEntity(String ip,
+                          Integer port,
+                          String token) {
+    this.ip = ip;
+    this.port = port;
+    this.token = token;
+  }
 
   public void updatePort(int port) {
     this.port = port;

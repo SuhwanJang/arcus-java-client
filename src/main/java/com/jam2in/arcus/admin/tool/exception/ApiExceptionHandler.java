@@ -6,6 +6,7 @@ import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 @ControllerAdvice
 @Slf4j
 public class ApiExceptionHandler {
@@ -23,12 +27,18 @@ public class ApiExceptionHandler {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    return new ResponseEntity<>(apiError, headers, apiError.getStatus());
+    return new ResponseEntity<>(apiError, headers, HttpStatus.valueOf(apiError.getStatus()));
   }
 
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity<?> handleBusinessException(BusinessException e) {
     return createResponse(e.getApiError());
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException e) {
+    return createResponse(ApiError.of(
+        ApiErrorCode.COMMON_INVALID_PARAMETER, e));
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)

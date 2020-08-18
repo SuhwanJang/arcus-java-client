@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,16 +26,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public final class ApiError {
 
-  @JsonIgnore
-  private final HttpStatus status;
-  private final String code;
-  private final String message;
-  private final List<Detail> details;
+  private int status;
+  private String code;
+  private String message;
+  private List<Detail> details;
 
-  private ApiError(HttpStatus status,
+  private ApiError(int status,
                   String code,
                   String message,
                   List<Detail> details) {
@@ -43,15 +46,15 @@ public final class ApiError {
   }
 
   private ApiError(ApiErrorCode apiErrorCode, List<Detail> details) {
-    this(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(), details);
+    this(apiErrorCode.status().value(), apiErrorCode.code(), apiErrorCode.message(), details);
   }
 
   private ApiError(ApiErrorCode apiErrorCode, Detail detail) {
-    this(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(), List.of(detail));
+    this(apiErrorCode.status().value(), apiErrorCode.code(), apiErrorCode.message(), List.of(detail));
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode) {
-    return new ApiError(apiErrorCode.status(), apiErrorCode.code(), apiErrorCode.message(),
+    return new ApiError(apiErrorCode.status().value(), apiErrorCode.code(), apiErrorCode.message(),
         Collections.emptyList());
   }
 
@@ -105,6 +108,22 @@ public final class ApiError {
             List::addAll));
   }
 
+  public static ApiError of(ApiErrorCode apiErrorCode, ConstraintViolationException e) {
+    return new ApiError(apiErrorCode, (List<Detail>) e.getConstraintViolations()
+        .stream()
+        .collect(
+            ArrayList<Detail>::new,
+            (details, violation) ->
+              details.add(Detail.of(
+                  com.jam2in.arcus.admin.tool.util.StringUtils
+                      .substringAfterLast(violation.getPropertyPath().toString(), "."),
+                  violation.getInvalidValue() != null
+                      ? violation.getInvalidValue().toString() : StringUtils.EMPTY,
+                  violation.getMessage()
+              )),
+            List::addAll));
+  }
+
   public static ApiError of(ApiErrorCode apiErrorCode,
                             MethodArgumentTypeMismatchException exception) {
     Optional<Class<?>> optionalClass = Optional.ofNullable(exception.getRequiredType());
@@ -121,7 +140,7 @@ public final class ApiError {
                               ApiError apiError,
                               ObjectMapper mapper)
       throws IOException {
-    response.setStatus(apiError.getStatus().value());
+    response.setStatus(apiError.getStatus());
     response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
     response.getWriter().write(mapper.writeValueAsString(apiError));
     response.getWriter().flush();
@@ -129,11 +148,12 @@ public final class ApiError {
   }
 
   @Getter
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
   public static class Detail {
 
-    private final String name;
-    private final String value;
-    private final String reason;
+    private String name;
+    private String value;
+    private String reason;
 
     private Detail(String name, String value, String reason) {
       this.name = name;
