@@ -1,7 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.common.validator;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;
