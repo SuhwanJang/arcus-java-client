@@ -1,5 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.agent.dto;
 
+import com.jam2in.arcus.admin.tool.domain.agent.entity.MemcachedOptionsEntity;
+import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +39,11 @@ public class MemcachedOptionsDto {
     this.connections = connections;
     this.threads = threads;
     this.zookeeper = zookeeper;
+  }
+
+  public static MemcachedOptionsDto of(MemcachedOptionsEntity memcachedOptionsEntity) {
+    return ModelMapperUtils.map(
+        memcachedOptionsEntity, MemcachedOptionsDtoBuilder.class).build();
   }
 
 }

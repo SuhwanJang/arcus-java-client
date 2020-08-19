@@ -62,6 +62,9 @@ public enum ApiErrorCode {
   AGENT_NOT_FOUND(
       "AGENT001", "agent is not found",
       HttpStatus.NOT_FOUND),
+  AGENT_CACHE_OPTION_NOT_FOUND(
+      "AGENT002", "cache options are not found",
+      HttpStatus.NOT_FOUND),
   AGENT_TASK_TIMEOUT(
       "AGENT100", "task timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),

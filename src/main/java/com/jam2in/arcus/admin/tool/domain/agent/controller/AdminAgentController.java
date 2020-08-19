@@ -6,6 +6,7 @@ import com.jam2in.arcus.admin.tool.domain.agent.service.AdminAgentService;
 import com.jam2in.arcus.admin.tool.domain.common.validator.Address;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,12 @@ public class AdminAgentController {
   public void startMemcachedServer(@PathVariable("address") @Address String address,
                                    @RequestBody @Valid MemcachedOptionsDto memcachedOptionsDto) {
     adminAgentService.startMemcachedServer(address, memcachedOptionsDto);
+  }
+
+  @GetMapping("/mcservers/{address}/options")
+  @ResponseStatus(code = HttpStatus.OK)
+  public MemcachedOptionsDto getMemcachedOptions(@PathVariable("address") @Address String address) {
+    return adminAgentService.getMemcachedOptions(address);
   }
 
   @PostMapping("/mcservers/{address}/stop")

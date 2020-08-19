@@ -4,7 +4,9 @@ import com.jam2in.arcus.admin.tool.domain.agent.component.AdminAgentComponent;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.AdminAgentDto;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
 import com.jam2in.arcus.admin.tool.domain.agent.entity.AdminAgentEntity;
+import com.jam2in.arcus.admin.tool.domain.agent.entity.MemcachedOptionsEntity;
 import com.jam2in.arcus.admin.tool.domain.agent.repository.AdminAgentRepository;
+import com.jam2in.arcus.admin.tool.domain.agent.repository.MemcachedOptionsRepository;
 import com.jam2in.arcus.admin.tool.domain.common.validator.AddressValidator;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
@@ -21,11 +23,14 @@ public class AdminAgentService {
 
   private final AdminAgentRepository adminAgentRepository;
   private final AdminAgentComponent adminAgentComponent;
+  private final MemcachedOptionsRepository memcachedOptionsRepository;
 
   public AdminAgentService(AdminAgentRepository adminAgentRepository,
-                           AdminAgentComponent adminAgentComponent) {
+                           AdminAgentComponent adminAgentComponent,
+                           MemcachedOptionsRepository memcachedOptionsRepository) {
     this.adminAgentRepository = adminAgentRepository;
     this.adminAgentComponent = adminAgentComponent;
+    this.memcachedOptionsRepository = memcachedOptionsRepository;
   }
 
   @Transactional
@@ -66,6 +71,7 @@ public class AdminAgentService {
         adminAgentEntity.getToken());
   }
 
+  @Transactional
   public void startMemcachedServer(String address, MemcachedOptionsDto memcachedOptionsDto) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
@@ -75,6 +81,14 @@ public class AdminAgentService {
         ipPort.port,
         adminAgentEntity.getToken(),
         memcachedOptionsDto);
+
+    memcachedOptionsRepository.save(MemcachedOptionsEntity.of(memcachedOptionsDto, address));
+  }
+
+  public MemcachedOptionsDto getMemcachedOptions(String address) {
+    return MemcachedOptionsDto.of(
+        memcachedOptionsRepository.findById(address)
+            .orElseThrow(() -> new BusinessException(ApiErrorCode.AGENT_CACHE_OPTION_NOT_FOUND)));
   }
 
   public void stopMemcachedServer(String address) {
