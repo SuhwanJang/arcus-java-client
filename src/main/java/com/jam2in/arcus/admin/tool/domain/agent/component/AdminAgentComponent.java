@@ -1,19 +1,14 @@
 package com.jam2in.arcus.admin.tool.domain.agent.component;
 
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
+import com.jam2in.arcus.admin.tool.domain.cache.util.CacheApiErrorUtil;
 import com.jam2in.arcus.admin.tool.error.ApiError;
-import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
 
-import java.net.ConnectException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 @Component
@@ -54,7 +49,7 @@ public class AdminAgentComponent {
     try {
       ApiError apiError = supplier.get()
           .orTimeout(TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-          .exceptionally(this::toErrorCode)
+          .exceptionally(CacheApiErrorUtil::toError)
           .join();
 
       if (apiError != null) {
@@ -64,30 +59,9 @@ public class AdminAgentComponent {
       if (t instanceof BusinessException) {
         throw t;
       } else {
-        throw new BusinessException(toErrorCode(t));
+        throw new BusinessException(CacheApiErrorUtil.toErrorCode(t));
       }
     }
-  }
-
-  private ApiError toErrorCode(Throwable throwable) {
-    if (throwable instanceof CompletionException
-        || throwable instanceof ResourceAccessException) {
-      return toErrorCode(throwable.getCause());
-    }
-
-    if (throwable instanceof TimeoutException) {
-      return ApiError.of(ApiErrorCode.AGENT_TASK_TIMEOUT);
-    } else if (throwable instanceof TaskRejectedException) {
-      return ApiError.of(ApiErrorCode.AGENT_TASK_REJECTED);
-    } else if (throwable instanceof ConnectException) {
-      return ApiError.of(ApiErrorCode.AGENT_CONNECTION_FAILED);
-    }
-
-    if (throwable != null) {
-      log.error(throwable.getMessage(), throwable);
-    }
-
-    return ApiError.of(ApiErrorCode.AGENT_UNKNOWN);
   }
 
 }

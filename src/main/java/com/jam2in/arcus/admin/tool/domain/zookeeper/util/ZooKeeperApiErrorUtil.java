@@ -19,9 +19,8 @@ import java.util.concurrent.TimeoutException;
 public final class ZooKeeperApiErrorUtil {
 
   public static ApiErrorCode toErrorCode(Throwable throwable) {
-    if (throwable instanceof CompletionException) {
-      return toErrorCode(throwable.getCause());
-    } else if (throwable instanceof ZooKeeperException) {
+    if (throwable instanceof CompletionException
+        || throwable instanceof ZooKeeperException) {
       return toErrorCode(throwable.getCause());
     }
 
