@@ -23,6 +23,7 @@ public class ZooKeeperCuratorClient implements ZooKeeperClient {
           .connectString(address)
           .retryPolicy(new RetryNTimes(100, 3))
           .connectionTimeoutMs(connectionTimeoutMs)
+          .zk34CompatibilityMode(true)
           .build();
 
       client.start();
