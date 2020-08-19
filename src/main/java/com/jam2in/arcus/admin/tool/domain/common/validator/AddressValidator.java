@@ -7,7 +7,6 @@ import org.springframework.util.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-@Component
 public class AddressValidator implements ConstraintValidator<Address, String> {
 
   public static final int SIZE_MIN_PORT = 1;
