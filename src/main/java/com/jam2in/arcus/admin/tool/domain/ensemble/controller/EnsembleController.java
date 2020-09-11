@@ -23,7 +23,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/ensembles")
+@RequestMapping("/api/v1/zkensembles")
 public class EnsembleController {
 
   private final EnsembleService ensembleService;
