@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cache.component;
+package com.jam2in.arcus.admin.tool.domain.memcached.component;
 
 import com.jam2in.arcus.admin.tool.util.CommandSender;
 import org.springframework.scheduling.annotation.Async;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class CacheCommandAsyncComponent {
+public class MemcachedCommandAsyncComponent {
 
   @Async
   public CompletableFuture<String> stats(String address, int socketTimeoutMs) throws IOException {

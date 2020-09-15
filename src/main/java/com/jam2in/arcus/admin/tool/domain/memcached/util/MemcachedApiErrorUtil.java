@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cache.util;
+package com.jam2in.arcus.admin.tool.domain.memcached.util;
 
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
@@ -22,17 +22,17 @@ public final class CacheApiErrorUtil {
     }
 
     if (throwable instanceof TimeoutException) {
-      return ApiErrorCode.CACHE_TASK_TIMEOUT;
+      return ApiErrorCode.MEMCACHED_TASK_TIMEOUT;
     } else if (throwable instanceof TaskRejectedException) {
-      return ApiErrorCode.CACHE_TASK_REJECTED;
+      return ApiErrorCode.MEMCACHED_TASK_REJECTED;
     } else if (throwable instanceof ConnectException
         || throwable instanceof SocketTimeoutException) {
-      return ApiErrorCode.CACHE_CONNECTION_FAILED;
+      return ApiErrorCode.MEMCACHED_CONNECTION_FAILED;
     } else {
       if (throwable != null) {
         log.error(throwable.getMessage(), throwable);
       }
-      return ApiErrorCode.CACHE_UNKNOWN;
+      return ApiErrorCode.MEMCACHED_UNKNOWN;
     }
   }
 

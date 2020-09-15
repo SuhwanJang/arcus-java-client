@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cache.dto;
+package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,21 +10,21 @@ import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ReplicationCacheGroupDto {
+public class MemcachedReplicationGroupDto {
 
   @NotEmpty
   private String group;
 
   @Valid
-  private ReplicationCacheNodeDto node1;
+  private MemcachedReplicationNodeDto node1;
 
   @Valid
-  private ReplicationCacheNodeDto node2;
+  private MemcachedReplicationNodeDto node2;
 
   @Builder
-  public ReplicationCacheGroupDto(String group,
-                                  ReplicationCacheNodeDto node1,
-                                  ReplicationCacheNodeDto node2) {
+  public MemcachedReplicationGroupDto(String group,
+                                      MemcachedReplicationNodeDto node1,
+                                      MemcachedReplicationNodeDto node2) {
     this.group = group;
     this.node1 = node1;
     this.node2 = node2;

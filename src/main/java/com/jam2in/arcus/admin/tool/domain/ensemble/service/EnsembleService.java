@@ -1,11 +1,11 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
-import com.jam2in.arcus.admin.tool.domain.cache.component.CacheCommandComponent;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.component.MemcachedCommandComponent;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedNodeDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationGroupDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.entity.EnsembleEntity;
 import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository;
@@ -38,12 +38,12 @@ public class EnsembleService {
 
   private final ZooKeeperZNodeComponent znodeComponent;
 
-  private final CacheCommandComponent commandComponent;
+  private final MemcachedCommandComponent commandComponent;
 
   public EnsembleService(EnsembleRepository ensembleRepository,
                          ZooKeeperFourLetterComponent fourLetterComponent,
                          ZooKeeperZNodeComponent znodeComponent,
-                         CacheCommandComponent commandComponent) {
+                         MemcachedCommandComponent commandComponent) {
     this.ensembleRepository = ensembleRepository;
     this.fourLetterComponent = fourLetterComponent;
     this.znodeComponent = znodeComponent;
@@ -121,12 +121,12 @@ public class EnsembleService {
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
   }
 
-  public void createServiceCode(long id, CacheClusterDto clusterDto) {
+  public void createServiceCode(long id, MemcachedClusterDto clusterDto) {
     znodeComponent.createServiceCode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), clusterDto);
   }
 
-  public void createReplicationServiceCode(long id, ReplicationCacheClusterDto replClusterDto) {
+  public void createReplicationServiceCode(long id, MemcachedReplicationClusterDto replClusterDto) {
     znodeComponent.createReplicationServiceCode(
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
   }
@@ -158,7 +158,7 @@ public class EnsembleService {
         EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
   }
 
-  public List<CacheNodeDto> getCacheNodes(long id, String serviceCode) {
+  public List<MemcachedNodeDto> getCacheNodes(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getCacheNodes(
             EnsembleEntity.joiningZooKeeperAddresses(
@@ -175,14 +175,14 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(long id,
-                                                                 String serviceCode) {
+  public List<MemcachedReplicationGroupDto> getReplicationCacheNodes(long id,
+                                                                     String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheNodes(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
         .stream()
         .map(group -> {
-          CompletableFuture<ReplicationCacheGroupDto> future = null;
+          CompletableFuture<MemcachedReplicationGroupDto> future = null;
 
           if (group.getNode1() != null) {
             future = commandComponent.stats(group.getNode1().getNodeAddress())
@@ -209,13 +209,13 @@ public class EnsembleService {
         .collect(Collectors.toList());
   }
 
-  public List<CacheClientsDto> getCacheClients(long id, String serviceCode) {
+  public List<MemcachedClientDto> getCacheClients(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getCacheClients(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
   }
 
-  public List<CacheClientsDto> getReplicationCacheClients(long id, String serviceCode) {
+  public List<MemcachedClientDto> getReplicationCacheClients(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheClients(
             EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));

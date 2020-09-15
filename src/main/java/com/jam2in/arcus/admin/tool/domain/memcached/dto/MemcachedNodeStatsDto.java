@@ -1,12 +1,12 @@
-package com.jam2in.arcus.admin.tool.domain.cache.dto;
+package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
-import com.jam2in.arcus.admin.tool.domain.cache.util.CacheApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.memcached.util.CacheApiErrorUtil;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class CacheNodeStatsDto {
+public class MemcachedNodeStatsDto {
 
   private final String host;
 
@@ -19,8 +19,8 @@ public class CacheNodeStatsDto {
   private final ApiError error;
 
   @Builder
-  public CacheNodeStatsDto(String host, String port, String version, String zkTimeout,
-                           Throwable throwable) {
+  public MemcachedNodeStatsDto(String host, String port, String version, String zkTimeout,
+                               Throwable throwable) {
     this.host = host;
     this.port = port;
     this.version = version;

@@ -1,9 +1,9 @@
-package com.jam2in.arcus.admin.tool.domain.cache.dto;
+package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
-public enum ReplicationRole {
+public enum MemcachedReplicationRole {
 
   @JsonProperty("master")
   MASTER,
@@ -11,7 +11,7 @@ public enum ReplicationRole {
   SLAVE
   ;
 
-  public static ReplicationRole of(String role) {
+  public static MemcachedReplicationRole of(String role) {
     if (StringUtils.equals(role, "M")) {
       return MASTER;
     } else if (StringUtils.equals(role, "S")) {

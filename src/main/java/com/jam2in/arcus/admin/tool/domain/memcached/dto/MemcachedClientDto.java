@@ -1,10 +1,10 @@
-package com.jam2in.arcus.admin.tool.domain.cache.dto;
+package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class CacheClientsDto {
+public class MemcachedClientDto {
 
   private final String host;
 
@@ -21,13 +21,13 @@ public class CacheClientsDto {
   private final String sessionId;
 
   @Builder
-  public CacheClientsDto(String host,
-                         String address,
-                         String poolSize,
-                         String client,
-                         String version,
-                         String date,
-                         String sessionId) {
+  public MemcachedClientDto(String host,
+                            String address,
+                            String poolSize,
+                            String client,
+                            String version,
+                            String date,
+                            String sessionId) {
     this.host = host;
     this.address = address;
     this.poolSize = poolSize;

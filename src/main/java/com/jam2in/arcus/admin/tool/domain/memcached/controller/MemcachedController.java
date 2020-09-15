@@ -1,8 +1,8 @@
-package com.jam2in.arcus.admin.tool.domain.cache.controller;
+package com.jam2in.arcus.admin.tool.domain.memcached.controller;
 
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
 import com.jam2in.arcus.admin.tool.domain.agent.service.AdminAgentService;
-import com.jam2in.arcus.admin.tool.domain.cache.service.CacheService;
+import com.jam2in.arcus.admin.tool.domain.memcached.service.MemcachedService;
 import com.jam2in.arcus.admin.tool.domain.common.validator.Address;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,13 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/mcservers")
-public class CacheController {
+public class MemcachedController {
 
-  private final CacheService cacheService;
+  private final MemcachedService memcachedService;
   private final AdminAgentService adminAgentService;
 
-  public CacheController(CacheService cacheService,  AdminAgentService adminAgentService) {
-    this.cacheService = cacheService;
+  public MemcachedController(MemcachedService memcachedService, AdminAgentService adminAgentService) {
+    this.memcachedService = memcachedService;
     this.adminAgentService = adminAgentService;
   }
 

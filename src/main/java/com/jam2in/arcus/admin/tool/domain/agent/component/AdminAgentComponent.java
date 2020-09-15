@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.agent.component;
 
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.util.CacheApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.memcached.util.CacheApiErrorUtil;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.jam2in.arcus.admin.tool.domain.cache.dto;
+package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,14 +10,14 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class CacheClusterDto extends CacheClusterBaseDto {
+public class MemcachedClusterDto extends MemcachedClusterBaseDto {
 
   @Valid
-  private List<CacheNodeDto> nodes;
+  private List<MemcachedNodeDto> nodes;
 
   @Builder
-  public CacheClusterDto(String serviceCode,
-                         List<CacheNodeDto> nodes) {
+  public MemcachedClusterDto(String serviceCode,
+                             List<MemcachedNodeDto> nodes) {
     super(serviceCode);
     this.nodes = nodes;
   }

@@ -88,42 +88,42 @@ public enum ApiErrorCode {
       HttpStatus.INTERNAL_SERVER_ERROR),
 
   ENSEMBLE_NOT_FOUND(
-      "ENSEMBLE001", "ensemble is not found",
+      "ZKENSEMBLE001", "ensemble is not found",
       HttpStatus.NOT_FOUND),
   ENSEMBLE_NAME_DUPLICATED(
-      "ENSEMBLE002", "name is duplicated",
+      "ZKENSEMBLE002", "name is duplicated",
       HttpStatus.CONFLICT),
 
   ZOOKEEPER_NOT_FOUND(
-      "ZOOKEEPER001", "zookeeper is not found",
+      "ZKSERVER001", "zookeeper is not found",
       HttpStatus.NOT_FOUND),
   ZOOKEEPER_ADDRESS_DUPLICATED(
-      "ZOOKEEPER002", "address is duplicated",
+      "ZKSERVER002", "address is duplicated",
       HttpStatus.CONFLICT),
   ZOOKEEPER_TASK_TIMEOUT(
-      "ZOOKEEPER100", "task timeout",
+      "ZKSERVER100", "task timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_TASK_REJECTED(
-      "ZOOKEEPER101", "task rejected",
+      "ZKSERVER101", "task rejected",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ZOOKEEPER_CONNECTION_FAILED(
-      "ZOOKEEPER102", "connection failed",
+      "ZKSERVER102", "connection failed",
       HttpStatus.BAD_GATEWAY),
   ZOOKEEPER_UNKNOWN(
-      "ZOOKEEPER199", "unknown",
+      "ZKSERVER199", "unknown",
       HttpStatus.INTERNAL_SERVER_ERROR),
 
-  CACHE_TASK_TIMEOUT(
-      "CACHE100", "task timeout",
+  MEMCACHED_TASK_TIMEOUT(
+      "MEMCACHED100", "task timeout",
       HttpStatus.INTERNAL_SERVER_ERROR),
-  CACHE_TASK_REJECTED(
-      "CACHE101", "task rejected",
+  MEMCACHED_TASK_REJECTED(
+      "MEMCACHED101", "task rejected",
       HttpStatus.INTERNAL_SERVER_ERROR),
-  CACHE_CONNECTION_FAILED(
-      "CACHE102", "connection failed",
+  MEMCACHED_CONNECTION_FAILED(
+      "MEMCACHED102", "connection failed",
       HttpStatus.BAD_GATEWAY),
-  CACHE_UNKNOWN(
-      "CACHE199", "unknown",
+  MEMCACHED_UNKNOWN(
+      "MEMCACHED199", "unknown",
       HttpStatus.INTERNAL_SERVER_ERROR),
   ;
 

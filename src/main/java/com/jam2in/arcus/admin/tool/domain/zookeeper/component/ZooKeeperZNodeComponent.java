@@ -1,10 +1,10 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedNodeDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationGroupDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.lang3.Functions;
@@ -35,14 +35,14 @@ public class ZooKeeperZNodeComponent {
     return handleClient(addresses, znodeAsyncComponent::getAsyncReplicationServiceCodes);
   }
 
-  public void createServiceCode(String addresses, CacheClusterDto clusterDto) {
+  public void createServiceCode(String addresses, MemcachedClusterDto clusterDto) {
     handleClient(addresses,
         connection ->
             znodeAsyncComponent.createAsyncServiceCode(connection, clusterDto));
   }
 
   public void createReplicationServiceCode(String addresses,
-                                            ReplicationCacheClusterDto replClusterDto) {
+                                            MemcachedReplicationClusterDto replClusterDto) {
     handleClient(addresses,
         connection ->
             znodeAsyncComponent.createAsyncReplicationServiceCode(connection, replClusterDto));
@@ -78,27 +78,27 @@ public class ZooKeeperZNodeComponent {
             znodeAsyncComponent.deleteAsyncReplicationGroup(connection, serviceCode, group));
   }
 
-  public List<CacheNodeDto> getCacheNodes(String addresses, String serviceCode) {
+  public List<MemcachedNodeDto> getCacheNodes(String addresses, String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncCacheNodes(client, serviceCode));
   }
 
-  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(String addresses,
-                                                                       String serviceCode) {
+  public List<MemcachedReplicationGroupDto> getReplicationCacheNodes(String addresses,
+                                                                     String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncReplicationCacheNodes(client, serviceCode));
   }
 
-  public List<CacheClientsDto> getCacheClients(String addresses, String serviceCode) {
+  public List<MemcachedClientDto> getCacheClients(String addresses, String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncCacheClients(client, serviceCode));
   }
 
-  public List<CacheClientsDto> getReplicationCacheClients(String addresses,
-                                                                String serviceCode) {
+  public List<MemcachedClientDto> getReplicationCacheClients(String addresses,
+                                                             String serviceCode) {
     return handleClient(addresses,
         client ->
             znodeAsyncComponent.getAsyncReplicationCacheClients(client, serviceCode));

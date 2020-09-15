@@ -1,10 +1,10 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.controller;
 
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedNodeDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationGroupDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.dto.EnsembleDto;
 import com.jam2in.arcus.admin.tool.domain.ensemble.service.EnsembleService;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
@@ -72,7 +72,7 @@ public class EnsembleController {
   @PostMapping("/{id}/service-codes")
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createServiceCode(@PathVariable long id,
-                                @RequestBody @Valid CacheClusterDto clusterDto) {
+                                @RequestBody @Valid MemcachedClusterDto clusterDto) {
     ensembleService.createServiceCode(id, clusterDto);
   }
 
@@ -80,7 +80,7 @@ public class EnsembleController {
   @ResponseStatus(code = HttpStatus.CREATED)
   public void createReplicationServiceCode(
       @PathVariable long id,
-      @RequestBody @Valid ReplicationCacheClusterDto replClusterDto) {
+      @RequestBody @Valid MemcachedReplicationClusterDto replClusterDto) {
     ensembleService.createReplicationServiceCode(id, replClusterDto);
   }
 
@@ -140,7 +140,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public List<CacheNodeDto> getCacheNodes(
+  public List<MemcachedNodeDto> getCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheNodes(id, serviceCode);
@@ -148,7 +148,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/repl-service-codes/{service-code}/cache-nodes")
   @ResponseStatus(code = HttpStatus.OK)
-  public List<ReplicationCacheGroupDto> getReplicationCacheNodes(
+  public List<MemcachedReplicationGroupDto> getReplicationCacheNodes(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheNodes(id, serviceCode);
@@ -156,7 +156,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/service-codes/{service-code}/clients")
   @ResponseStatus(code = HttpStatus.OK)
-  public List<CacheClientsDto> getCacheClients(
+  public List<MemcachedClientDto> getCacheClients(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getCacheClients(id, serviceCode);
@@ -164,7 +164,7 @@ public class EnsembleController {
 
   @GetMapping("/{id}/repl-service-codes/{service-code}/clients")
   @ResponseStatus(code = HttpStatus.OK)
-  public List<CacheClientsDto> getReplicationCacheClients(
+  public List<MemcachedClientDto> getReplicationCacheClients(
       @PathVariable("id") long id,
       @PathVariable("service-code") String serviceCode) {
     return ensembleService.getReplicationCacheClients(id, serviceCode);

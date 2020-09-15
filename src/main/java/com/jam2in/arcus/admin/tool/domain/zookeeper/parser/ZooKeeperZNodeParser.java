@@ -1,7 +1,7 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.parser;
 
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationRole;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationRole;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public final class ZooKeeperZNodeParser {
 
     return ReplicationCacheListZNode.builder()
         .group(splitted[0])
-        .role(ReplicationRole.of(splitted[1]))
+        .role(MemcachedReplicationRole.of(splitted[1]))
         .address(splitted[2].split("-")[0])
         .build();
   }
@@ -45,14 +45,14 @@ public final class ZooKeeperZNodeParser {
         .build();
   }
 
-  public static CacheClientsDto parseCacheClientList(String znode) {
+  public static MemcachedClientDto parseCacheClientList(String znode) {
     String[] splitted = znode.split("_");
 
     if (splitted.length != 7) {
       throw new IllegalArgumentException();
     }
 
-    return CacheClientsDto.builder()
+    return MemcachedClientDto.builder()
         .host(splitted[0])
         .address(splitted[1])
         .poolSize(splitted[2])
@@ -80,7 +80,7 @@ public final class ZooKeeperZNodeParser {
 
     @Builder
     public ReplicationCacheListZNode(String group,
-                                     ReplicationRole role,
+                                     MemcachedReplicationRole role,
                                      String address) {
       this.group = group;
       this.role = role;
@@ -89,7 +89,7 @@ public final class ZooKeeperZNodeParser {
 
     private final String group;
 
-    private final ReplicationRole role;
+    private final MemcachedReplicationRole role;
 
     private final String address;
 

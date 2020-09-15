@@ -1,11 +1,11 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.component;
 
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClientsDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.CacheNodeDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheClusterDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheGroupDto;
-import com.jam2in.arcus.admin.tool.domain.cache.dto.ReplicationCacheNodeDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedNodeDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationClusterDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationGroupDto;
+import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationNodeDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.client.ZooKeeperClient;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.parser.ZooKeeperZNodeParser;
 import com.jam2in.arcus.admin.tool.util.PathUtils;
@@ -79,7 +79,7 @@ public class ZooKeeperZNodeAsyncComponent {
 
   @Async
   public CompletableFuture<Void> createAsyncServiceCode(Object connection,
-                                                        CacheClusterDto clusterDto) {
+                                                        MemcachedClusterDto clusterDto) {
     zookeeperClient.create(connection,
         ARCUS_CACHE_SERVER_LOG_PATH);
 
@@ -101,7 +101,7 @@ public class ZooKeeperZNodeAsyncComponent {
   @Async
   public CompletableFuture<Void> createAsyncReplicationServiceCode(
       Object connection,
-      ReplicationCacheClusterDto replClusterDto) {
+      MemcachedReplicationClusterDto replClusterDto) {
     zookeeperClient.create(connection,
         ARCUS_REPL_CACHE_SERVER_LOG_PATH);
 
@@ -259,9 +259,9 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<List<CacheNodeDto>> getAsyncCacheNodes(Object connection,
-                                                                        String serviceCode) {
-    Map<String, CacheNodeDto> aliveCacheNodeMap = new HashMap<>();
+  public CompletableFuture<List<MemcachedNodeDto>> getAsyncCacheNodes(Object connection,
+                                                                      String serviceCode) {
+    Map<String, MemcachedNodeDto> aliveCacheNodeMap = new HashMap<>();
 
     ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
@@ -272,7 +272,7 @@ public class ZooKeeperZNodeAsyncComponent {
                 .parseCacheList(znode)
                 .getAddress();
             aliveCacheNodeMap.put(address,
-                CacheNodeDto.builder()
+                MemcachedNodeDto.builder()
                     .address(address)
                     .build());
           } catch (IllegalArgumentException e) {
@@ -292,7 +292,7 @@ public class ZooKeeperZNodeAsyncComponent {
                 .stream()
                 .anyMatch(s -> StringUtils.equals(s, serviceCode)))
         .map(address ->
-          CacheNodeDto.builder()
+          MemcachedNodeDto.builder()
               .address(address)
               .alive(aliveCacheNodeMap.containsKey(address))
               .build())
@@ -300,9 +300,9 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<List<ReplicationCacheGroupDto>> getAsyncReplicationCacheNodes(
+  public CompletableFuture<List<MemcachedReplicationGroupDto>> getAsyncReplicationCacheNodes(
       Object connection, String serviceCode) {
-    Map<String, ReplicationCacheNodeDto> aliveCacheNodeMap = new HashMap<>();
+    Map<String, MemcachedReplicationNodeDto> aliveCacheNodeMap = new HashMap<>();
 
     ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
@@ -312,7 +312,7 @@ public class ZooKeeperZNodeAsyncComponent {
             ZooKeeperZNodeParser.ReplicationCacheListZNode parsedZnode =
                 ZooKeeperZNodeParser.parseReplicationCacheList(znode);
             aliveCacheNodeMap.put(parsedZnode.getAddress(),
-                ReplicationCacheNodeDto.builder()
+                MemcachedReplicationNodeDto.builder()
                     .role(parsedZnode.getRole())
                     .nodeAddress(parsedZnode.getAddress())
                     .build());
@@ -328,8 +328,8 @@ public class ZooKeeperZNodeAsyncComponent {
         .stream()
         .sorted()
         .map(group -> {
-          ReplicationCacheGroupDto.ReplicationCacheGroupDtoBuilder builder =
-              ReplicationCacheGroupDto.builder();
+          MemcachedReplicationGroupDto.ReplicationCacheGroupDtoBuilder builder =
+              MemcachedReplicationGroupDto.builder();
           builder.group(group);
 
           final AtomicInteger nodeCount = new AtomicInteger(0);
@@ -352,7 +352,7 @@ public class ZooKeeperZNodeAsyncComponent {
                         && StringUtils.equals(parsedZnode.getGroup(), group)) {
                       if (nodeCount.getAndIncrement() == 0) {
                         builder.node1(
-                            ReplicationCacheNodeDto.builder()
+                            MemcachedReplicationNodeDto.builder()
                                 .nodeAddress(address)
                                 .listenAddress(parsedZnode.getListenAddress())
                                 .role(aliveCacheNodeMap.containsKey(address)
@@ -361,7 +361,7 @@ public class ZooKeeperZNodeAsyncComponent {
                                 .build());
                       } else {
                         builder.node2(
-                            ReplicationCacheNodeDto.builder()
+                            MemcachedReplicationNodeDto.builder()
                                 .nodeAddress(address)
                                 .listenAddress(parsedZnode.getListenAddress())
                                 .listenAddress(parsedZnode.getListenAddress())
@@ -380,22 +380,22 @@ public class ZooKeeperZNodeAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<List<CacheClientsDto>> getAsyncCacheClients(
+  public CompletableFuture<List<MemcachedClientDto>> getAsyncCacheClients(
       Object connection, String serviceCode) {
     return CompletableFuture.completedFuture(
         getCacheClients(connection, serviceCode, ARCUS_CLIENT_LIST_PATH));
   }
 
   @Async
-  public CompletableFuture<List<CacheClientsDto>> getAsyncReplicationCacheClients(
+  public CompletableFuture<List<MemcachedClientDto>> getAsyncReplicationCacheClients(
       Object connection, String serviceCode) {
     return CompletableFuture.completedFuture(
         getCacheClients(connection, serviceCode, ARCUS_REPL_CLIENT_LIST_PATH));
   }
 
-  private List<CacheClientsDto> getCacheClients(Object connection,
-                                                      String serviceCode,
-                                                      String path) {
+  private List<MemcachedClientDto> getCacheClients(Object connection,
+                                                   String serviceCode,
+                                                   String path) {
     return ListUtils.emptyIfNull(
         zookeeperClient.get(connection,
             PathUtils.path(path, serviceCode)))
