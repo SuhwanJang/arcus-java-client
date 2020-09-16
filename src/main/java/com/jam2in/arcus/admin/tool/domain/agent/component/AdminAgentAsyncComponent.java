@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.agent.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jam2in.arcus.admin.tool.domain.agent.dto.MemcachedOptionsDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperParticipantsDto;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -21,9 +22,12 @@ import java.util.concurrent.CompletionException;
 @Slf4j
 public class AdminAgentAsyncComponent {
 
+  private static final String INSTALL_ZOOKEEPER_FORMAT = "http://%s/api/v1/zkservers/%d/install/%s";
+  private static final String INITIALIZE_ZOOKEEPER_FORMAT = "http://%s/api/v1/zkservers/%d/initialize";
   private static final String START_ZOOKEEPER_API_FORMAT = "http://%s/api/v1/zkservers/%d/start";
   private static final String STOP_ZOOKEEPER_API_FORMAT = "http://%s/api/v1/zkservers/%d/stop";
-  private static final String START_MEMCACHED_API_FORMAT = "http://%s/api/v1/mcservers/%d/start";
+  private static final String START_MEMCACHED_API_FORMAT = "http://%s/api/v1/mcservers/%d/install";
+  private static final String INSTALL_MEMCACHED_API_FORMAT = "http://%s/api/v1/mcservers/%d/start";
   private static final String STOP_MEMCACHED_API_FORMAT = "http://%s/api/v1/mcservers/%d/stop";
 
   private final RestTemplate restTemplate;
@@ -35,26 +39,53 @@ public class AdminAgentAsyncComponent {
   }
 
   @Async
-  public CompletableFuture<ApiError> startZooKeeperServer(String address, int port, String token) {
+  public CompletableFuture<ApiError> installZooKeeperServer(String address, int port, String version,
+                                                            String token) {
+    return post(String.format(INSTALL_ZOOKEEPER_FORMAT, address, port, version),
+        new HttpEntity<>(makeHeaders(token)));
+  }
+
+  @Async
+  public CompletableFuture<ApiError> initializeZooKeeperServer(String address, int port,
+                                                               ZooKeeperParticipantsDto zookeeperParticipantsDto,
+                                                               String token) {
+    return post(String.format(INITIALIZE_ZOOKEEPER_FORMAT, address, port),
+        new HttpEntity<>(zookeeperParticipantsDto, makeHeaders(token)));
+  }
+
+
+  @Async
+  public CompletableFuture<ApiError> startZooKeeperServer(String address, int port,
+                                                          String token) {
     return post(String.format(START_ZOOKEEPER_API_FORMAT, address, port),
         new HttpEntity<>(makeHeaders(token)));
   }
 
   @Async
-  public CompletableFuture<ApiError> stopZooKeeperServer(String address, int port, String token) {
+  public CompletableFuture<ApiError> stopZooKeeperServer(String address, int port,
+                                                         String token) {
     return post(String.format(STOP_ZOOKEEPER_API_FORMAT, address, port),
         new HttpEntity<>(makeHeaders(token)));
   }
 
   @Async
-  public CompletableFuture<ApiError> startMemcachedServer(String address, int port, String token,
-                                                          MemcachedOptionsDto memcachedOptionsDto) {
+  public CompletableFuture<ApiError> installMemcachedServer(String address, int port,
+                                                            String version, String token) {
+    return post(String.format(INSTALL_MEMCACHED_API_FORMAT, address, port, version),
+        new HttpEntity<>(makeHeaders(token)));
+  }
+
+  @Async
+  public CompletableFuture<ApiError> startMemcachedServer(String address, int port,
+                                                          MemcachedOptionsDto memcachedOptionsDto,
+                                                          String token) {
     return post(String.format(START_MEMCACHED_API_FORMAT, address, port),
         new HttpEntity<>(memcachedOptionsDto, makeHeaders(token)));
   }
 
   @Async
-  public CompletableFuture<ApiError> stopMemcachedServer(String address, int port, String token) {
+  public CompletableFuture<ApiError> stopMemcachedServer(String address, int port,
+                                                         String token) {
     return post(String.format(STOP_MEMCACHED_API_FORMAT, address, port),
         new HttpEntity<>(makeHeaders(token)));
   }

@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,9 +29,11 @@ public class AdminAgentEntity {
   private String ip;
 
   @Column(nullable = false)
+  @Setter
   private Integer port;
 
   @Column(nullable = false)
+  @Setter
   private String token;
 
   @Builder
@@ -42,12 +45,8 @@ public class AdminAgentEntity {
     this.token = token;
   }
 
-  public void updatePort(int port) {
-    this.port = port;
-  }
-
-  public void updateToken(String token) {
-    this.token = token;
+  public String getAddress() {
+    return ip + ":" + port;
   }
 
   public static AdminAgentEntity of(AdminAgentDto adminAgentDto) {

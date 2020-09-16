@@ -11,11 +11,11 @@ public interface EnsembleRepository extends JpaRepository<EnsembleEntity, Long> 
 
   @Query(
       "SELECT CASE WHEN COUNT(e) > 0 "
-      + "THEN TRUE "
-      + "ELSE FALSE "
-      + "END "
-      + "FROM EnsembleEntity e "
-      + "WHERE LOWER(e.name) = LOWER(:name)")
+          + "THEN TRUE "
+          + "ELSE FALSE "
+          + "END "
+          + "FROM EnsembleEntity e "
+          + "WHERE LOWER(e.name) = LOWER(:name)")
   boolean existsByName(@Param("name") String name);
 
 }

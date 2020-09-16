@@ -1,5 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.ensemble.service;
 
+import com.jam2in.arcus.admin.tool.domain.agent.service.AdminAgentService;
 import com.jam2in.arcus.admin.tool.domain.memcached.component.MemcachedCommandComponent;
 import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClientDto;
 import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
@@ -12,6 +13,7 @@ import com.jam2in.arcus.admin.tool.domain.ensemble.repository.EnsembleRepository
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperFourLetterComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.component.ZooKeeperZNodeComponent;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperParticipantsDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -40,23 +43,36 @@ public class EnsembleService {
 
   private final MemcachedCommandComponent commandComponent;
 
+  private final AdminAgentService adminAgentService;
+
   public EnsembleService(EnsembleRepository ensembleRepository,
                          ZooKeeperFourLetterComponent fourLetterComponent,
                          ZooKeeperZNodeComponent znodeComponent,
-                         MemcachedCommandComponent commandComponent) {
+                         MemcachedCommandComponent commandComponent,
+                         AdminAgentService adminAgentService) {
     this.ensembleRepository = ensembleRepository;
     this.fourLetterComponent = fourLetterComponent;
     this.znodeComponent = znodeComponent;
     this.commandComponent = commandComponent;
+    this.adminAgentService = adminAgentService;
   }
 
   @Transactional
   public EnsembleDto create(EnsembleDto ensembleDto) {
     checkDuplicateName(ensembleDto.getName());
+    checkDuplicateZkServers(ensembleDto.getZkservers());
+
+    for (int i = 0; i < CollectionUtils.size(ensembleDto.getZkservers()); i++) {
+      ensembleDto.getZkservers().get(i).setMyId(i + 1);
+    }
 
     EnsembleEntity ensembleEntity = EnsembleEntity.of(ensembleDto);
 
     ensembleRepository.save(ensembleEntity);
+
+    adminAgentService.initializeZooKeeperServer(
+        ensembleDto.getZkservers(),
+        ZooKeeperParticipantsDto.generateParticipants(ensembleDto.getZkservers()));
 
     return EnsembleDto.ofZooKeepers(ensembleEntity);
   }
@@ -67,11 +83,11 @@ public class EnsembleService {
 
     if (!ensembleDto.getName().equals(ensembleEntity.getName())) {
       checkDuplicateName(ensembleDto.getName());
-      ensembleEntity.updateName(ensembleDto.getName());
+      ensembleEntity.setName(ensembleDto.getName());
     }
 
     checkDuplicateAddress(ensembleDto);
-    ensembleEntity.updateZookeepers(ZooKeeperEntity.of(ensembleDto.getZookeepers()));
+    ensembleEntity.setZkservers(ZooKeeperEntity.of(ensembleDto.getZkservers()));
 
     ensembleRepository.save(ensembleEntity);
 
@@ -89,14 +105,14 @@ public class EnsembleService {
   @Transactional
   public void delete(long id) {
     if (!ensembleRepository.existsById(id)) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND);
+      throw new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_NOT_FOUND));
     }
 
     ensembleRepository.deleteById(id);
   }
 
   public List<ZooKeeperDto> getZooKeepers(long id) {
-    return ListUtils.emptyIfNull(get(id).getZookeepers())
+    return ListUtils.emptyIfNull(get(id).getZkservers())
         .stream()
         .map(zookeeperDto -> fourLetterComponent.getStats(zookeeperDto.getAddress())
             .thenApply(stats -> {
@@ -112,57 +128,56 @@ public class EnsembleService {
   public List<String> getServiceCodes(long id) {
     return ListUtils.emptyIfNull(
         znodeComponent.getServiceCodes(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
+            getEntity(id).getAddress()));
   }
 
   public List<String> getReplicationServiceCodes(long id) {
     return ListUtils.emptyIfNull(
         znodeComponent.getReplicationServiceCodes(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id))));
+            getEntity(id).getAddress()));
   }
 
   public void createServiceCode(long id, MemcachedClusterDto clusterDto) {
     znodeComponent.createServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), clusterDto);
+        getEntity(id).getAddress(), clusterDto);
   }
 
   public void createReplicationServiceCode(long id, MemcachedReplicationClusterDto replClusterDto) {
     znodeComponent.createReplicationServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), replClusterDto);
+        getEntity(id).getAddress(), replClusterDto);
   }
 
   @SuppressWarnings("unused")
   public void deleteCacheNode(long id, String serviceCode, String cacheNodeAddress) {
     znodeComponent.deleteCacheNode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
+        getEntity(id).getAddress(), cacheNodeAddress);
   }
 
   @SuppressWarnings("unused")
   public void deleteReplicationCacheNode(long id, String serviceCode, String cacheNodeAddress) {
     znodeComponent.deleteReplicationCacheNode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), cacheNodeAddress);
+        getEntity(id).getAddress(), cacheNodeAddress);
   }
 
   public void deleteServiceCode(long id, String serviceCode) {
     znodeComponent.deleteServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode);
+        getEntity(id).getAddress(), serviceCode);
   }
 
   public void deleteReplicationServiceCode(long id, String serviceCode) {
     znodeComponent.deleteReplicationServiceCode(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode);
+        getEntity(id).getAddress(), serviceCode);
   }
 
   public void deleteReplicationGroup(long id, String serviceCode, String group) {
     znodeComponent.deleteReplicationGroup(
-        EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode, group);
+        getEntity(id).getAddress(), serviceCode, group);
   }
 
   public List<MemcachedNodeDto> getCacheNodes(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getCacheNodes(
-            EnsembleEntity.joiningZooKeeperAddresses(
-                getEntity(id)), serviceCode))
+            getEntity(id).getAddress(), serviceCode))
         .stream()
         .map(cacheNodeDto -> commandComponent.stats(cacheNodeDto.getAddress())
             .thenApply(stats -> {
@@ -179,7 +194,7 @@ public class EnsembleService {
                                                                      String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheNodes(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode))
+            getEntity(id).getAddress(), serviceCode))
         .stream()
         .map(group -> {
           CompletableFuture<MemcachedReplicationGroupDto> future = null;
@@ -212,34 +227,71 @@ public class EnsembleService {
   public List<MemcachedClientDto> getCacheClients(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getCacheClients(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
+            getEntity(id).getAddress(), serviceCode));
   }
 
   public List<MemcachedClientDto> getReplicationCacheClients(long id, String serviceCode) {
     return ListUtils.emptyIfNull(
         znodeComponent.getReplicationCacheClients(
-            EnsembleEntity.joiningZooKeeperAddresses(getEntity(id)), serviceCode));
+            getEntity(id).getAddress(), serviceCode));
   }
 
   private EnsembleEntity getEntity(long id) {
     return ensembleRepository.findById(id)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_NOT_FOUND)));
   }
 
   private void checkDuplicateName(String name) {
     if (ensembleRepository.existsByName(name)) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NAME_DUPLICATED);
+      throw new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_DUPLICATED_NAME));
+    }
+  }
+
+  private void checkDuplicateZkServers(List<ZooKeeperDto> zkservers) {
+    Set<String> clientPorts = new HashSet<>();
+    Set<String> serverPorts = new HashSet<>();
+    Set<String> electionPorts = new HashSet<>();
+
+    List<ApiError.Detail> details = new LinkedList<>();
+
+    for (int i = 0; i < CollectionUtils.size(zkservers); i++) {
+      ZooKeeperDto zookeeperDto = zkservers.get(i);
+
+      if (!clientPorts.add(zookeeperDto.getIp() + ":" + zookeeperDto.getClientPort())) {
+        details.add(
+            ApiError.Detail.of(
+                String.format("zkservers[%d].clientPorts", i),
+                String.valueOf(zookeeperDto.getClientPort())));
+      }
+
+      if (!serverPorts.add(zookeeperDto.getIp() + ":" + zookeeperDto.getServerPort())) {
+        details.add(
+            ApiError.Detail.of(
+                String.format("zkservers[%d].serverPorts", i),
+                String.valueOf(zookeeperDto.getServerPort())));
+      }
+
+      if (!electionPorts.add(zookeeperDto.getIp() + ":" + zookeeperDto.getElectionPort())) {
+        details.add(
+            ApiError.Detail.of(
+                String.format("zkservers[%d].electionPorts", i),
+                String.valueOf(zookeeperDto.getElectionPort())));
+      }
+    }
+
+    if (details.size() > 0) {
+      throw new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_DUPLICATED_PORT, details));
     }
   }
 
   private void checkDuplicateAddress(EnsembleDto ensembleDto) {
-    if (CollectionUtils.isEmpty(ensembleDto.getZookeepers())) {
+    if (CollectionUtils.isEmpty(ensembleDto.getZkservers())) {
       return;
     }
 
     Set<String> addresses = new HashSet<>();
 
-    Set<String> duplicateAddress = ensembleDto.getZookeepers()
+    Set<String> duplicateAddress = ensembleDto.getZkservers()
         .stream()
         .map(ZooKeeperDto::getAddress)
         .filter(address -> {

@@ -328,7 +328,7 @@ public class ZooKeeperZNodeAsyncComponent {
         .stream()
         .sorted()
         .map(group -> {
-          MemcachedReplicationGroupDto.ReplicationCacheGroupDtoBuilder builder =
+          MemcachedReplicationGroupDto.MemcachedReplicationGroupDtoBuilder builder =
               MemcachedReplicationGroupDto.builder();
           builder.group(group);
 

@@ -58,7 +58,7 @@ public class UserEntityTest {
         .build();
 
     // when
-    userEntity.updateEmail("bar");
+    userEntity.setEmail("bar");
 
     // then
     assertThat(userEntity.getEmail(), is("bar"));
@@ -72,7 +72,7 @@ public class UserEntityTest {
         .build();
 
     // when
-    userEntity.updatePassword("bar");
+    userEntity.setPassword("bar");
 
     // then
     assertThat(userEntity.getPassword(), is("bar"));

@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 public class MemcachedCommandComponent {
 
   // TODO: use property value
-  public static final int SOCKET_TIMEOUT_MS = 10000;
-  public static final int TASK_TIMEOUT_MS = 15000;
+  public static final int SOCKET_TIMEOUT_MS = 3000;
+  public static final int TASK_TIMEOUT_MS = 6000;
 
   private final MemcachedCommandAsyncComponent commandAsyncComponent;
 

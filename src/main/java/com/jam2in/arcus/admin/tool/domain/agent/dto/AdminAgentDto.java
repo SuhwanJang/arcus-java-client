@@ -2,6 +2,7 @@ package com.jam2in.arcus.admin.tool.domain.agent.dto;
 
 import com.jam2in.arcus.admin.tool.domain.agent.entity.AdminAgentEntity;
 import com.jam2in.arcus.admin.tool.domain.common.validator.AddressValidator;
+import com.jam2in.arcus.admin.tool.domain.common.validator.Port;
 import com.jam2in.arcus.admin.tool.util.ModelMapperUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,8 +24,7 @@ public class AdminAgentDto {
   private String ip;
 
   @NotNull
-  @Min(AddressValidator.SIZE_MIN_PORT)
-  @Max(AddressValidator.SIZE_MAX_PORT)
+  @Port
   private Integer port;
 
   @NotEmpty

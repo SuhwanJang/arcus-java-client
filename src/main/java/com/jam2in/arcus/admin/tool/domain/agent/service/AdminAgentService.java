@@ -7,15 +7,23 @@ import com.jam2in.arcus.admin.tool.domain.agent.entity.AdminAgentEntity;
 import com.jam2in.arcus.admin.tool.domain.agent.entity.MemcachedOptionsEntity;
 import com.jam2in.arcus.admin.tool.domain.agent.repository.AdminAgentRepository;
 import com.jam2in.arcus.admin.tool.domain.agent.repository.MemcachedOptionsRepository;
-import com.jam2in.arcus.admin.tool.domain.common.validator.AddressValidator;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperParticipantsDto;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperDto;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,8 +48,8 @@ public class AdminAgentService {
 
     if (optional.isPresent()) {
       adminAgentEntity = optional.get();
-      adminAgentEntity.updatePort(adminAgentDto.getPort());
-      adminAgentEntity.updateToken(adminAgentDto.getToken());
+      adminAgentEntity.setPort(adminAgentDto.getPort());
+      adminAgentEntity.setToken(adminAgentDto.getToken());
     } else {
       adminAgentEntity = AdminAgentEntity.of(adminAgentDto);
     }
@@ -51,12 +59,85 @@ public class AdminAgentService {
     return AdminAgentDto.of(adminAgentEntity);
   }
 
+  public void installZooKeeperServer(String address, String version) {
+    IpPort ipPort = new IpPort(address);
+    AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.installZooKeeperServer(
+        adminAgentEntity.getAddress(),
+        ipPort.port,
+        version,
+        adminAgentEntity.getToken());
+  }
+
+  public void initializeZooKeeperServer(List<ZooKeeperDto> zookeeperDtos, String zkservers) {
+    Map<Integer, String> notFoundAgentIpMap = new HashMap<>();
+    Map<String, AdminAgentEntity> adminAgentMap = new HashMap<>();
+
+    // initialize agent map.
+    for (int i = 0; i < CollectionUtils.size(zookeeperDtos); i++) {
+      ZooKeeperDto zookeeperDto = zookeeperDtos.get(i);
+
+      try {
+        adminAgentMap.put(zookeeperDto.getIp(), getEntityByIp(zookeeperDto.getIp()));
+      } catch (BusinessException e) {
+        notFoundAgentIpMap.put(i, zookeeperDto.getIp());
+      }
+    }
+
+    // throw exception if some of agents are not found.
+    if (!notFoundAgentIpMap.isEmpty()) {
+      throw new BusinessException(
+          ApiError.of(
+              ApiErrorCode.AGENT_NOT_FOUND,
+              MapUtils.emptyIfNull(notFoundAgentIpMap).entrySet()
+                  .stream()
+                  .map(entry -> ApiError.Detail.of(String.format("zkservers[%d].ip", entry.getKey()), entry.getValue()))
+                  .collect(Collectors.toList())));
+    }
+
+    // request for zookeeper config initialization.
+    List<ApiError> apiErrors = CollectionUtils.emptyIfNull(zookeeperDtos)
+        .stream()
+        .map(zookeeperDto -> {
+          AdminAgentEntity adminAgentEntity = adminAgentMap.get(zookeeperDto.getIp());
+          return adminAgentComponent.initializeZooKeeperServer(
+              adminAgentEntity.getAddress(), zookeeperDto.getClientPort(),
+              new ZooKeeperParticipantsDto(zookeeperDto.getMyId(), zkservers),
+              adminAgentEntity.getToken());
+        })
+        .collect(Collectors.toList())
+        .stream()
+        .map(CompletableFuture::join)
+        .collect(Collectors.toList());
+
+    // if some of the requests have failed, throw exception
+    List<ApiError.Detail> details = new LinkedList<>();
+
+    for (int i = 0; i < CollectionUtils.size(apiErrors); i++) {
+      ZooKeeperDto zookeeperDto = zookeeperDtos.get(i);
+      ApiError apiError = apiErrors.get(i);
+
+      if (apiError != null) {
+        details.add(
+            ApiError.Detail.of(
+                String.format("zkservers[%d].ip", i),
+                zookeeperDto.getIp(),
+                apiError.getCode()));
+      }
+    }
+
+    if (!details.isEmpty()) {
+      throw new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_INITIALIZATION_FAILURE, details));
+    }
+  }
+
   public void startZooKeeperServer(String address) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
 
     adminAgentComponent.startZooKeeperServer(
-        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        adminAgentEntity.getAddress(),
         ipPort.port,
         adminAgentEntity.getToken());
   }
@@ -71,16 +152,27 @@ public class AdminAgentService {
         adminAgentEntity.getToken());
   }
 
+  public void installMemcachedServer(String address, String version) {
+    IpPort ipPort = new IpPort(address);
+    AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
+
+    adminAgentComponent.installMemcachedServer(
+        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        ipPort.port,
+        version,
+        adminAgentEntity.getToken());
+  }
+
   @Transactional
   public void startMemcachedServer(String address, MemcachedOptionsDto memcachedOptionsDto) {
     IpPort ipPort = new IpPort(address);
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
 
     adminAgentComponent.startMemcachedServer(
-        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        adminAgentEntity.getAddress(),
         ipPort.port,
-        adminAgentEntity.getToken(),
-        memcachedOptionsDto);
+        memcachedOptionsDto,
+        adminAgentEntity.getToken());
 
     memcachedOptionsRepository.save(MemcachedOptionsEntity.of(memcachedOptionsDto, address));
   }
@@ -88,7 +180,7 @@ public class AdminAgentService {
   public MemcachedOptionsDto getMemcachedOptions(String address) {
     return MemcachedOptionsDto.of(
         memcachedOptionsRepository.findById(address)
-            .orElseThrow(() -> new BusinessException(ApiErrorCode.AGENT_CACHE_OPTION_NOT_FOUND)));
+            .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.AGENT_CACHE_OPTION_NOT_FOUND))));
   }
 
   public void stopMemcachedServer(String address) {
@@ -96,14 +188,14 @@ public class AdminAgentService {
     AdminAgentEntity adminAgentEntity = getEntityByIp(ipPort.ip);
 
     adminAgentComponent.stopMemcachedServer(
-        adminAgentEntity.getIp() + ":" + adminAgentEntity.getPort(),
+        adminAgentEntity.getAddress(),
         ipPort.port,
         adminAgentEntity.getToken());
   }
 
   private AdminAgentEntity getEntityByIp(String ip) {
     return adminAgentRepository.findByIp(ip)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.AGENT_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.AGENT_NOT_FOUND)));
   }
 
   private static class IpPort {
@@ -112,21 +204,13 @@ public class AdminAgentService {
 
     private final int port;
 
-    public IpPort(String address) {
+    IpPort(String address) {
       String[] splitted = address.split(":", 2);
-
-      if (splitted.length < 2
-          || StringUtils.isEmpty(splitted[0])
-          || StringUtils.isEmpty((splitted[1]))
-          || !NumberUtils.isDigits(splitted[1])
-          || Integer.parseInt(splitted[1]) < AddressValidator.SIZE_MIN_PORT
-          || Integer.parseInt(splitted[1]) > AddressValidator.SIZE_MAX_PORT) {
-        throw new BusinessException(ApiErrorCode.COMMON_INVALID_PARAMETER);
-      }
 
       ip = splitted[0];
       port = Integer.parseInt(splitted[1]);
     }
+
   }
 
 }

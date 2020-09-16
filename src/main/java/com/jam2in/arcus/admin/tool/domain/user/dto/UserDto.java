@@ -22,7 +22,7 @@ public class UserDto extends DateDto {
 
   private Long id;
 
-  @Size(min = SIZE_MIN_USERNAME, max = SIZE_MAX_USERNAME)
+  @Size(min = USERNAME_SIZE_MIN, max = USERNAME_SIZE_MAX)
   @NotEmpty
   private String username;
 
@@ -30,11 +30,11 @@ public class UserDto extends DateDto {
   @NotEmpty
   private String email;
 
-  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
+  @Size(min = PASSWORD_SIZE_MIN, max = PASSWORD_SIZE_MAX)
   @NotEmpty
   private String password;
 
-  @Size(min = SIZE_MIN_PASSWORD, max = SIZE_MAX_PASSWORD)
+  @Size(min = PASSWORD_SIZE_MIN, max = PASSWORD_SIZE_MAX)
   private String newPassword;
 
   private Role role;
@@ -76,10 +76,10 @@ public class UserDto extends DateDto {
             List::addAll);
   }
 
-  public static final int SIZE_MIN_USERNAME = 4;
-  public static final int SIZE_MAX_USERNAME = 32;
+  public static final int USERNAME_SIZE_MIN = 4;
+  public static final int USERNAME_SIZE_MAX = 32;
 
-  public static final int SIZE_MIN_PASSWORD = 8;
-  public static final int SIZE_MAX_PASSWORD = 64;
+  public static final int PASSWORD_SIZE_MIN = 8;
+  public static final int PASSWORD_SIZE_MAX = 64;
 
 }

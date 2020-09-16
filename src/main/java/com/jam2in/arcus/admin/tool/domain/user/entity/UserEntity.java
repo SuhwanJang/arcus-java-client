@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -34,16 +35,32 @@ public class UserEntity extends DateEntity {
   private Long id;
 
   @Column(nullable = false, unique = true)
+  @Setter
   private String username;
 
   @Column(nullable = false, unique = true)
+  @Setter
   private String email;
 
   @Column(nullable = false)
+  @Setter
   private String password;
 
   @Column(nullable = false)
+  @Setter
   private Role role;
+
+  @ElementCollection
+  @JoinTable (
+      name = "accesses",
+      joinColumns = {
+        @JoinColumn(name = "id")
+      }
+  )
+  @Enumerated(EnumType.STRING)
+  @Column(name = "access")
+  @Setter
+  private List<Access> accesses;
 
   @Builder
   public UserEntity(String username,
@@ -58,43 +75,12 @@ public class UserEntity extends DateEntity {
     this.accesses = accesses;
   }
 
-  @ElementCollection
-  @JoinTable (
-      name = "accesses",
-      joinColumns = {
-        @JoinColumn(name = "id")
-      }
-  )
-  @Enumerated(EnumType.STRING)
-  @Column(name = "access")
-  private List<Access> accesses;
-
-  public void updateUsername(String username) {
-    this.username = username;
-  }
-
-  public void updateEmail(String email) {
-    this.email = email;
-  }
-
-  public void updatePassword(String encodedPassword) {
-    password = encodedPassword;
-  }
-
   public void applyAdminRole() {
     role = Role.ROLE_ADMIN;
   }
 
   public void applyUserRole() {
     role = Role.ROLE_USER;
-  }
-
-  public void updateRole(Role role) {
-    this.role = role;
-  }
-
-  public void updateAccesses(List<Access> accesses) {
-    this.accesses = accesses;
   }
 
   public static UserEntity of(UserDto userDto) {

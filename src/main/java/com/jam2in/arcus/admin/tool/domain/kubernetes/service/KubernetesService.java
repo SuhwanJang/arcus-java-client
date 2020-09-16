@@ -3,6 +3,7 @@ package com.jam2in.arcus.admin.tool.domain.kubernetes.service;
 import com.jam2in.arcus.admin.tool.domain.kubernetes.dto.KubernetesDto;
 import com.jam2in.arcus.admin.tool.domain.kubernetes.entity.KubernetesEntity;
 import com.jam2in.arcus.admin.tool.domain.kubernetes.repository.KubernetesRepository;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.collections4.ListUtils;
@@ -65,7 +66,7 @@ public class KubernetesService {
   @Transactional
   public void delete(long id) {
     if (!kubernetesRepository.existsById(id)) {
-      throw new BusinessException(ApiErrorCode.ENSEMBLE_NOT_FOUND);
+      throw new BusinessException(ApiError.of(ApiErrorCode.ENSEMBLE_NOT_FOUND));
     }
 
     kubernetesRepository.deleteById(id);
@@ -73,19 +74,19 @@ public class KubernetesService {
 
   private void checkDuplicateName(String name) {
     if (kubernetesRepository.existsByName(name)) {
-      throw new BusinessException(ApiErrorCode.KUBERNETES_NAME_DUPLICATED);
+      throw new BusinessException(ApiError.of(ApiErrorCode.KUBERNETES_NAME_DUPLICATED));
     }
   }
 
   private void checkDuplicateAddress(String address) {
     if (kubernetesRepository.existsByAddress(address)) {
-      throw new BusinessException(ApiErrorCode.KUBERNETES_ADDRESS_DUPLICATED);
+      throw new BusinessException(ApiError.of(ApiErrorCode.KUBERNETES_ADDRESS_DUPLICATED));
     }
   }
 
   private KubernetesEntity getEntity(long id) {
     return kubernetesRepository.findById(id)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.KUBERNETES_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.KUBERNETES_NOT_FOUND)));
   }
 
 }

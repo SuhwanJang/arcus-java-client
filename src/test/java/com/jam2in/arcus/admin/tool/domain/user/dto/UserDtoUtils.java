@@ -19,10 +19,10 @@ public final class UserDtoUtils {
   public static UserDto.UserDtoBuilder createBuilder() {
     return UserDto.builder()
       .id(1L)
-      .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME))
+      .username(StringUtils.repeat('u', UserDto.USERNAME_SIZE_MIN))
       .email("foo@bar.com")
-      .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD))
-      .newPassword(StringUtils.repeat('n', UserDto.SIZE_MIN_PASSWORD))
+      .password(StringUtils.repeat('p', UserDto.PASSWORD_SIZE_MIN))
+      .newPassword(StringUtils.repeat('n', UserDto.PASSWORD_SIZE_MIN))
       .role(Role.ROLE_ADMIN)
       .accesses(List.of(
           Access.ACCESS_ZOOKEEPER_CLUSTER_MANAGEMENT,

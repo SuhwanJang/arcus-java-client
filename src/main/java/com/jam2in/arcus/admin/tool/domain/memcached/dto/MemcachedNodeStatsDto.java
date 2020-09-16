@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.memcached.dto;
 
-import com.jam2in.arcus.admin.tool.domain.memcached.util.CacheApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.memcached.util.MemcachedApiErrorUtils;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class MemcachedNodeStatsDto {
     this.port = port;
     this.version = version;
     this.zkTimeout = zkTimeout;
-    this.error = CacheApiErrorUtil.toError(throwable);
+    this.error = MemcachedApiErrorUtils.toError(throwable);
   }
 
 }

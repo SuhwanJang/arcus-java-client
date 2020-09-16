@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,10 +22,12 @@ import java.util.List;
 @Entity
 @Table(
     name = "zookeepers",
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {
-            "ensemble_id", "address"
-        })
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"ensembleId", "myId"}),
+        @UniqueConstraint(columnNames = {"ensembleId", "ip", "clientPort"}),
+        @UniqueConstraint(columnNames = {"ensembleId", "ip", "serverPort"}),
+        @UniqueConstraint(columnNames = {"ensembleId", "ip", "electionPort"})
+    }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -35,12 +38,37 @@ public class ZooKeeperEntity extends DateEntity {
   private Long id;
 
   @Column(nullable = false)
-  private String address;
+  private Integer myId;
+
+  @Column(nullable = false)
+  private String ip;
+
+  @Column(nullable = false)
+  private Integer clientPort;
+
+  @Column(nullable = false)
+  private Integer serverPort;
+
+  @Column(nullable = false)
+  private Integer electionPort;
 
   @Builder
-  public ZooKeeperEntity(Long id, String address) {
+  public ZooKeeperEntity(Long id,
+                         Integer myId,
+                         String ip,
+                         Integer clientPort,
+                         Integer serverPort,
+                         Integer electionPort) {
     this.id = id;
-    this.address = address;
+    this.myId = myId;
+    this.ip = ip;
+    this.clientPort = clientPort;
+    this.serverPort = serverPort;
+    this.electionPort = electionPort;
+  }
+
+  public String getAddress() {
+    return ip + ":" + clientPort;
   }
 
   public static ZooKeeperEntity of(ZooKeeperDto zookeeperDto) {
@@ -48,15 +76,11 @@ public class ZooKeeperEntity extends DateEntity {
   }
 
   public static List<ZooKeeperEntity> of(List<ZooKeeperDto> zookeeperDtos) {
-    if (zookeeperDtos == null) {
-      return null;
-    }
-
-    return zookeeperDtos
+    return CollectionUtils.emptyIfNull(zookeeperDtos)
         .stream()
         .collect(
             ArrayList::new,
-            (zookeperEntities, zookeeperDto) -> zookeperEntities.add(of(zookeeperDto)),
+            (zookeeperEntities, zookeeperDto) -> zookeeperEntities.add(of(zookeeperDto)),
             List::addAll);
   }
 

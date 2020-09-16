@@ -14,34 +14,26 @@ import java.util.concurrent.TimeoutException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public final class CacheApiErrorUtil {
+public final class MemcachedApiErrorUtils {
 
-  public static ApiErrorCode toErrorCode(Throwable throwable) {
+  public static ApiError toError(Throwable throwable) {
     if (throwable instanceof CompletionException) {
-      return toErrorCode(throwable.getCause());
+      return toError(throwable.getCause());
     }
 
     if (throwable instanceof TimeoutException) {
-      return ApiErrorCode.MEMCACHED_TASK_TIMEOUT;
+      return ApiError.of(ApiErrorCode.MEMCACHED_TASK_TIMEOUT);
     } else if (throwable instanceof TaskRejectedException) {
-      return ApiErrorCode.MEMCACHED_TASK_REJECTED;
+      return ApiError.of(ApiErrorCode.MEMCACHED_TASK_REJECTED);
     } else if (throwable instanceof ConnectException
         || throwable instanceof SocketTimeoutException) {
-      return ApiErrorCode.MEMCACHED_CONNECTION_FAILED;
+      return ApiError.of(ApiErrorCode.MEMCACHED_CONNECTION_FAILED);
     } else {
       if (throwable != null) {
         log.error(throwable.getMessage(), throwable);
       }
-      return ApiErrorCode.MEMCACHED_UNKNOWN;
+      return ApiError.of(ApiErrorCode.MEMCACHED_UNKNOWN);
     }
-  }
-
-  public static ApiError toError(Throwable throwable) {
-    if (throwable == null) {
-      return null;
-    }
-
-    return ApiError.of(toErrorCode(throwable));
   }
 
 }

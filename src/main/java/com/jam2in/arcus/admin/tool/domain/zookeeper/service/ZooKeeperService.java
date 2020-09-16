@@ -6,7 +6,8 @@ import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterMntrD
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterSrvrDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.entity.ZooKeeperEntity;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.repository.ZooKeeperRepository;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtils;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class ZooKeeperService {
     try {
       return fourLetterComponent.getSrvr(getEntity(id).getAddress());
     } catch (Exception e) {
-      throw new BusinessException(ZooKeeperApiErrorUtil.toErrorCode(e));
+      throw new BusinessException(ZooKeeperApiErrorUtils.toError(e));
     }
   }
 
@@ -38,7 +39,7 @@ public class ZooKeeperService {
     try {
       return fourLetterComponent.getCons(getEntity(id).getAddress());
     } catch (Exception e) {
-      throw new BusinessException(ZooKeeperApiErrorUtil.toErrorCode(e));
+      throw new BusinessException(ZooKeeperApiErrorUtils.toError(e));
     }
   }
 
@@ -46,13 +47,13 @@ public class ZooKeeperService {
     try {
       return fourLetterComponent.getMntr(getEntity(id).getAddress());
     } catch (Exception e) {
-      throw new BusinessException(ZooKeeperApiErrorUtil.toErrorCode(e));
+      throw new BusinessException(ZooKeeperApiErrorUtils.toError(e));
     }
   }
 
   private ZooKeeperEntity getEntity(long id) {
     return zookeeperRepository.findById(id)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.ZOOKEEPER_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.ZOOKEEPER_NOT_FOUND)));
   }
 
 }

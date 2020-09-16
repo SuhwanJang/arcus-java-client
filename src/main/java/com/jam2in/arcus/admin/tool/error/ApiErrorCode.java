@@ -74,15 +74,6 @@ public enum ApiErrorCode {
   AGENT_CONNECTION_FAILED(
       "AGENT102", "connection failed",
       HttpStatus.BAD_GATEWAY),
-  AGENT_ACCESS_DENIED(
-      "AGENT103", "access denied",
-      HttpStatus.FORBIDDEN),
-  AGENT_NOT_FOUND_PROCESS_INFORMATION(
-      "AGENT104", "not found process information",
-      HttpStatus.NOT_FOUND),
-  AGENT_FAILED_TO_EXECUTE_COMMAND(
-      "AGENT105", "failed to execute command",
-      HttpStatus.INTERNAL_SERVER_ERROR),
   AGENT_UNKNOWN(
       "AGENT199", "unknown",
       HttpStatus.INTERNAL_SERVER_ERROR),
@@ -90,9 +81,15 @@ public enum ApiErrorCode {
   ENSEMBLE_NOT_FOUND(
       "ZKENSEMBLE001", "ensemble is not found",
       HttpStatus.NOT_FOUND),
-  ENSEMBLE_NAME_DUPLICATED(
+  ENSEMBLE_DUPLICATED_NAME(
       "ZKENSEMBLE002", "name is duplicated",
       HttpStatus.CONFLICT),
+  ENSEMBLE_DUPLICATED_PORT(
+      "ZKENSEMBLE003", "port is duplicated",
+      HttpStatus.CONFLICT),
+  ENSEMBLE_INITIALIZATION_FAILURE(
+      "ZKENSEMBLE004", "ensemble initialization failure",
+      HttpStatus.INTERNAL_SERVER_ERROR),
 
   ZOOKEEPER_NOT_FOUND(
       "ZKSERVER001", "zookeeper is not found",

@@ -4,6 +4,7 @@ import com.jam2in.arcus.admin.tool.domain.common.BaseControllerTest;
 import com.jam2in.arcus.admin.tool.domain.common.TestController;
 import com.jam2in.arcus.admin.tool.domain.common.TestDto;
 import com.jam2in.arcus.admin.tool.domain.common.TestService;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class ApiExceptionHandlerTest extends BaseControllerTest {
   public void handleBusinessException() throws Exception {
     // given
     given(testService.test()).willThrow(new BusinessException(
-        ApiErrorCode.COMMON_INTERNAL_SERVER_ERROR));
+        ApiError.of(ApiErrorCode.COMMON_INTERNAL_SERVER_ERROR)));
 
     // when
     ResultActions resultActions = get(URL);

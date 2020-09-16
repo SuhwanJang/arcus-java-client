@@ -51,9 +51,9 @@ public class UserControllerTest extends BaseControllerTest {
   public void invalidContentSizeMin() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
-        .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME - 1))
-        .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD - 1))
-        .newPassword(StringUtils.repeat('n', UserDto.SIZE_MIN_PASSWORD - 1))
+        .username(StringUtils.repeat('u', UserDto.USERNAME_SIZE_MIN - 1))
+        .password(StringUtils.repeat('p', UserDto.PASSWORD_SIZE_MIN - 1))
+        .newPassword(StringUtils.repeat('n', UserDto.PASSWORD_SIZE_MIN - 1))
         .build();
 
     // when
@@ -70,17 +70,17 @@ public class UserControllerTest extends BaseControllerTest {
                 hasEntry("name", "username"),
                 hasEntry("value", userDto.getUsername()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_USERNAME, UserDto.SIZE_MAX_USERNAME))),
+                    UserDto.USERNAME_SIZE_MIN, UserDto.USERNAME_SIZE_MAX))),
             allOf(
                 hasEntry("name", "password"),
                 hasEntry("value", userDto.getPassword()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_PASSWORD, UserDto.SIZE_MAX_PASSWORD))),
+                    UserDto.PASSWORD_SIZE_MIN, UserDto.PASSWORD_SIZE_MAX))),
             allOf(
                 hasEntry("name", "newPassword"),
                 hasEntry("value", userDto.getNewPassword()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_PASSWORD, UserDto.SIZE_MAX_PASSWORD)))
+                    UserDto.PASSWORD_SIZE_MIN, UserDto.PASSWORD_SIZE_MAX)))
             ))).andDo(print());
   }
 
@@ -88,9 +88,9 @@ public class UserControllerTest extends BaseControllerTest {
   public void invalidContentSizeMax() throws Exception {
     // given
     UserDto userDto = userDtoBuilder
-        .username(StringUtils.repeat('u', UserDto.SIZE_MAX_USERNAME + 1))
-        .password(StringUtils.repeat('p', UserDto.SIZE_MAX_PASSWORD + 1))
-        .newPassword(StringUtils.repeat('n', UserDto.SIZE_MAX_PASSWORD + 1))
+        .username(StringUtils.repeat('u', UserDto.USERNAME_SIZE_MAX + 1))
+        .password(StringUtils.repeat('p', UserDto.PASSWORD_SIZE_MAX + 1))
+        .newPassword(StringUtils.repeat('n', UserDto.PASSWORD_SIZE_MAX + 1))
         .build();
 
     // when
@@ -107,17 +107,17 @@ public class UserControllerTest extends BaseControllerTest {
                 hasEntry("name", "username"),
                 hasEntry("value", userDto.getUsername()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_USERNAME, UserDto.SIZE_MAX_USERNAME))),
+                    UserDto.USERNAME_SIZE_MIN, UserDto.USERNAME_SIZE_MAX))),
             allOf(
                 hasEntry("name", "password"),
                 hasEntry("value", userDto.getPassword()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_PASSWORD, UserDto.SIZE_MAX_PASSWORD))),
+                    UserDto.PASSWORD_SIZE_MIN, UserDto.PASSWORD_SIZE_MAX))),
             allOf(
                 hasEntry("name", "newPassword"),
                 hasEntry("value", userDto.getNewPassword()),
                 hasEntry("reason", String.format("size must be between %d and %d",
-                    UserDto.SIZE_MIN_PASSWORD, UserDto.SIZE_MAX_PASSWORD)))
+                    UserDto.PASSWORD_SIZE_MIN, UserDto.PASSWORD_SIZE_MAX)))
         ))).andDo(print());
   }
 
@@ -261,15 +261,15 @@ public class UserControllerTest extends BaseControllerTest {
     // given
     UserDto userDto1 = userDtoBuilder
             .id(1L)
-            .username(StringUtils.repeat('u', UserDto.SIZE_MIN_USERNAME))
-            .password(StringUtils.repeat('p', UserDto.SIZE_MIN_PASSWORD))
+            .username(StringUtils.repeat('u', UserDto.USERNAME_SIZE_MIN))
+            .password(StringUtils.repeat('p', UserDto.PASSWORD_SIZE_MIN))
             .email("foo@bar.com")
             .build();
 
     UserDto userDto2 = userDtoBuilder
             .id(2L)
-            .username(StringUtils.repeat('x', UserDto.SIZE_MIN_USERNAME))
-            .password(StringUtils.repeat('y', UserDto.SIZE_MIN_PASSWORD))
+            .username(StringUtils.repeat('x', UserDto.USERNAME_SIZE_MIN))
+            .password(StringUtils.repeat('y', UserDto.PASSWORD_SIZE_MIN))
             .email("foo@bar.com")
             .build();
 

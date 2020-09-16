@@ -12,7 +12,7 @@ import com.google.common.net.HostAndPort;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CommandSender {
+public class CommandSenderUtils {
 
   //in milliseconds, socket should connect/read within this period otherwise SocketTimeoutException
   private static final int DEFAULT_SOCKET_TIMEOUT = 5000;

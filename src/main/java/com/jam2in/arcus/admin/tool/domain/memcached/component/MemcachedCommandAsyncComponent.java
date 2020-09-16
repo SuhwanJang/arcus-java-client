@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.memcached.component;
 
-import com.jam2in.arcus.admin.tool.util.CommandSender;
+import com.jam2in.arcus.admin.tool.util.CommandSenderUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ public class MemcachedCommandAsyncComponent {
   @Async
   public CompletableFuture<String> stats(String address, int socketTimeoutMs) throws IOException {
     return CompletableFuture.completedFuture(
-        CommandSender.send(address, "stats\r\n", socketTimeoutMs));
+        CommandSenderUtils.send(address, "stats\r\n", socketTimeoutMs));
   }
 
 }

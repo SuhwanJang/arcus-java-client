@@ -7,6 +7,7 @@ import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterMntrD
 import com.jam2in.arcus.admin.tool.domain.zookeeper.dto.ZooKeeperFourLetterSrvrDto;
 import com.jam2in.arcus.admin.tool.domain.zookeeper.service.ZooKeeperService;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/zkservers")
+@Validated
 public class ZooKeeperController {
 
   private final ZooKeeperService zookeeperService;
@@ -27,6 +29,13 @@ public class ZooKeeperController {
                              AdminAgentService adminAgentService) {
     this.zookeeperService = zookeeperService;
     this.adminAgentService = adminAgentService;
+  }
+
+  @PostMapping("/{address}/install/{version}")
+  @ResponseStatus(code = HttpStatus.OK)
+  public void installZooKeeperServer(@PathVariable("address") @Address String address,
+                                     @PathVariable("version") String version) {
+    adminAgentService.installZooKeeperServer(address, version);
   }
 
   @PostMapping("/{address}/start")

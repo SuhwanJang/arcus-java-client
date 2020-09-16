@@ -53,7 +53,7 @@ public class JwtAuthenticationFilterTest extends BaseControllerTest {
 
     UserEntity userEntity = UserEntity.of(userDto);
     userEntity.applyAdminRole();
-    userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
+    userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
     given(userRepository.findByUsername(userDto.getUsername()))
         .willReturn(Optional.of(userEntity));

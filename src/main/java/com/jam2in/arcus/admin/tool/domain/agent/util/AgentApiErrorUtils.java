@@ -14,12 +14,12 @@ import java.util.concurrent.TimeoutException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public class AgentApiErrorUtil {
+public class AgentApiErrorUtils {
 
-  public static ApiError toErrorCode(Throwable throwable) {
+  public static ApiError toError(Throwable throwable) {
     if (throwable instanceof CompletionException
         || throwable instanceof ResourceAccessException) {
-      return toErrorCode(throwable.getCause());
+      return toError(throwable.getCause());
     }
 
     if (throwable instanceof TimeoutException) {

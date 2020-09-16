@@ -1,6 +1,6 @@
 package com.jam2in.arcus.admin.tool.domain.zookeeper.dto;
 
-import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtils;
 import com.jam2in.arcus.admin.tool.error.ApiError;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class ZooKeeperFourLetterDto {
     this.ruok = ruok;
     this.srvr = srvr;
     this.cons = cons;
-    this.error = ZooKeeperApiErrorUtil.toError(throwable);
+    this.error = ZooKeeperApiErrorUtils.toError(throwable);
   }
 
 }

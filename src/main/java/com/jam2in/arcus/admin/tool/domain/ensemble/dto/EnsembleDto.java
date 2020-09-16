@@ -22,20 +22,24 @@ public class EnsembleDto extends DateDto {
 
   private Long id;
 
-  @Size(min = SIZE_MIN_NAME, max = SIZE_MAX_NAME)
+  @Size(min = NAME_SIZE_MIN, max = NAME_SIZE_MAX)
   @NotEmpty
   private String name;
 
+  private String address;
+
   @Valid
-  private List<ZooKeeperDto> zookeepers;
+  private List<ZooKeeperDto> zkservers;
 
   @Builder
   public EnsembleDto(Long id,
                      String name,
-                     List<ZooKeeperDto> zookeepers) {
+                     String address,
+                     List<ZooKeeperDto> zkservers) {
     this.id = id;
     this.name = name;
-    this.zookeepers = zookeepers;
+    this.address = address;
+    this.zkservers = zkservers;
   }
 
   public static EnsembleDto of(EnsembleEntity ensembleEntity) {
@@ -63,12 +67,12 @@ public class EnsembleDto extends DateDto {
             new PropertyMap<EnsembleEntity, EnsembleDto>() {
               @Override
               protected void configure() {
-                skip(destination.zookeepers);
+                skip(destination.zkservers);
               }
             });
   }
 
-  public static final int SIZE_MIN_NAME = 4;
-  public static final int SIZE_MAX_NAME = 32;
+  public static final int NAME_SIZE_MIN = 4;
+  public static final int NAME_SIZE_MAX = 32;
 
 }

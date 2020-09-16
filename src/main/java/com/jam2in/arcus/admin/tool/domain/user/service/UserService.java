@@ -3,6 +3,7 @@ package com.jam2in.arcus.admin.tool.domain.user.service;
 import com.jam2in.arcus.admin.tool.domain.user.dto.UserDto;
 import com.jam2in.arcus.admin.tool.domain.user.entity.UserEntity;
 import com.jam2in.arcus.admin.tool.domain.user.repository.UserRepository;
+import com.jam2in.arcus.admin.tool.error.ApiError;
 import com.jam2in.arcus.admin.tool.error.ApiErrorCode;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.collections4.ListUtils;
@@ -38,7 +39,7 @@ public class UserService {
     checkDuplicateEmail(userDto.getEmail());
 
     UserEntity userEntity = UserEntity.of(userDto);
-    userEntity.updatePassword(passwordEncoder.encode(userDto.getPassword()));
+    userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
     if (userRepository.count() == 0) {
       // FIXME: concurrency issue
@@ -57,25 +58,25 @@ public class UserService {
     UserEntity userEntity = getEntity(id);
 
     if (!passwordEncoder.matches(userDto.getPassword(), userEntity.getPassword())) {
-      throw new BusinessException(ApiErrorCode.USER_PASSWORD_MISMATCH);
+      throw new BusinessException(ApiError.of(ApiErrorCode.USER_PASSWORD_MISMATCH));
     }
 
     if (!userDto.getUsername().equals(userEntity.getUsername())) {
       checkDuplicateUsername(userDto.getUsername());
-      userEntity.updateUsername(userDto.getUsername());
+      userEntity.setUsername(userDto.getUsername());
     }
 
     if (!userDto.getEmail().equals(userEntity.getEmail())) {
       checkDuplicateEmail(userDto.getEmail());
-      userEntity.updateEmail(userDto.getEmail());
+      userEntity.setEmail(userDto.getEmail());
     }
 
     if (StringUtils.length(userDto.getNewPassword()) > 0) {
-      userEntity.updatePassword(passwordEncoder.encode(userDto.getNewPassword()));
+      userEntity.setPassword(passwordEncoder.encode(userDto.getNewPassword()));
     }
 
-    userEntity.updateRole(userDto.getRole());
-    userEntity.updateAccesses(userDto.getAccesses());
+    userEntity.setRole(userDto.getRole());
+    userEntity.setAccesses(userDto.getAccesses());
 
     userRepository.save(userEntity);
 
@@ -97,7 +98,7 @@ public class UserService {
   @Transactional
   public void delete(long id) {
     if (!userRepository.existsById(id)) {
-      throw new BusinessException(ApiErrorCode.USER_NOT_FOUND);
+      throw new BusinessException(ApiError.of(ApiErrorCode.USER_NOT_FOUND));
     }
 
     userRepository.deleteById(id);
@@ -108,7 +109,7 @@ public class UserService {
     UserEntity userEntity = getEntityByUsername(username);
     String newPassword = UUID.randomUUID().toString().replaceAll("-", StringUtils.EMPTY)
         .substring(0, 10);  // FIXME: 비밀번호 최대 사이즈 사용 (UserDto.SIZE_MAX_PASSWORD)
-    userEntity.updatePassword(passwordEncoder.encode(newPassword));
+    userEntity.setPassword(passwordEncoder.encode(newPassword));
 
     String subject = "Your password has changed";
     String to = userEntity.getEmail();
@@ -120,23 +121,23 @@ public class UserService {
 
   private UserEntity getEntity(long id) {
     return userRepository.findById(id)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.USER_NOT_FOUND)));
   }
 
   private UserEntity getEntityByUsername(String username) {
     return userRepository.findByUsername(username)
-        .orElseThrow(() -> new BusinessException(ApiErrorCode.USER_USERNAME_NOT_FOUND));
+        .orElseThrow(() -> new BusinessException(ApiError.of(ApiErrorCode.USER_USERNAME_NOT_FOUND)));
   }
 
   private void checkDuplicateUsername(String username) {
     if (userRepository.existsByUsername(username)) {
-      throw new BusinessException(ApiErrorCode.USER_USERNAME_DUPLICATED);
+      throw new BusinessException(ApiError.of(ApiErrorCode.USER_USERNAME_DUPLICATED));
     }
   }
 
   private void checkDuplicateEmail(String email) {
     if (userRepository.existsByEmail(email)) {
-      throw new BusinessException(ApiErrorCode.USER_EMAIL_DUPLICATED);
+      throw new BusinessException(ApiError.of(ApiErrorCode.USER_EMAIL_DUPLICATED));
     }
   }
 

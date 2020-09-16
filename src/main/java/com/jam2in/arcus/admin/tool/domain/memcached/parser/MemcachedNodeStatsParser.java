@@ -15,20 +15,20 @@ public final class MemcachedNodeStatsParser {
   private static final String LINE_ZK_TIMEOUT = "STAT zk_timeout ";
 
   private static void parseVersion(
-      MemcachedNodeStatsDto.CacheNodeStatsDtoBuilder builder,
+      MemcachedNodeStatsDto.MemcachedNodeStatsDtoBuilder builder,
       String line) {
     builder.version(StringUtils.substringAfter(line, LINE_VERSION));
   }
 
   private static void parseZkTimeout(
-      MemcachedNodeStatsDto.CacheNodeStatsDtoBuilder builder,
+      MemcachedNodeStatsDto.MemcachedNodeStatsDtoBuilder builder,
       String line) {
     builder.zkTimeout(StringUtils.substringAfter(line, LINE_ZK_TIMEOUT));
   }
 
   @SuppressWarnings("UnstableApiUsage")
   public static MemcachedNodeStatsDto parse(String address, String stats) {
-    MemcachedNodeStatsDto.CacheNodeStatsDtoBuilder builder =
+    MemcachedNodeStatsDto.MemcachedNodeStatsDtoBuilder builder =
         MemcachedNodeStatsDto.builder();
 
     for (String line : stats.split("\n")) {

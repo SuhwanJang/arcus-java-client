@@ -20,6 +20,10 @@ public final class ModelMapperUtils {
     return modelMapper.map(object, destinationType, typeMapName);
   }
 
+  public static <S, D> TypeMap<S, D> typeMap(Class<S> sourceType, Class<D> destinationType) {
+    return modelMapper.typeMap(sourceType, destinationType);
+  }
+
   public static <S, D> TypeMap<S, D> createTypeMap(Class<S> sourceType, Class<D> destinationType,
                                                    String typeMapName) {
     return modelMapper.createTypeMap(sourceType, destinationType, typeMapName);

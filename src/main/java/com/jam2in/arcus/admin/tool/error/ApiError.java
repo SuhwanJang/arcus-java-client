@@ -56,12 +56,12 @@ public final class ApiError {
         Collections.emptyList());
   }
 
-  public static ApiError of(ApiErrorCode apiErrorCode, List<Detail> details) {
-    return new ApiError(apiErrorCode, details);
-  }
-
   public static ApiError of(ApiErrorCode apiErrorCode, Detail detail) {
     return new ApiError(apiErrorCode, detail);
+  }
+
+  public static ApiError of(ApiErrorCode apiErrorCode, List<Detail> details) {
+    return new ApiError(apiErrorCode, details);
   }
 
   public static ApiError of(ApiErrorCode apiErrorCode, InvalidFormatException exception) {
@@ -106,8 +106,8 @@ public final class ApiError {
             List::addAll));
   }
 
-  public static ApiError of(ApiErrorCode apiErrorCode, ConstraintViolationException e) {
-    return new ApiError(apiErrorCode, (List<Detail>) e.getConstraintViolations()
+  public static ApiError of(ApiErrorCode apiErrorCode, ConstraintViolationException exception) {
+    return new ApiError(apiErrorCode, (List<Detail>) exception.getConstraintViolations()
         .stream()
         .collect(
             ArrayList<Detail>::new,

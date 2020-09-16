@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.CascadeType;
@@ -19,8 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "ensembles")
@@ -33,39 +34,33 @@ public class EnsembleEntity extends DateEntity {
   private Long id;
 
   @Column(nullable = false, unique = true)
+  @Setter
   private String name;
 
+  private String address;
+
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "ensemble_id")
-  private List<ZooKeeperEntity> zookeepers;
+  @JoinColumn(name = "ensembleId")
+  private List<ZooKeeperEntity> zkservers = new ArrayList<>();
 
   @Builder
   public EnsembleEntity(String name,
-                        List<ZooKeeperEntity> zookeepers) {
+                        List<ZooKeeperEntity> zkservers,
+                        String address) {
     this.name = name;
-    this.zookeepers = zookeepers;
+    this.zkservers = zkservers;
+    this.address = address;
   }
 
-  public void updateName(String name) {
-    this.name = name;
-  }
-
-  public void updateZookeepers(List<ZooKeeperEntity> zookeepers) {
-    this.zookeepers.clear();
-    if (CollectionUtils.isNotEmpty(zookeepers)) {
-      this.zookeepers.addAll(zookeepers);
+  public void setZkservers(List<ZooKeeperEntity> zkservers) {
+    this.zkservers.clear();
+    if (CollectionUtils.isNotEmpty(zkservers)) {
+      this.zkservers.addAll(zkservers);
     }
   }
 
   public static EnsembleEntity of(EnsembleDto ensembleDto) {
     return ModelMapperUtils.map(ensembleDto, EnsembleEntity.class);
-  }
-
-  public static String joiningZooKeeperAddresses(EnsembleEntity ensembleEntity) {
-    return ensembleEntity.getZookeepers()
-        .stream()
-        .map(ZooKeeperEntity::getAddress)
-        .collect(Collectors.joining(","));
   }
 
 }

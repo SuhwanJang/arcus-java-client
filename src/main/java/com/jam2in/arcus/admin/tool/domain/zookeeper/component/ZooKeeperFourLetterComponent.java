@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 public class ZooKeeperFourLetterComponent {
 
   // TODO: use property value
-  public static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 10000;
-  public static final int FOUR_LETTER_TASK_TIMEOUT_MS = 15000;
+  public static final int FOUR_LETTER_SOCKET_TIMEOUT_MS = 3000;
+  public static final int FOUR_LETTER_TASK_TIMEOUT_MS = 6000;
 
   private final ZooKeeperFourLetterAsyncComponent fourLetterComponent;
 

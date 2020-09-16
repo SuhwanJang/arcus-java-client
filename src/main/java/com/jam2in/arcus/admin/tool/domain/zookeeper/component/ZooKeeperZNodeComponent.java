@@ -5,7 +5,7 @@ import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedClusterDto;
 import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedNodeDto;
 import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationClusterDto;
 import com.jam2in.arcus.admin.tool.domain.memcached.dto.MemcachedReplicationGroupDto;
-import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtil;
+import com.jam2in.arcus.admin.tool.domain.zookeeper.util.ZooKeeperApiErrorUtils;
 import com.jam2in.arcus.admin.tool.exception.BusinessException;
 import org.apache.commons.lang3.Functions;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 public class ZooKeeperZNodeComponent {
 
   // TODO: use property value
-  private static final int ZNODE_CONNECTION_TIMEOUT_MS = 10000;
-  private static final int ZNODE_TASK_TIMEOUT_MS = 15000;
+  private static final int ZNODE_CONNECTION_TIMEOUT_MS = 3000;
+  private static final int ZNODE_TASK_TIMEOUT_MS = 6000;
 
   private final ZooKeeperZNodeAsyncComponent znodeAsyncComponent;
 
@@ -115,7 +115,7 @@ public class ZooKeeperZNodeComponent {
           .orTimeout(ZNODE_TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS)
           .join();
     } catch (Exception e) {
-      throw new BusinessException(ZooKeeperApiErrorUtil.toErrorCode(e));
+      throw new BusinessException(ZooKeeperApiErrorUtils.toError(e));
     } finally {
       znodeAsyncComponent.closeConnection(connection);
     }
